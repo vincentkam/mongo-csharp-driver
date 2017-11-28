@@ -21,14 +21,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="xunit" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\MongoDB.Bson.Dotnet\MongoDB.Bson.Dotnet.csproj" />
     <ProjectReference Include="..\MongoDB.Bson.TestHelpers.Dotnet\MongoDB.Bson.TestHelpers.Dotnet.csproj" />
     <ProjectReference Include="..\..\src\MongoDB.Driver.Core.Dotnet\MongoDB.Driver.Core.Dotnet.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
-    <PackageReference Include="System.Diagnostics.StackTrace" Version="4.0.1" />
-    <PackageReference Include="System.Diagnostics.TextWriterTraceListener" Version="4.0.0" />
+    <PackageReference Include="System.Diagnostics.StackTrace" Version="4.3.0" />
+    <PackageReference Include="System.Diagnostics.TextWriterTraceListener" Version="4.3.0" />
   </ItemGroup>
 
 </Project>
