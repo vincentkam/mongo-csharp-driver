@@ -16,13 +16,20 @@
       "clientOptions": {
         "retryReads": true
       },
-      "operation": {
-        "name": "count"
-      },
-      "outcome": {
-        "result": {
-          "count": 2
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": "off",
+        "data": {
+          "failCommands": [
+            "count"
+          ],
+          "closeConnection": false
         }
+      },
+      "operation": {
+        "name": "count",
+        "object": "collection",
+        "result": 2
       }
     },
     {
@@ -36,19 +43,16 @@
           "times": 1
         },
         "data": {
-          "commands": [
+          "failCommands": [
             "count"
           ],
           "closeConnection": true
         }
       },
       "operation": {
-        "name": "count"
-      },
-      "outcome": {
-        "result": {
-          "count": 2
-        }
+        "name": "count",
+        "object": "collection",
+        "result": 2
       }
     },
     {
@@ -62,17 +66,18 @@
           "times": 2
         },
         "data": {
-          "commands": [
+          "failCommands": [
             "count"
           ],
           "closeConnection": true
         }
       },
       "operation": {
-        "name": "count"
-      },
-      "outcome": {
-        "error": true
+        "name": "count",
+        "object": "collection",
+        "result": {
+          "errorContains": ""
+        }
       }
     }
   ]
