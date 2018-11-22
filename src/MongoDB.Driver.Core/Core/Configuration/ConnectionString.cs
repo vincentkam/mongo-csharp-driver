@@ -86,6 +86,7 @@ namespace MongoDB.Driver.Core.Configuration
         private ReadPreferenceMode? _readPreference;
         private IReadOnlyList<TagSet> _readPreferenceTags;
         private string _replicaSet;
+        private bool? _retryReads;
         private bool? _retryWrites;
         private ConnectionStringScheme _scheme;
         private TimeSpan? _serverSelectionTimeout;
@@ -326,6 +327,15 @@ namespace MongoDB.Driver.Core.Configuration
         {
             get { return _readPreferenceTags; }
         }
+        
+        /// <summary>
+        /// Gets a value indicating whether or not to retry reads.
+        /// </summary>
+        public bool? RetryReads
+        {
+            get { return _retryReads; }
+        }
+
 
         /// <summary>
         /// Gets a value indicating whether or not to retry writes.
@@ -773,6 +783,9 @@ namespace MongoDB.Driver.Core.Configuration
                     break;
                 case "replicaset":
                     _replicaSet = value;
+                    break;
+                case "retryreads":
+                    _retryReads = ParseBoolean(name, value);
                     break;
                 case "retrywrites":
                     _retryWrites = ParseBoolean(name, value);

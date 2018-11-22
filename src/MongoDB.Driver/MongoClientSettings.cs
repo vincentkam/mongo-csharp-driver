@@ -50,6 +50,7 @@ namespace MongoDB.Driver
         private UTF8Encoding _readEncoding;
         private ReadPreference _readPreference;
         private string _replicaSetName;
+        private bool _retryReads;
         private bool _retryWrites;
         private string _sdamLogFilename;
         private List<MongoServerAddress> _servers;
@@ -91,6 +92,7 @@ namespace MongoDB.Driver
             _readEncoding = null;
             _readPreference = ReadPreference.Primary;
             _replicaSetName = null;
+            _retryReads = false;
             _retryWrites = false;
             _sdamLogFilename = null;
             _servers = new List<MongoServerAddress> { new MongoServerAddress("localhost") };
@@ -378,6 +380,19 @@ namespace MongoDB.Driver
                 _replicaSetName = value;
             }
         }
+        
+        /// <summary>
+        /// Gets or sets whether to retry reads.
+        /// </summary>
+        public bool RetryReads
+        {
+            get { return _retryReads; }
+            set
+            {
+                if (_isFrozen) { throw new InvalidOperationException("MongoClientSettings is frozen."); }
+                _retryReads = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets whether to retry writes.
@@ -644,6 +659,7 @@ namespace MongoDB.Driver
             clientSettings.ReadEncoding = null; // ReadEncoding must be provided in code
             clientSettings.ReadPreference = (url.ReadPreference == null) ? ReadPreference.Primary : url.ReadPreference;
             clientSettings.ReplicaSetName = url.ReplicaSetName;
+            clientSettings.RetryReads = url.RetryReads.GetValueOrDefault(false);
             clientSettings.RetryWrites = url.RetryWrites.GetValueOrDefault(false);
             clientSettings.LocalThreshold = url.LocalThreshold;
             clientSettings.Servers = new List<MongoServerAddress>(url.Servers);
@@ -684,6 +700,7 @@ namespace MongoDB.Driver
             clone._readEncoding = _readEncoding;
             clone._readPreference = _readPreference;
             clone._replicaSetName = _replicaSetName;
+            clone._retryReads = _retryReads;
             clone._retryWrites = _retryWrites;
             clone._localThreshold = _localThreshold;
             clone._sdamLogFilename = _sdamLogFilename;
@@ -741,6 +758,7 @@ namespace MongoDB.Driver
                 object.Equals(_readConcern, rhs._readConcern) &&
                 _readPreference == rhs._readPreference &&
                 _replicaSetName == rhs._replicaSetName &&
+                _retryReads == rhs._retryReads &&
                 _retryWrites == rhs._retryWrites &&
                 _localThreshold == rhs._localThreshold &&
                 _sdamLogFilename == rhs._sdamLogFilename &&
@@ -816,6 +834,7 @@ namespace MongoDB.Driver
                 .Hash(_readEncoding)
                 .Hash(_readPreference)
                 .Hash(_replicaSetName)
+                .Hash(_retryReads)
                 .Hash(_retryWrites)
                 .Hash(_localThreshold)
                 .Hash(_sdamLogFilename)
@@ -866,6 +885,7 @@ namespace MongoDB.Driver
             sb.AppendFormat("ReadConcern={0};", _readConcern);
             sb.AppendFormat("ReadPreference={0};", _readPreference);
             sb.AppendFormat("ReplicaSetName={0};", _replicaSetName);
+            sb.AppendFormat("RetryReads={0}", _retryReads);
             sb.AppendFormat("RetryWrites={0}", _retryWrites);
             sb.AppendFormat("LocalThreshold={0};", _localThreshold);
             if (_sdamLogFilename != null)
