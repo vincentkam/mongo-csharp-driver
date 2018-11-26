@@ -226,8 +226,8 @@ namespace MongoDB.Driver
             Ensure.IsNotNull(filter, nameof(filter));
             options = options ?? new CountOptions();
 
-            var operation = CreateCountOperation(filter, options);
-            return ExecuteReadOperation(session, operation, cancellationToken);
+            var operation = CreateRetryableCountOperation(filter, options, _database.Client.Settings.RetryReads);
+            return ExecuteReadOperation(session, operation, cancellationToken)["n"].ToInt64();
         }
 
         [Obsolete("Use CountDocumentsAsync or EstimatedDocumentCountAsync instead.")]
@@ -242,9 +242,9 @@ namespace MongoDB.Driver
             Ensure.IsNotNull(session, nameof(session));
             Ensure.IsNotNull(filter, nameof(filter));
             options = options ?? new CountOptions();
-
-            var operation = CreateCountOperation(filter, options);
-            return ExecuteReadOperationAsync(session, operation, cancellationToken);
+            
+            var operation = CreateRetryableCountOperation(filter, options, _database.Client.Settings.RetryReads);
+            return Task.Run(()=> ExecuteReadOperationAsync(session, operation, cancellationToken).Result["n"].ToInt64(), cancellationToken);
         }
 
         public override long CountDocuments(FilterDefinition<TDocument> filter, CountOptions options, CancellationToken cancellationToken = default(CancellationToken))
@@ -1000,6 +1000,24 @@ namespace MongoDB.Driver
         {
             var binding = new WritableServerBinding(_cluster, session.WrappedCoreSession.Fork());
             return new ReadWriteBindingHandle(binding);
+        }
+        
+        private RetryableCountCommandOperation CreateRetryableCountOperation(
+            FilterDefinition<TDocument> filter, 
+            CountOptions options,
+            bool retryRequested)
+        {
+            return new RetryableCountCommandOperation(_collectionNamespace,
+                options.Collation,
+                filter.Render(_documentSerializer, _settings.SerializerRegistry),
+                options.Hint,
+                options.Limit,
+                options.MaxTime,
+                _settings.ReadConcern,
+                options.Skip,
+                _messageEncoderSettings,
+                retryRequested)
+            ;
         }
 
         private IBsonSerializer<TField> GetValueSerializerForDistinct<TField>(RenderedFieldDefinition<TField> renderedField, IBsonSerializerRegistry serializerRegistry)
