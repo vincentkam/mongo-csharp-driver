@@ -56,7 +56,32 @@
       }
     },
     {
-      "description": "Count fails",
+      "description": "Count fails on first attempt",
+      "clientOptions": {
+        "retryReads": false
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "count"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operation": {
+        "name": "count",
+        "object": "collection",
+        "result": {
+          "errorContains": ""
+        }
+      }
+    },
+    {
+      "description": "Count fails on second attempt",
       "clientOptions": {
         "retryReads": true
       },
