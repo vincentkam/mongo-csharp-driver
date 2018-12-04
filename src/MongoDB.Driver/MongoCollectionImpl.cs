@@ -227,7 +227,7 @@ namespace MongoDB.Driver
             options = options ?? new CountOptions();
 
             var operation = CreateRetryableCountOperation(filter, options, _database.Client.Settings.RetryReads);
-            return ExecuteReadOperation(session, operation, cancellationToken)["n"].ToInt64();
+            return ExecuteReadOperation(session, operation, cancellationToken);
         }
 
         [Obsolete("Use CountDocumentsAsync or EstimatedDocumentCountAsync instead.")]
@@ -244,7 +244,7 @@ namespace MongoDB.Driver
             options = options ?? new CountOptions();
             
             var operation = CreateRetryableCountOperation(filter, options, _database.Client.Settings.RetryReads);
-            return Task.Run(()=> ExecuteReadOperationAsync(session, operation, cancellationToken).Result["n"].ToInt64(), cancellationToken);
+            return ExecuteReadOperationAsync(session, operation, cancellationToken);
         }
 
         public override long CountDocuments(FilterDefinition<TDocument> filter, CountOptions options, CancellationToken cancellationToken = default(CancellationToken))

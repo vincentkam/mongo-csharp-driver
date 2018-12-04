@@ -16,6 +16,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
@@ -31,7 +32,7 @@ namespace MongoDB.Driver.Core.Operations
     /// <summary>
     /// Represents a count command operation.
     /// </summary>
-    public class RetryableCountCommandOperation : RetryableReadCommandOperationBase
+    public class RetryableCountCommandOperation : RetryableReadCommandOperationBase<long>
     {
         
         // constructors
@@ -178,6 +179,19 @@ namespace MongoDB.Driver.Core.Operations
                 Skip = Skip
             };
             return operation.CreateCommand(connectionDescription, session);
+        }
+
+        /// <inheritdoc />
+        protected override async Task<long> ParseCommandResultAsync(Task<BsonDocument> commandResultTask)
+        {
+            var commandResult = await commandResultTask.ConfigureAwait(false);
+            return commandResult ["n"].ToInt64();
+        }
+
+        /// <inheritdoc />
+        protected override long ParseCommandResult(BsonDocument commandResult)
+        {
+            return commandResult["n"].ToInt64();
         }
 
 //        /// <inheritdoc />

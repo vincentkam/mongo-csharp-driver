@@ -33,11 +33,11 @@ namespace MongoDB.Driver.Core.Operations
     /// <summary>
     /// Represents a base class for a delete, insert or update command operation.
     /// </summary>
-    public abstract class RetryableReadCommandOperationBase : IReadOperation<BsonDocument>, IRetryableReadOperation<BsonDocument>
+    public abstract class RetryableReadCommandOperationBase<TResult> : IReadOperation<TResult>, IRetryableReadOperation<TResult>
     {
         // constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="RetryableReadCommandOperationBase" /> class.
+        /// Initializes a new instance of the <see cref="RetryableReadCommandOperationBase{TResult}" /> class.
         /// </summary>
         /// <param name="databaseNamespace">The database namespace.</param>
         /// <param name="messageEncoderSettings">The message encoder settings.</param>
@@ -55,7 +55,7 @@ namespace MongoDB.Driver.Core.Operations
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RetryableReadCommandOperationBase" /> class.
+        /// Initializes a new instance of the <see cref="RetryableReadCommandOperationBase{TResult}" /> class.
         /// </summary>
         /// <param name="databaseNamespace">The database namespace.</param>
         /// <param name="retryRequested">Whether retry was requested.</param>
@@ -113,7 +113,7 @@ namespace MongoDB.Driver.Core.Operations
 
         // public methods
         /// <inheritdoc />
-        public virtual BsonDocument Execute(IReadBinding binding, CancellationToken cancellationToken)
+        public virtual TResult Execute(IReadBinding binding, CancellationToken cancellationToken)
         {
             using (var context = RetryableReadContext.Create(binding, RetryRequested, cancellationToken))
             {
@@ -122,13 +122,13 @@ namespace MongoDB.Driver.Core.Operations
         }
 
         /// <inheritdoc />
-        public virtual BsonDocument Execute(RetryableReadContext context, CancellationToken cancellationToken)
+        public virtual TResult Execute(RetryableReadContext context, CancellationToken cancellationToken)
         {
             return RetryableReadOperationExecutor.Execute(this, context, cancellationToken);
         }
 
         /// <inheritdoc />
-        public virtual async Task<BsonDocument> ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
+        public virtual async Task<TResult> ExecuteAsync(IReadBinding binding, CancellationToken cancellationToken)
         {
             using (var context = await RetryableReadContext.CreateAsync(binding, RetryRequested, cancellationToken).ConfigureAwait(false))
             {
@@ -137,17 +137,17 @@ namespace MongoDB.Driver.Core.Operations
         }
 
         /// <inheritdoc />
-        public virtual Task<BsonDocument> ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
+        public virtual Task<TResult> ExecuteAsync(RetryableReadContext context, CancellationToken cancellationToken)
         {
             return RetryableReadOperationExecutor.ExecuteAsync(this, context, cancellationToken);
         }
 
         /// <inheritdoc />
-        public BsonDocument ExecuteAttempt(RetryableReadContext context, int attempt, long? transactionNumber, CancellationToken cancellationToken)
+        public TResult ExecuteAttempt(RetryableReadContext context, int attempt, long? transactionNumber, CancellationToken cancellationToken)
         {
             var args = GetCommandArgs(context, attempt, transactionNumber);
 
-            return context.Channel.Command<BsonDocument>(
+            return ParseCommandResult(context.Channel.Command<BsonDocument>(
                 session: context.ChannelSource.Session,
                 readPreference: ReadPreference.Primary,
                 databaseNamespace: DatabaseNamespace,
@@ -159,15 +159,15 @@ namespace MongoDB.Driver.Core.Operations
                 responseHandling: args.ResponseHandling,
                 resultSerializer: BsonDocumentSerializer.Instance,
                 messageEncoderSettings: args.MessageEncoderSettings,
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken));
         }
 
         /// <inheritdoc />
-        public Task<BsonDocument> ExecuteAttemptAsync(RetryableReadContext context, int attempt, long? transactionNumber, CancellationToken cancellationToken)
+        public Task<TResult> ExecuteAttemptAsync(RetryableReadContext context, int attempt, long? transactionNumber, CancellationToken cancellationToken)
         {
             var args = GetCommandArgs(context, attempt, transactionNumber);
 
-            return context.Channel.CommandAsync<BsonDocument>(
+            return ParseCommandResultAsync(context.Channel.CommandAsync<BsonDocument>(
                 session: context.ChannelSource.Session,
                 readPreference: ReadPreference.Primary,
                 databaseNamespace: DatabaseNamespace,
@@ -179,7 +179,7 @@ namespace MongoDB.Driver.Core.Operations
                 responseHandling: args.ResponseHandling,
                 resultSerializer: BsonDocumentSerializer.Instance,
                 messageEncoderSettings: args.MessageEncoderSettings,
-                cancellationToken: cancellationToken);
+                cancellationToken: cancellationToken));
         }
 
         // protected methods
@@ -194,6 +194,27 @@ namespace MongoDB.Driver.Core.Operations
         /// A command.
         /// </returns>
         protected abstract BsonDocument CreateCommand(ICoreSessionHandle session, ConnectionDescription connectionDescription, int attempt, long? transactionNumber);
+
+        /// <summary>
+        /// Parses the command result.
+        /// </summary>
+        /// <param name="commandResultTask">Task that contains the result of the command</param>
+        /// <returns>The result.</returns>
+        protected virtual Task<TResult> ParseCommandResultAsync(Task<BsonDocument> commandResultTask)
+        {
+            return (Task<TResult>)(object)commandResultTask;
+        }
+
+        /// <summary>
+        /// Parses the command result.
+        /// </summary>
+        /// <param name="commandResult">The result of the command</param>
+        /// <returns>The result.</returns>
+        protected virtual TResult ParseCommandResult(BsonDocument commandResult)
+        {
+            return (TResult)(object)commandResult;
+        }
+        
 
 //        /// <summary>
 //        /// Creates the command payloads.
