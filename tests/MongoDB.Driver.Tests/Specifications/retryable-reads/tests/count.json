@@ -25,7 +25,18 @@
           "filter": {}
         },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
       "description": "Count succeeds on second attempt",
@@ -51,7 +62,27 @@
           "filter": {}
         },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
       "description": "Count fails on first attempt",

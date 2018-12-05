@@ -18,6 +18,12 @@ tests:
             arguments:
                 filter: { }
             result: 2
+        expectations:
+             - command_started_event:
+                 command:
+                   count: *collection_name
+                 command_name: count
+                 database_name: *database_name            
     -
         description: "Count succeeds on second attempt"
         clientOptions:
@@ -35,6 +41,17 @@ tests:
             arguments:
                 filter: { }
             result: 2
+        expectations:
+             - command_started_event:
+                 command:
+                   count: *collection_name
+                 command_name: count
+                 database_name: *database_name
+             - command_started_event:
+                 command:
+                   count: *collection_name
+                 command_name: count
+                 database_name: *database_name                                         
     -
         description: "Count fails on first attempt"
         clientOptions:
