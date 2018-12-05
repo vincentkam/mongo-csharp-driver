@@ -19,6 +19,9 @@
       "operation": {
         "name": "count",
         "object": "collection",
+        "arguments": {
+          "filter": {}
+        },
         "result": 2
       }
     },
@@ -42,6 +45,9 @@
       "operation": {
         "name": "count",
         "object": "collection",
+        "arguments": {
+          "filter": {}
+        },
         "result": 2
       }
     },
@@ -65,6 +71,9 @@
       "operation": {
         "name": "count",
         "object": "collection",
+        "arguments": {
+          "filter": {}
+        },
         "result": {
           "errorContains": ""
         }
@@ -90,6 +99,9 @@
       "operation": {
         "name": "count",
         "object": "collection",
+        "arguments": {
+          "filter": {}
+        },
         "result": {
           "errorContains": ""
         }
