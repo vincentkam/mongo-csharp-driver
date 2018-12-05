@@ -96,6 +96,7 @@ namespace MongoDB.Driver.Tests.Specifications.retryable_reads
                 "failPoint", 
                 "operation", 
                 "result",
+                "expectations",
                 "async");
 
             DropCollection();
