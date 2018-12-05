@@ -9,13 +9,6 @@ tests:
         description: "Count succeeds on first attempt"
         clientOptions:
             retryReads: true
-        failPoint:
-            configureFailPoint: failCommand
-            mode: off
-            data:
-                failCommands:
-                        - count
-                closeConnection: false
         operation:
             name: count
             object: collection
