@@ -80,7 +80,14 @@ namespace MongoDB.Driver.Tests.Specifications.retryable_reads
                 throw new SkipException(test["skipReason"].AsString);
             }
            
-            JsonDrivenHelper.EnsureAllFieldsAreValid(shared, "_path", "minServerVersion", "data", "tests");
+            JsonDrivenHelper.EnsureAllFieldsAreValid(
+                shared, 
+                "_path", 
+                "minServerVersion", 
+                "data", 
+                "tests", 
+                "database_name", 
+                "collection_name");
             JsonDrivenHelper.EnsureAllFieldsAreValid(
                 test, 
                 "description", 
