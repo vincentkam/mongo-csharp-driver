@@ -74,7 +74,9 @@ namespace MongoDB.Bson.TestHelpers.JsonDrivenTests
 
         public virtual void Assert()
         {
-            if (_expectedException == null)
+            var notExpectingException = 
+                _expectedException == null  || !_expectedException.GetValue("error", true).ToBoolean();
+            if (notExpectingException)
             {
                 if (_actualException != null)
                 {
