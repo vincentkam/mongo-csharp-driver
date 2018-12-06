@@ -108,7 +108,7 @@
           "filter": {}
         },
         "result": {
-          "errorContains": ""
+          "error": true
         }
       }
     },
@@ -136,7 +136,7 @@
           "filter": {}
         },
         "result": {
-          "errorContains": ""
+          "error": true
         }
       }
     }

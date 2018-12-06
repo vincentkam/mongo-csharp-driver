@@ -69,7 +69,7 @@ tests:
             arguments:
                 filter: { }
             result:
-                errorContains: ""
+                error: true
     -
         description: "Count fails on second attempt"
         clientOptions:
@@ -87,4 +87,4 @@ tests:
             arguments:
                 filter: { }
             result:
-                errorContains: ""
+                error: true
