@@ -1,4 +1,6 @@
 {
+  "database_name": "retryable-reads-tests",
+  "collection_name": "coll",
   "data": [
     {
       "_id": 1,
@@ -9,6 +11,15 @@
       "x": 22
     }
   ],
+  "count_command_started_event": {
+    "command_started_event": {
+      "command": {
+        "count": "coll"
+      },
+      "command_name": "count",
+      "database_name": "retryable-reads-tests"
+    }
+  },
   "minServerVersion": "4.1.6",
   "tests": [
     {
@@ -25,7 +36,7 @@
           "failCommands": [
             "count"
           ],
-          "errorcode": 11600
+          "errorCode": 11600
         }
       },
       "operation": {
@@ -35,7 +46,18 @@
           "filter": {}
         },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
       "description": "Count succeeds after InterruptedDueToStepDown",
@@ -51,7 +73,7 @@
           "failCommands": [
             "count"
           ],
-          "errorcode": 11602
+          "errorCode": 11602
         }
       },
       "operation": {
@@ -61,7 +83,18 @@
           "filter": {}
         },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
       "description": "Count succeeds after NotMaster",
@@ -77,7 +110,7 @@
           "failCommands": [
             "count"
           ],
-          "errorcode": 10107
+          "errorCode": 10107
         }
       },
       "operation": {
@@ -87,7 +120,18 @@
           "filter": {}
         },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
       "description": "Count succeeds after NotMasterNoSlaveOk",
@@ -103,7 +147,7 @@
           "failCommands": [
             "count"
           ],
-          "errorcode": 13435
+          "errorCode": 13435
         }
       },
       "operation": {
@@ -113,7 +157,18 @@
           "filter": {}
         },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
       "description": "Count succeeds after NotMasterOrSecondary",
@@ -129,7 +184,7 @@
           "failCommands": [
             "count"
           ],
-          "errorcode": 13436
+          "errorCode": 13436
         }
       },
       "operation": {
@@ -139,7 +194,18 @@
           "filter": {}
         },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
       "description": "Count succeeds after PrimarySteppedDown",
@@ -155,7 +221,7 @@
           "failCommands": [
             "count"
           ],
-          "errorcode": 189
+          "errorCode": 189
         }
       },
       "operation": {
@@ -165,7 +231,18 @@
           "filter": {}
         },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
       "description": "Count succeeds after ShutdownInProgress",
@@ -181,7 +258,7 @@
           "failCommands": [
             "count"
           ],
-          "errorcode": 91
+          "errorCode": 91
         }
       },
       "operation": {
@@ -191,7 +268,18 @@
           "filter": {}
         },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
       "description": "Count succeeds after HostNotFound",
@@ -207,7 +295,7 @@
           "failCommands": [
             "count"
           ],
-          "errorcode": 7
+          "errorCode": 7
         }
       },
       "operation": {
@@ -217,7 +305,18 @@
           "filter": {}
         },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
       "description": "Count succeeds after HostUnreachable",
@@ -233,7 +332,7 @@
           "failCommands": [
             "count"
           ],
-          "errorcode": 6
+          "errorCode": 6
         }
       },
       "operation": {
@@ -243,7 +342,18 @@
           "filter": {}
         },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
       "description": "Count succeeds after NetworkTimeout",
@@ -259,7 +369,7 @@
           "failCommands": [
             "count"
           ],
-          "errorcode": 89
+          "errorCode": 89
         }
       },
       "operation": {
@@ -269,7 +379,18 @@
           "filter": {}
         },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     },
     {
       "description": "Count succeeds after SocketException",
@@ -285,7 +406,7 @@
           "failCommands": [
             "count"
           ],
-          "errorcode": 9001
+          "errorCode": 9001
         }
       },
       "operation": {
@@ -295,7 +416,18 @@
           "filter": {}
         },
         "result": 2
-      }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "count": "coll"
+            },
+            "command_name": "count",
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
     }
   ]
 }

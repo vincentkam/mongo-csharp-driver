@@ -1,6 +1,16 @@
+database_name: &database_name "retryable-reads-tests"
+collection_name: &collection_name "coll"
+
 data:
     - { _id: 1, x: 11 }
     - { _id: 2, x: 22 }
+
+count_command_started_event: &count_command_started_event
+ command_started_event:
+   command:
+     count: *collection_name
+   command_name: count
+   database_name: *database_name
 
 minServerVersion: '4.1.6' # 4.2
 
@@ -15,13 +25,15 @@ tests:
             data:
                 failCommands:
                         - count
-                errorcode: 11600
+                errorCode: 11600
         operation:
             name: count
             object: collection
             arguments:
                 filter: { }
             result: 2
+        expectations:
+             - *count_command_started_event    
     -
         description: "Count succeeds after InterruptedDueToStepDown"
         clientOptions:
@@ -32,13 +44,15 @@ tests:
             data:
                 failCommands:
                         - count
-                errorcode: 11602
+                errorCode: 11602
         operation:
             name: count
             object: collection
             arguments:
                 filter: { }
             result: 2
+        expectations:
+             - *count_command_started_event    
     -
         description: "Count succeeds after NotMaster"
         clientOptions:
@@ -49,13 +63,15 @@ tests:
             data:
                 failCommands:
                         - count
-                errorcode: 10107
+                errorCode: 10107
         operation:
             name: count
             object: collection
             arguments:
                 filter: { }
             result: 2
+        expectations:
+             - *count_command_started_event    
     -
         description: "Count succeeds after NotMasterNoSlaveOk"
         clientOptions:
@@ -66,13 +82,15 @@ tests:
             data:
                 failCommands:
                         - count
-                errorcode: 13435
+                errorCode: 13435
         operation:
             name: count
             object: collection
             arguments:
                 filter: { }
             result: 2
+        expectations:
+             - *count_command_started_event    
     -
         description: "Count succeeds after NotMasterOrSecondary"
         clientOptions:
@@ -83,13 +101,15 @@ tests:
             data:
                 failCommands:
                         - count
-                errorcode: 13436
+                errorCode: 13436
         operation:
             name: count
             object: collection
             arguments:
                 filter: { }
             result: 2
+        expectations:
+             - *count_command_started_event    
     -
         description: "Count succeeds after PrimarySteppedDown"
         clientOptions:
@@ -100,13 +120,15 @@ tests:
             data:
                 failCommands:
                         - count
-                errorcode: 189
+                errorCode: 189
         operation:
             name: count
             object: collection
             arguments:
                 filter: { }
             result: 2
+        expectations:
+             - *count_command_started_event    
     -
         description: "Count succeeds after ShutdownInProgress"
         clientOptions:
@@ -117,13 +139,15 @@ tests:
             data:
                 failCommands:
                         - count
-                errorcode: 91
+                errorCode: 91
         operation:
             name: count
             object: collection
             arguments:
                 filter: { }
             result: 2
+        expectations:
+             - *count_command_started_event    
     -
         description: "Count succeeds after HostNotFound"
         clientOptions:
@@ -134,13 +158,15 @@ tests:
             data:
                 failCommands:
                         - count
-                errorcode: 7
+                errorCode: 7
         operation:
             name: count
             object: collection
             arguments:
                 filter: { }
             result: 2
+        expectations:
+             - *count_command_started_event    
     -
         description: "Count succeeds after HostUnreachable"
         clientOptions:
@@ -151,13 +177,15 @@ tests:
             data:
                 failCommands:
                         - count
-                errorcode: 6
+                errorCode: 6
         operation:
             name: count
             object: collection
             arguments:
                 filter: { }
             result: 2
+        expectations:
+             - *count_command_started_event    
     -
         description: "Count succeeds after NetworkTimeout"
         clientOptions:
@@ -168,13 +196,15 @@ tests:
             data:
                 failCommands:
                         - count
-                errorcode: 89
+                errorCode: 89
         operation:
             name: count
             object: collection
             arguments:
                 filter: { }
             result: 2
+        expectations:
+             - *count_command_started_event    
     -
         description: "Count succeeds after SocketException"
         clientOptions:
@@ -185,10 +215,12 @@ tests:
             data:
                 failCommands:
                         - count
-                errorcode: 9001
+                errorCode: 9001
         operation:
             name: count
             object: collection
             arguments:
                 filter: { }
             result: 2
+        expectations:
+             - *count_command_started_event    
