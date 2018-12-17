@@ -9,12 +9,16 @@
     {
       "_id": 2,
       "x": 22
+    },
+    {
+      "_id": 3,
+      "x": 33
     }
   ],
   "minServerVersion": "4.1.6",
   "tests": [
     {
-      "description": "Count succeeds after InterruptedAtShutdown",
+      "description": "client.watch succeeds after InterruptedAtShutdown",
       "clientOptions": {
         "retryReads": true
       },
@@ -25,24 +29,29 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "aggregate"
           ],
           "errorCode": 11600
         }
       },
       "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "result": 2
+        "name": "watch",
+        "object": "client",
+        "result": []
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -50,7 +59,15 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -58,7 +75,7 @@
       ]
     },
     {
-      "description": "Count succeeds after InterruptedDueToStepDown",
+      "description": "client.watch succeeds after InterruptedDueToStepDown",
       "clientOptions": {
         "retryReads": true
       },
@@ -69,24 +86,29 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "aggregate"
           ],
           "errorCode": 11602
         }
       },
       "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "result": 2
+        "name": "watch",
+        "object": "client",
+        "result": []
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -94,7 +116,15 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -102,7 +132,7 @@
       ]
     },
     {
-      "description": "Count succeeds after NotMaster",
+      "description": "client.watch succeeds after NotMaster",
       "clientOptions": {
         "retryReads": true
       },
@@ -113,24 +143,29 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "aggregate"
           ],
           "errorCode": 10107
         }
       },
       "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "result": 2
+        "name": "watch",
+        "object": "client",
+        "result": []
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -138,7 +173,15 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -146,7 +189,7 @@
       ]
     },
     {
-      "description": "Count succeeds after NotMasterNoSlaveOk",
+      "description": "client.watch succeeds after NotMasterNoSlaveOk",
       "clientOptions": {
         "retryReads": true
       },
@@ -157,24 +200,29 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "aggregate"
           ],
           "errorCode": 13435
         }
       },
       "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "result": 2
+        "name": "watch",
+        "object": "client",
+        "result": []
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -182,7 +230,15 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -190,7 +246,7 @@
       ]
     },
     {
-      "description": "Count succeeds after NotMasterOrSecondary",
+      "description": "client.watch succeeds after NotMasterOrSecondary",
       "clientOptions": {
         "retryReads": true
       },
@@ -201,24 +257,29 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "aggregate"
           ],
           "errorCode": 13436
         }
       },
       "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "result": 2
+        "name": "watch",
+        "object": "client",
+        "result": []
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -226,7 +287,15 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -234,7 +303,7 @@
       ]
     },
     {
-      "description": "Count succeeds after PrimarySteppedDown",
+      "description": "client.watch succeeds after PrimarySteppedDown",
       "clientOptions": {
         "retryReads": true
       },
@@ -245,24 +314,29 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "aggregate"
           ],
           "errorCode": 189
         }
       },
       "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "result": 2
+        "name": "watch",
+        "object": "client",
+        "result": []
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -270,7 +344,15 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -278,7 +360,7 @@
       ]
     },
     {
-      "description": "Count succeeds after ShutdownInProgress",
+      "description": "client.watch succeeds after ShutdownInProgress",
       "clientOptions": {
         "retryReads": true
       },
@@ -289,24 +371,29 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "aggregate"
           ],
           "errorCode": 91
         }
       },
       "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "result": 2
+        "name": "watch",
+        "object": "client",
+        "result": []
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -314,7 +401,15 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -322,7 +417,7 @@
       ]
     },
     {
-      "description": "Count succeeds after HostNotFound",
+      "description": "client.watch succeeds after HostNotFound",
       "clientOptions": {
         "retryReads": true
       },
@@ -333,24 +428,29 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "aggregate"
           ],
           "errorCode": 7
         }
       },
       "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "result": 2
+        "name": "watch",
+        "object": "client",
+        "result": []
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -358,7 +458,15 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -366,7 +474,7 @@
       ]
     },
     {
-      "description": "Count succeeds after HostUnreachable",
+      "description": "client.watch succeeds after HostUnreachable",
       "clientOptions": {
         "retryReads": true
       },
@@ -377,24 +485,29 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "aggregate"
           ],
           "errorCode": 6
         }
       },
       "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "result": 2
+        "name": "watch",
+        "object": "client",
+        "result": []
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -402,7 +515,15 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -410,7 +531,7 @@
       ]
     },
     {
-      "description": "Count succeeds after NetworkTimeout",
+      "description": "client.watch succeeds after NetworkTimeout",
       "clientOptions": {
         "retryReads": true
       },
@@ -421,24 +542,29 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "aggregate"
           ],
           "errorCode": 89
         }
       },
       "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "result": 2
+        "name": "watch",
+        "object": "client",
+        "result": []
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -446,7 +572,15 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -454,7 +588,7 @@
       ]
     },
     {
-      "description": "Count succeeds after SocketException",
+      "description": "client.watch succeeds after SocketException",
       "clientOptions": {
         "retryReads": true
       },
@@ -465,24 +599,29 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "aggregate"
           ],
           "errorCode": 9001
         }
       },
       "operation": {
-        "name": "count",
-        "object": "collection",
-        "arguments": {
-          "filter": {}
-        },
-        "result": 2
+        "name": "watch",
+        "object": "client",
+        "result": []
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -490,7 +629,15 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }

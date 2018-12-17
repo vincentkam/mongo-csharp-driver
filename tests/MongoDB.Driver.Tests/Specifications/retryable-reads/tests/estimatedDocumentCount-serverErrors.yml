@@ -9,7 +9,7 @@ minServerVersion: '4.1.6' # 4.2
 
 tests:
     -
-        description: "Count succeeds after InterruptedAtShutdown"
+        description: "EstimatedDocumentCount succeeds after InterruptedAtShutdown"
         clientOptions:
             retryReads: true
         failPoint: &failCommand_failPoint
@@ -17,7 +17,7 @@ tests:
             mode: { times: 1 }
             data: { failCommands: [count], errorCode: 11600 }
         operation: &retryable_operation
-            name: count
+            name: estimatedDocumentCount
             object: collection
             arguments:
                 filter: { }
@@ -30,10 +30,10 @@ tests:
                     database_name: *database_name
             - *retryable_command_started_event
     -
-        description: "Count succeeds after InterruptedDueToStepDown"
+        description: "EstimatedDocumentCount succeeds after InterruptedDueToStepDown"
         clientOptions:
             retryReads: true
-        failPoint: 
+        failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [count], errorCode: 11602 }
         operation: *retryable_operation
@@ -41,7 +41,7 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event    
     -
-        description: "Count succeeds after NotMaster"
+        description: "EstimatedDocumentCount succeeds after NotMaster"
         clientOptions:
             retryReads: true
         failPoint:
@@ -52,7 +52,7 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event    
     -
-        description: "Count succeeds after NotMasterNoSlaveOk"
+        description: "EstimatedDocumentCount succeeds after NotMasterNoSlaveOk"
         clientOptions:
             retryReads: true
         failPoint:
@@ -63,7 +63,7 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event    
     -
-        description: "Count succeeds after NotMasterOrSecondary"
+        description: "EstimatedDocumentCount succeeds after NotMasterOrSecondary"
         clientOptions:
             retryReads: true
         failPoint:
@@ -74,7 +74,7 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event    
     -
-        description: "Count succeeds after PrimarySteppedDown"
+        description: "EstimatedDocumentCount succeeds after PrimarySteppedDown"
         clientOptions:
             retryReads: true
         failPoint:
@@ -85,7 +85,7 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event    
     -
-        description: "Count succeeds after ShutdownInProgress"
+        description: "EstimatedDocumentCount succeeds after ShutdownInProgress"
         clientOptions:
             retryReads: true
         failPoint:
@@ -96,7 +96,7 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event    
     -
-        description: "Count succeeds after HostNotFound"
+        description: "EstimatedDocumentCount succeeds after HostNotFound"
         clientOptions:
             retryReads: true
         failPoint:
@@ -107,7 +107,7 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event    
     -
-        description: "Count succeeds after HostUnreachable"
+        description: "EstimatedDocumentCount succeeds after HostUnreachable"
         clientOptions:
             retryReads: true
         failPoint:
@@ -118,7 +118,7 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event    
     -
-        description: "Count succeeds after NetworkTimeout"
+        description: "EstimatedDocumentCount succeeds after NetworkTimeout"
         clientOptions:
             retryReads: true
         failPoint:
@@ -129,7 +129,7 @@ tests:
              - *retryable_command_started_event
              - *retryable_command_started_event    
     -
-        description: "Count succeeds after SocketException"
+        description: "EstimatedDocumentCount succeeds after SocketException"
         clientOptions:
             retryReads: true
         failPoint:
@@ -138,4 +138,4 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event 

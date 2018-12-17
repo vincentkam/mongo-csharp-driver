@@ -1,20 +1,42 @@
 {
   "database_name": "retryable-reads-tests",
-  "collection_name": "coll",
-  "data": [
-    {
-      "_id": 1,
-      "x": 11
-    },
-    {
-      "_id": 2,
-      "x": 22
-    }
-  ],
-  "minServerVersion": "4.1.6",
+  "collection_name": "files",
+  "data": {
+    "files": [
+      {
+        "_id": {
+          "$oid": "000000000000000000000001"
+        },
+        "length": 1,
+        "chunkSize": 4,
+        "uploadDate": {
+          "$date": "1970-01-01T00:00:00.000Z"
+        },
+        "md5": "47ed733b8d10be225eceba344d533586",
+        "filename": "abc",
+        "contentType": "application/octet-stream",
+        "aliases": [],
+        "metadata": {}
+      }
+    ],
+    "chunks": [
+      {
+        "_id": {
+          "$oid": "000000000000000000000001"
+        },
+        "files_id": {
+          "$oid": "000000000000000000000001"
+        },
+        "n": 0,
+        "data": {
+          "$hex": "11"
+        }
+      }
+    ]
+  },
   "tests": [
     {
-      "description": "Count succeeds after InterruptedAtShutdown",
+      "description": "Download_by_name succeeds after InterruptedAtShutdown",
       "clientOptions": {
         "retryReads": true
       },
@@ -25,24 +47,25 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "find"
           ],
           "errorCode": 11600
         }
       },
       "operation": {
-        "name": "count",
-        "object": "collection",
+        "operation": "download_by_name",
         "arguments": {
-          "filter": {}
-        },
-        "result": 2
+          "filename": "abc"
+        }
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
             },
             "database_name": "retryable-reads-tests"
           }
@@ -50,7 +73,10 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
             },
             "database_name": "retryable-reads-tests"
           }
@@ -58,7 +84,7 @@
       ]
     },
     {
-      "description": "Count succeeds after InterruptedDueToStepDown",
+      "description": "Download_by_name succeeds after InterruptedDueToStepDown",
       "clientOptions": {
         "retryReads": true
       },
@@ -69,24 +95,25 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "find"
           ],
           "errorCode": 11602
         }
       },
       "operation": {
-        "name": "count",
-        "object": "collection",
+        "operation": "download_by_name",
         "arguments": {
-          "filter": {}
-        },
-        "result": 2
+          "filename": "abc"
+        }
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
             },
             "database_name": "retryable-reads-tests"
           }
@@ -94,7 +121,10 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
             },
             "database_name": "retryable-reads-tests"
           }
@@ -102,7 +132,7 @@
       ]
     },
     {
-      "description": "Count succeeds after NotMaster",
+      "description": "Download_by_name succeeds after NotMaster",
       "clientOptions": {
         "retryReads": true
       },
@@ -113,24 +143,25 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "find"
           ],
           "errorCode": 10107
         }
       },
       "operation": {
-        "name": "count",
-        "object": "collection",
+        "operation": "download_by_name",
         "arguments": {
-          "filter": {}
-        },
-        "result": 2
+          "filename": "abc"
+        }
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
             },
             "database_name": "retryable-reads-tests"
           }
@@ -138,7 +169,10 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
             },
             "database_name": "retryable-reads-tests"
           }
@@ -146,7 +180,7 @@
       ]
     },
     {
-      "description": "Count succeeds after NotMasterNoSlaveOk",
+      "description": "Download_by_name succeeds after NotMasterNoSlaveOk",
       "clientOptions": {
         "retryReads": true
       },
@@ -157,24 +191,25 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "find"
           ],
           "errorCode": 13435
         }
       },
       "operation": {
-        "name": "count",
-        "object": "collection",
+        "operation": "download_by_name",
         "arguments": {
-          "filter": {}
-        },
-        "result": 2
+          "filename": "abc"
+        }
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
             },
             "database_name": "retryable-reads-tests"
           }
@@ -182,7 +217,10 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
             },
             "database_name": "retryable-reads-tests"
           }
@@ -190,7 +228,7 @@
       ]
     },
     {
-      "description": "Count succeeds after NotMasterOrSecondary",
+      "description": "Download_by_name succeeds after NotMasterOrSecondary",
       "clientOptions": {
         "retryReads": true
       },
@@ -201,24 +239,25 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "find"
           ],
           "errorCode": 13436
         }
       },
       "operation": {
-        "name": "count",
-        "object": "collection",
+        "operation": "download_by_name",
         "arguments": {
-          "filter": {}
-        },
-        "result": 2
+          "filename": "abc"
+        }
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
             },
             "database_name": "retryable-reads-tests"
           }
@@ -226,7 +265,10 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
             },
             "database_name": "retryable-reads-tests"
           }
@@ -234,7 +276,7 @@
       ]
     },
     {
-      "description": "Count succeeds after PrimarySteppedDown",
+      "description": "Download_by_name succeeds after PrimarySteppedDown",
       "clientOptions": {
         "retryReads": true
       },
@@ -245,24 +287,25 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "find"
           ],
           "errorCode": 189
         }
       },
       "operation": {
-        "name": "count",
-        "object": "collection",
+        "operation": "download_by_name",
         "arguments": {
-          "filter": {}
-        },
-        "result": 2
+          "filename": "abc"
+        }
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
             },
             "database_name": "retryable-reads-tests"
           }
@@ -270,7 +313,10 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
             },
             "database_name": "retryable-reads-tests"
           }
@@ -278,7 +324,7 @@
       ]
     },
     {
-      "description": "Count succeeds after ShutdownInProgress",
+      "description": "Download_by_name succeeds after ShutdownInProgress",
       "clientOptions": {
         "retryReads": true
       },
@@ -289,24 +335,25 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "find"
           ],
           "errorCode": 91
         }
       },
       "operation": {
-        "name": "count",
-        "object": "collection",
+        "operation": "download_by_name",
         "arguments": {
-          "filter": {}
-        },
-        "result": 2
+          "filename": "abc"
+        }
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
             },
             "database_name": "retryable-reads-tests"
           }
@@ -314,7 +361,10 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
             },
             "database_name": "retryable-reads-tests"
           }
@@ -322,7 +372,7 @@
       ]
     },
     {
-      "description": "Count succeeds after HostNotFound",
+      "description": "Download_by_name succeeds after HostNotFound",
       "clientOptions": {
         "retryReads": true
       },
@@ -333,24 +383,25 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "find"
           ],
           "errorCode": 7
         }
       },
       "operation": {
-        "name": "count",
-        "object": "collection",
+        "operation": "download_by_name",
         "arguments": {
-          "filter": {}
-        },
-        "result": 2
+          "filename": "abc"
+        }
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
             },
             "database_name": "retryable-reads-tests"
           }
@@ -358,7 +409,10 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
             },
             "database_name": "retryable-reads-tests"
           }
@@ -366,7 +420,7 @@
       ]
     },
     {
-      "description": "Count succeeds after HostUnreachable",
+      "description": "Download_by_name succeeds after HostUnreachable",
       "clientOptions": {
         "retryReads": true
       },
@@ -377,24 +431,25 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "find"
           ],
           "errorCode": 6
         }
       },
       "operation": {
-        "name": "count",
-        "object": "collection",
+        "operation": "download_by_name",
         "arguments": {
-          "filter": {}
-        },
-        "result": 2
+          "filename": "abc"
+        }
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
             },
             "database_name": "retryable-reads-tests"
           }
@@ -402,7 +457,10 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
             },
             "database_name": "retryable-reads-tests"
           }
@@ -410,7 +468,7 @@
       ]
     },
     {
-      "description": "Count succeeds after NetworkTimeout",
+      "description": "Download_by_name succeeds after NetworkTimeout",
       "clientOptions": {
         "retryReads": true
       },
@@ -421,24 +479,25 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "find"
           ],
           "errorCode": 89
         }
       },
       "operation": {
-        "name": "count",
-        "object": "collection",
+        "operation": "download_by_name",
         "arguments": {
-          "filter": {}
-        },
-        "result": 2
+          "filename": "abc"
+        }
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
             },
             "database_name": "retryable-reads-tests"
           }
@@ -446,7 +505,10 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
             },
             "database_name": "retryable-reads-tests"
           }
@@ -454,7 +516,7 @@
       ]
     },
     {
-      "description": "Count succeeds after SocketException",
+      "description": "Download_by_name succeeds after SocketException",
       "clientOptions": {
         "retryReads": true
       },
@@ -465,24 +527,25 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "find"
           ],
           "errorCode": 9001
         }
       },
       "operation": {
-        "name": "count",
-        "object": "collection",
+        "operation": "download_by_name",
         "arguments": {
-          "filter": {}
-        },
-        "result": 2
+          "filename": "abc"
+        }
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
             },
             "database_name": "retryable-reads-tests"
           }
@@ -490,7 +553,10 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "files",
+              "filter": {
+                "filename": "abc"
+              }
             },
             "database_name": "retryable-reads-tests"
           }

@@ -14,12 +14,12 @@
   "minServerVersion": "4.1.6",
   "tests": [
     {
-      "description": "Count succeeds on first attempt",
+      "description": "EstimatedDocumentCount succeeds on first attempt",
       "clientOptions": {
         "retryReads": true
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -38,7 +38,7 @@
       ]
     },
     {
-      "description": "Count succeeds on second attempt",
+      "description": "EstimatedDocumentCount succeeds on second attempt",
       "clientOptions": {
         "retryReads": true
       },
@@ -55,7 +55,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -82,7 +82,7 @@
       ]
     },
     {
-      "description": "Count fails on first attempt",
+      "description": "EstimatedDocumentCount fails on first attempt",
       "clientOptions": {
         "retryReads": false
       },
@@ -99,7 +99,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -120,7 +120,7 @@
       ]
     },
     {
-      "description": "Count fails on second attempt",
+      "description": "EstimatedDocumentCount fails on second attempt",
       "clientOptions": {
         "retryReads": true
       },
@@ -137,7 +137,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}

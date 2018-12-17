@@ -9,11 +9,11 @@ minServerVersion: '4.1.6' # 4.2
 
 tests:
     -
-        description: "Count succeeds on first attempt"
+        description: "EstimatedDocumentCount succeeds on first attempt"
         clientOptions:
             retryReads: true
         operation: &retryable_operation
-            name: count
+            name: estimatedDocumentCount
             object: collection
             arguments:
                 filter: { }
@@ -22,10 +22,10 @@ tests:
             - &retryable_command_started_event
                 command_started_event:
                     command:
-                            count: *collection_name
-                    database_name: *database_name  
+                        count: *collection_name
+                    database_name: *database_name
     -
-        description: "Count succeeds on second attempt"
+        description: "EstimatedDocumentCount succeeds on second attempt"
         clientOptions:
             retryReads: true
         failPoint:  &failCommand_failPoint
@@ -34,13 +34,12 @@ tests:
             data:
                 failCommands: [count]
                 closeConnection: true
-
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event 
              - *retryable_command_started_event                                          
     -
-        description: "Count fails on first attempt"
+        description: "EstimatedDocumentCount fails on first attempt"
         clientOptions:
             retryReads: false
         failPoint: *failCommand_failPoint
@@ -51,7 +50,7 @@ tests:
         expectations:
              - *retryable_command_started_event                
     -
-        description: "Count fails on second attempt"
+        description: "EstimatedDocumentCount fails on second attempt"
         clientOptions:
             retryReads: true
         failPoint:

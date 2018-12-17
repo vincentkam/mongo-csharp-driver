@@ -1,46 +1,40 @@
 database_name: &database_name "retryable-reads-tests"
 collection_name: &collection_name "coll"
 
-data:
-    - { _id: 1, x: 11 }
-    - { _id: 2, x: 22 }
-
+data: []
 minServerVersion: '4.1.6' # 4.2
 
 tests:
     -
-        description: "Count succeeds on first attempt"
+        description: "ListCollections succeeds on first attempt"
         clientOptions:
             retryReads: true
         operation: &retryable_operation
-            name: count
-            object: collection
-            arguments:
-                filter: { }
-            result: 2
+            name: "listCollections"
+            object: database
+            result:
+                error: false
         expectations:
-            - &retryable_command_started_event
+            -  &retryable_command_started_event
                 command_started_event:
                     command:
-                            count: *collection_name
-                    database_name: *database_name  
+                        listCollections: *database_name
     -
-        description: "Count succeeds on second attempt"
+        description: "ListCollections succeeds on second attempt"
         clientOptions:
             retryReads: true
-        failPoint:  &failCommand_failPoint
+        failPoint: &failCommand_failPoint
             configureFailPoint: failCommand
             mode: { times: 1 }
             data:
-                failCommands: [count]
+                failCommands:
+                        - listCollections
                 closeConnection: true
-
-        operation: *retryable_operation
+        operation: *retryable_operation                
         expectations:
-             - *retryable_command_started_event 
-             - *retryable_command_started_event                                          
+             - *retryable_command_started_event
     -
-        description: "Count fails on first attempt"
+        description: "ListCollections fails on first attempt"
         clientOptions:
             retryReads: false
         failPoint: *failCommand_failPoint
@@ -49,14 +43,14 @@ tests:
             result:
                 error: true
         expectations:
-             - *retryable_command_started_event                
+             - *retryable_command_started_event 
     -
-        description: "Count fails on second attempt"
+        description: "ListCollections fails on second attempt"
         clientOptions:
             retryReads: true
         failPoint:
-          <<: *failCommand_failPoint
-          mode: { times: 2 }
+            <<: *failCommand_failPoint
+            mode: { times: 2 }        
         operation:
             <<: *retryable_operation
             result:
@@ -64,3 +58,4 @@ tests:
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
+                

@@ -2,140 +2,143 @@ database_name: &database_name "retryable-reads-tests"
 collection_name: &collection_name "coll"
 
 data:
-    - { _id: 1, x: 11 }
-    - { _id: 2, x: 22 }
-
+    - {_id: 1, x: 11}
+    - {_id: 2, x: 22}
+    - {_id: 3, x: 33}
+    
 minServerVersion: '4.1.6' # 4.2
 
 tests:
     -
-        description: "Count succeeds after InterruptedAtShutdown"
+        description: "db.watch succeeds after InterruptedAtShutdown"
         clientOptions:
             retryReads: true
         failPoint: &failCommand_failPoint
             configureFailPoint: failCommand
             mode: { times: 1 }
-            data: { failCommands: [count], errorCode: 11600 }
+            data: { failCommands: [aggregate], errorCode: 11600 }
         operation: &retryable_operation
-            name: count
-            object: collection
-            arguments:
-                filter: { }
-            result: 2
+            name: watch
+            object: database
+            result: []
         expectations:
             - &retryable_command_started_event
                 command_started_event:
                     command:
-                        count: *collection_name
+                        aggregate: *collection_name
+                        cursor: {}
+                        pipeline:
+                          - $changeStream:
+                                fullDocument: default
                     database_name: *database_name
             - *retryable_command_started_event
     -
-        description: "Count succeeds after InterruptedDueToStepDown"
+        description: "db.watch succeeds after InterruptedDueToStepDown"
         clientOptions:
             retryReads: true
-        failPoint: 
+        failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [count], errorCode: 11602 }
+            data: { failCommands: [aggregate], errorCode: 11602 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event    
     -
-        description: "Count succeeds after NotMaster"
+        description: "db.watch succeeds after NotMaster"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [count], errorCode: 10107 }
+            data: { failCommands: [aggregate], errorCode: 10107 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event    
     -
-        description: "Count succeeds after NotMasterNoSlaveOk"
+        description: "db.watch succeeds after NotMasterNoSlaveOk"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [count], errorCode: 13435 }
+            data: { failCommands: [aggregate], errorCode: 13435 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event    
     -
-        description: "Count succeeds after NotMasterOrSecondary"
+        description: "db.watch succeeds after NotMasterOrSecondary"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [count], errorCode: 13436 }
+            data: { failCommands: [aggregate], errorCode: 13436 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event    
     -
-        description: "Count succeeds after PrimarySteppedDown"
+        description: "db.watch succeeds after PrimarySteppedDown"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [count], errorCode: 189 }
+            data: { failCommands: [aggregate], errorCode: 189 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event    
     -
-        description: "Count succeeds after ShutdownInProgress"
+        description: "db.watch succeeds after ShutdownInProgress"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [count], errorCode: 91 }            
+            data: { failCommands: [aggregate], errorCode: 91 }            
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event    
     -
-        description: "Count succeeds after HostNotFound"
+        description: "db.watch succeeds after HostNotFound"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [count], errorCode: 7 }            
+            data: { failCommands: [aggregate], errorCode: 7 }            
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event    
     -
-        description: "Count succeeds after HostUnreachable"
+        description: "db.watch succeeds after HostUnreachable"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [count], errorCode: 6 }            
+            data: { failCommands: [aggregate], errorCode: 6 }            
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event    
     -
-        description: "Count succeeds after NetworkTimeout"
+        description: "db.watch succeeds after NetworkTimeout"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [count], errorCode: 89 }            
+            data: { failCommands: [aggregate], errorCode: 89 }            
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event    
     -
-        description: "Count succeeds after SocketException"
+        description: "db.watch succeeds after SocketException"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [count], errorCode: 9001 }            
+            data: { failCommands: [aggregate], errorCode: 9001 }            
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event 

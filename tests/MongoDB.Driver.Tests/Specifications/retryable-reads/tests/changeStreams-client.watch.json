@@ -1,0 +1,219 @@
+{
+  "database_name": "retryable-reads-tests",
+  "collection_name": "coll",
+  "data": [
+    {
+      "_id": 1,
+      "x": 11
+    }
+  ],
+  "minServerVersion": "4.1.6",
+  "tests": [
+    {
+      "description": "client.watch succeeds on first attempt",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "operation": {
+        "name": "watch",
+        "object": "client",
+        "result": []
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": {
+                "$numberInt": "1"
+              },
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        }
+      ]
+    },
+    {
+      "description": "client.watch succeeds on second attempt",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operation": {
+        "name": "watch",
+        "object": "client",
+        "result": []
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": {
+                "$numberInt": "1"
+              },
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": {
+                "$numberInt": "1"
+              },
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        }
+      ]
+    },
+    {
+      "description": "client.watch fails on first attempt",
+      "clientOptions": {
+        "retryReads": false
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operation": {
+        "name": "watch",
+        "object": "client",
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": {
+                "$numberInt": "1"
+              },
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        }
+      ]
+    },
+    {
+      "description": "client.watch fails on second attempt",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "closeConnection": true
+        }
+      },
+      "operation": {
+        "name": "watch",
+        "object": "client",
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": {
+                "$numberInt": "1"
+              },
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": {
+                "$numberInt": "1"
+              },
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default",
+                    "allChangesForCluster": true
+                  }
+                }
+              ]
+            },
+            "database_name": "admin"
+          }
+        }
+      ]
+    }
+  ]
+}

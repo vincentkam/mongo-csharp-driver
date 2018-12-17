@@ -9,28 +9,68 @@
     {
       "_id": 2,
       "x": 22
+    },
+    {
+      "_id": 3,
+      "x": 33
+    },
+    {
+      "_id": 4,
+      "x": 44
+    },
+    {
+      "_id": 5,
+      "x": 55
     }
   ],
   "minServerVersion": "4.1.6",
   "tests": [
     {
-      "description": "Count succeeds on first attempt",
+      "description": "Find succeeds on first attempt",
       "clientOptions": {
         "retryReads": true
       },
       "operation": {
-        "name": "count",
+        "name": "find",
         "object": "collection",
         "arguments": {
-          "filter": {}
+          "filter": {},
+          "sort": {
+            "_id": 1
+          },
+          "limit": 4,
+          "batchSize": 2
         },
-        "result": 2
+        "result": [
+          {
+            "_id": 1,
+            "x": 11
+          },
+          {
+            "_id": 2,
+            "x": 22
+          },
+          {
+            "_id": 3,
+            "x": 33
+          },
+          {
+            "_id": 4,
+            "x": 44
+          }
+        ]
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "coll",
+              "filter": {},
+              "sort": {
+                "_id": 1
+              },
+              "limit": 4,
+              "batchSize": 2
             },
             "database_name": "retryable-reads-tests"
           }
@@ -38,7 +78,7 @@
       ]
     },
     {
-      "description": "Count succeeds on second attempt",
+      "description": "Find succeeds on second attempt",
       "clientOptions": {
         "retryReads": true
       },
@@ -49,32 +89,52 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "find"
           ],
           "closeConnection": true
         }
       },
       "operation": {
-        "name": "count",
+        "name": "find",
         "object": "collection",
         "arguments": {
-          "filter": {}
+          "filter": {},
+          "sort": {
+            "_id": 1
+          },
+          "limit": 4,
+          "batchSize": 2
         },
-        "result": 2
+        "result": [
+          {
+            "_id": 1,
+            "x": 11
+          },
+          {
+            "_id": 2,
+            "x": 22
+          },
+          {
+            "_id": 3,
+            "x": 33
+          },
+          {
+            "_id": 4,
+            "x": 44
+          }
+        ]
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
-            },
-            "database_name": "retryable-reads-tests"
-          }
-        },
-        {
-          "command_started_event": {
-            "command": {
-              "count": "coll"
+              "find": "coll",
+              "filter": {},
+              "sort": {
+                "_id": 1
+              },
+              "limit": 4,
+              "batchSize": 2
             },
             "database_name": "retryable-reads-tests"
           }
@@ -82,7 +142,7 @@
       ]
     },
     {
-      "description": "Count fails on first attempt",
+      "description": "Find fails on first attempt",
       "clientOptions": {
         "retryReads": false
       },
@@ -93,16 +153,21 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "find"
           ],
           "closeConnection": true
         }
       },
       "operation": {
-        "name": "count",
+        "name": "find",
         "object": "collection",
         "arguments": {
-          "filter": {}
+          "filter": {},
+          "sort": {
+            "_id": 1
+          },
+          "limit": 4,
+          "batchSize": 2
         },
         "result": {
           "error": true
@@ -112,7 +177,13 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "coll",
+              "filter": {},
+              "sort": {
+                "_id": 1
+              },
+              "limit": 4,
+              "batchSize": 2
             },
             "database_name": "retryable-reads-tests"
           }
@@ -120,7 +191,7 @@
       ]
     },
     {
-      "description": "Count fails on second attempt",
+      "description": "Find fails on second attempt",
       "clientOptions": {
         "retryReads": true
       },
@@ -131,16 +202,21 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "find"
           ],
           "closeConnection": true
         }
       },
       "operation": {
-        "name": "count",
+        "name": "find",
         "object": "collection",
         "arguments": {
-          "filter": {}
+          "filter": {},
+          "sort": {
+            "_id": 1
+          },
+          "limit": 4,
+          "batchSize": 2
         },
         "result": {
           "error": true
@@ -150,7 +226,13 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "coll",
+              "filter": {},
+              "sort": {
+                "_id": 1
+              },
+              "limit": 4,
+              "batchSize": 2
             },
             "database_name": "retryable-reads-tests"
           }
@@ -158,7 +240,13 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "find": "coll",
+              "filter": {},
+              "sort": {
+                "_id": 1
+              },
+              "limit": 4,
+              "batchSize": 2
             },
             "database_name": "retryable-reads-tests"
           }

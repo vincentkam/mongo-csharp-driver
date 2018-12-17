@@ -14,7 +14,7 @@
   "minServerVersion": "4.1.6",
   "tests": [
     {
-      "description": "Count succeeds after InterruptedAtShutdown",
+      "description": "EstimatedDocumentCount succeeds after InterruptedAtShutdown",
       "clientOptions": {
         "retryReads": true
       },
@@ -31,7 +31,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -58,7 +58,7 @@
       ]
     },
     {
-      "description": "Count succeeds after InterruptedDueToStepDown",
+      "description": "EstimatedDocumentCount succeeds after InterruptedDueToStepDown",
       "clientOptions": {
         "retryReads": true
       },
@@ -75,7 +75,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -102,7 +102,7 @@
       ]
     },
     {
-      "description": "Count succeeds after NotMaster",
+      "description": "EstimatedDocumentCount succeeds after NotMaster",
       "clientOptions": {
         "retryReads": true
       },
@@ -119,7 +119,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -146,7 +146,7 @@
       ]
     },
     {
-      "description": "Count succeeds after NotMasterNoSlaveOk",
+      "description": "EstimatedDocumentCount succeeds after NotMasterNoSlaveOk",
       "clientOptions": {
         "retryReads": true
       },
@@ -163,7 +163,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -190,7 +190,7 @@
       ]
     },
     {
-      "description": "Count succeeds after NotMasterOrSecondary",
+      "description": "EstimatedDocumentCount succeeds after NotMasterOrSecondary",
       "clientOptions": {
         "retryReads": true
       },
@@ -207,7 +207,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -234,7 +234,7 @@
       ]
     },
     {
-      "description": "Count succeeds after PrimarySteppedDown",
+      "description": "EstimatedDocumentCount succeeds after PrimarySteppedDown",
       "clientOptions": {
         "retryReads": true
       },
@@ -251,7 +251,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -278,7 +278,7 @@
       ]
     },
     {
-      "description": "Count succeeds after ShutdownInProgress",
+      "description": "EstimatedDocumentCount succeeds after ShutdownInProgress",
       "clientOptions": {
         "retryReads": true
       },
@@ -295,7 +295,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -322,7 +322,7 @@
       ]
     },
     {
-      "description": "Count succeeds after HostNotFound",
+      "description": "EstimatedDocumentCount succeeds after HostNotFound",
       "clientOptions": {
         "retryReads": true
       },
@@ -339,7 +339,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -366,7 +366,7 @@
       ]
     },
     {
-      "description": "Count succeeds after HostUnreachable",
+      "description": "EstimatedDocumentCount succeeds after HostUnreachable",
       "clientOptions": {
         "retryReads": true
       },
@@ -383,7 +383,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -410,7 +410,7 @@
       ]
     },
     {
-      "description": "Count succeeds after NetworkTimeout",
+      "description": "EstimatedDocumentCount succeeds after NetworkTimeout",
       "clientOptions": {
         "retryReads": true
       },
@@ -427,7 +427,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -454,7 +454,7 @@
       ]
     },
     {
-      "description": "Count succeeds after SocketException",
+      "description": "EstimatedDocumentCount succeeds after SocketException",
       "clientOptions": {
         "retryReads": true
       },
@@ -471,7 +471,7 @@
         }
       },
       "operation": {
-        "name": "count",
+        "name": "estimatedDocumentCount",
         "object": "collection",
         "arguments": {
           "filter": {}

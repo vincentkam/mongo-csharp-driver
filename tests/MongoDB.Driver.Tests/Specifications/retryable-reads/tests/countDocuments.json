@@ -14,12 +14,12 @@
   "minServerVersion": "4.1.6",
   "tests": [
     {
-      "description": "Count succeeds on first attempt",
+      "description": "CountDocuments succeeds on first attempt",
       "clientOptions": {
         "retryReads": true
       },
       "operation": {
-        "name": "count",
+        "name": "countDocuments",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -30,7 +30,20 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "pipeline": [
+                {
+                  "$match": {}
+                },
+                {
+                  "$group": {
+                    "_id": null,
+                    "n": {
+                      "$sum": 1
+                    }
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -38,7 +51,7 @@
       ]
     },
     {
-      "description": "Count succeeds on second attempt",
+      "description": "CountDocuments succeeds on second attempt",
       "clientOptions": {
         "retryReads": true
       },
@@ -49,13 +62,13 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "aggregate"
           ],
           "closeConnection": true
         }
       },
       "operation": {
-        "name": "count",
+        "name": "countDocuments",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -66,7 +79,20 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "pipeline": [
+                {
+                  "$match": {}
+                },
+                {
+                  "$group": {
+                    "_id": null,
+                    "n": {
+                      "$sum": 1
+                    }
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -74,7 +100,20 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "pipeline": [
+                {
+                  "$match": {}
+                },
+                {
+                  "$group": {
+                    "_id": null,
+                    "n": {
+                      "$sum": 1
+                    }
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -82,7 +121,7 @@
       ]
     },
     {
-      "description": "Count fails on first attempt",
+      "description": "CountDocuments fails on first attempt",
       "clientOptions": {
         "retryReads": false
       },
@@ -93,13 +132,13 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "aggregate"
           ],
           "closeConnection": true
         }
       },
       "operation": {
-        "name": "count",
+        "name": "countDocuments",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -112,7 +151,20 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "pipeline": [
+                {
+                  "$match": {}
+                },
+                {
+                  "$group": {
+                    "_id": null,
+                    "n": {
+                      "$sum": 1
+                    }
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -120,7 +172,7 @@
       ]
     },
     {
-      "description": "Count fails on second attempt",
+      "description": "CountDocuments fails on second attempt",
       "clientOptions": {
         "retryReads": true
       },
@@ -131,13 +183,13 @@
         },
         "data": {
           "failCommands": [
-            "count"
+            "aggregate"
           ],
           "closeConnection": true
         }
       },
       "operation": {
-        "name": "count",
+        "name": "countDocuments",
         "object": "collection",
         "arguments": {
           "filter": {}
@@ -150,7 +202,20 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "pipeline": [
+                {
+                  "$match": {}
+                },
+                {
+                  "$group": {
+                    "_id": null,
+                    "n": {
+                      "$sum": 1
+                    }
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }
@@ -158,7 +223,20 @@
         {
           "command_started_event": {
             "command": {
-              "count": "coll"
+              "aggregate": "coll",
+              "pipeline": [
+                {
+                  "$match": {}
+                },
+                {
+                  "$group": {
+                    "_id": null,
+                    "n": {
+                      "$sum": 1
+                    }
+                  }
+                }
+              ]
             },
             "database_name": "retryable-reads-tests"
           }

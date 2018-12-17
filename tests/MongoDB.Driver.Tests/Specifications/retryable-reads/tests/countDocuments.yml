@@ -9,38 +9,39 @@ minServerVersion: '4.1.6' # 4.2
 
 tests:
     -
-        description: "Count succeeds on first attempt"
+        description: "CountDocuments succeeds on first attempt"
         clientOptions:
             retryReads: true
         operation: &retryable_operation
-            name: count
+            name: countDocuments
             object: collection
             arguments:
                 filter: { }
             result: 2
         expectations:
-            - &retryable_command_started_event
+            -  &retryable_command_started_event
                 command_started_event:
-                    command:
-                            count: *collection_name
-                    database_name: *database_name  
+                  command:
+                        aggregate: *collection_name
+                        pipeline: [{'$match': {}}, {'$group': {'_id': null, 'n': {'$sum': 1}}}]
+                  database_name: *database_name    
     -
-        description: "Count succeeds on second attempt"
+        description: "CountDocuments succeeds on second attempt"
         clientOptions:
             retryReads: true
         failPoint:  &failCommand_failPoint
             configureFailPoint: failCommand
             mode: { times: 1 }
             data:
-                failCommands: [count]
-                closeConnection: true
-
+                failCommands:
+                        - aggregate
+                closeConnection: true  
         operation: *retryable_operation
         expectations:
-             - *retryable_command_started_event 
-             - *retryable_command_started_event                                          
+             - *retryable_command_started_event  
+             - *retryable_command_started_event                                      
     -
-        description: "Count fails on first attempt"
+        description: "CountDocuments fails on first attempt"
         clientOptions:
             retryReads: false
         failPoint: *failCommand_failPoint
@@ -49,18 +50,18 @@ tests:
             result:
                 error: true
         expectations:
-             - *retryable_command_started_event                
+             - *retryable_command_started_event  
     -
-        description: "Count fails on second attempt"
+        description: "CountDocuments fails on second attempt"
         clientOptions:
             retryReads: true
         failPoint:
-          <<: *failCommand_failPoint
-          mode: { times: 2 }
+            <<: *failCommand_failPoint
+            mode: { times: 2 }           
         operation:
             <<: *retryable_operation
             result:
                 error: true
         expectations:
-             - *retryable_command_started_event
-             - *retryable_command_started_event
+             - *retryable_command_started_event  
+             - *retryable_command_started_event                 
