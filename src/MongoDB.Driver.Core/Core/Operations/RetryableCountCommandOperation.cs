@@ -44,7 +44,7 @@ namespace MongoDB.Driver.Core.Operations
         public RetryableCountCommandOperation(
             CollectionNamespace collectionNamespace,
             MessageEncoderSettings messageEncoderSettings)
-            : this( collectionNamespace: collectionNamespace,
+            : this(collectionNamespace: collectionNamespace,
                 collation: null,
                 filter: null,
                 hint: null,
@@ -57,7 +57,6 @@ namespace MongoDB.Driver.Core.Operations
         {
         }
         
-        // constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="RetryableCountCommandOperation" /> class.
         /// </summary>
@@ -182,14 +181,14 @@ namespace MongoDB.Driver.Core.Operations
         }
 
         /// <inheritdoc />
-        protected override async Task<long> ParseCommandResultAsync(Task<BsonDocument> commandResultTask)
+        protected override async Task<long> ParseCommandResultAsync(RetryableReadContext context, Task<BsonDocument> commandResultTask)
         {
             var commandResult = await commandResultTask.ConfigureAwait(false);
             return commandResult ["n"].ToInt64();
         }
 
         /// <inheritdoc />
-        protected override long ParseCommandResult(BsonDocument commandResult)
+        protected override long ParseCommandResult(RetryableReadContext context, BsonDocument commandResult)
         {
             return commandResult["n"].ToInt64();
         }

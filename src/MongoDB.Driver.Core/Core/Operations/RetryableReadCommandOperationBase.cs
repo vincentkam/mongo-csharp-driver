@@ -147,7 +147,7 @@ namespace MongoDB.Driver.Core.Operations
         {
             var args = GetCommandArgs(context, attempt, transactionNumber);
 
-            return ParseCommandResult(context.Channel.Command<BsonDocument>(
+            return ParseCommandResult(context, context.Channel.Command<BsonDocument>(
                 session: context.ChannelSource.Session,
                 readPreference: ReadPreference.Primary,
                 databaseNamespace: DatabaseNamespace,
@@ -167,7 +167,7 @@ namespace MongoDB.Driver.Core.Operations
         {
             var args = GetCommandArgs(context, attempt, transactionNumber);
 
-            return ParseCommandResultAsync(context.Channel.CommandAsync<BsonDocument>(
+            return ParseCommandResultAsync(context, context.Channel.CommandAsync<BsonDocument>(
                 session: context.ChannelSource.Session,
                 readPreference: ReadPreference.Primary,
                 databaseNamespace: DatabaseNamespace,
@@ -183,6 +183,7 @@ namespace MongoDB.Driver.Core.Operations
         }
 
         // protected methods
+        // Todo: refactor this
         /// <summary>
         /// Creates the command.
         /// </summary>
@@ -195,22 +196,26 @@ namespace MongoDB.Driver.Core.Operations
         /// </returns>
         protected abstract BsonDocument CreateCommand(ICoreSessionHandle session, ConnectionDescription connectionDescription, int attempt, long? transactionNumber);
 
+        // Todo: refactor this
         /// <summary>
         /// Parses the command result.
         /// </summary>
+        /// <param name="context">The retryable read context.</param>
         /// <param name="commandResultTask">Task that contains the result of the command</param>
         /// <returns>The result.</returns>
-        protected virtual Task<TResult> ParseCommandResultAsync(Task<BsonDocument> commandResultTask)
+        protected virtual Task<TResult> ParseCommandResultAsync(RetryableReadContext context, Task<BsonDocument> commandResultTask)
         {
             return (Task<TResult>)(object)commandResultTask;
         }
-
+        
+        // Todo: refactor this
         /// <summary>
         /// Parses the command result.
         /// </summary>
+        /// <param name="context">The retryable read context.</param>
         /// <param name="commandResult">The result of the command</param>
         /// <returns>The result.</returns>
-        protected virtual TResult ParseCommandResult(BsonDocument commandResult)
+        protected virtual TResult ParseCommandResult(RetryableReadContext context, BsonDocument commandResult)
         {
             return (TResult)(object)commandResult;
         }

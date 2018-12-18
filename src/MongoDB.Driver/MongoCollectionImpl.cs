@@ -338,7 +338,7 @@ namespace MongoDB.Driver
             Ensure.IsNotNull(filter, nameof(filter));
             options = options ?? new FindOptions<TDocument, TProjection>();
 
-            var operation = CreateFindOperation<TProjection>(filter, options);
+            var operation = CreateFindOperation<TProjection>(filter, options, _database.Client.Settings.RetryReads);
             return ExecuteReadOperation(session, operation, cancellationToken);
         }
 
@@ -353,7 +353,7 @@ namespace MongoDB.Driver
             Ensure.IsNotNull(filter, nameof(filter));
             options = options ?? new FindOptions<TDocument, TProjection>();
 
-            var operation = CreateFindOperation<TProjection>(filter, options);
+            var operation = CreateFindOperation<TProjection>(filter, options, _database.Client.Settings.RetryReads);
             return ExecuteReadOperationAsync(session, operation, cancellationToken);
         }
 
@@ -889,7 +889,10 @@ namespace MongoDB.Driver
             };
         }
 
-        private FindOperation<TProjection> CreateFindOperation<TProjection>(FilterDefinition<TDocument> filter, FindOptions<TDocument, TProjection> options)
+        private FindOperation<TProjection> CreateFindOperation<TProjection>(
+            FilterDefinition<TDocument> filter, 
+            FindOptions<TDocument, TProjection> options,
+            bool retryRequested)
         {
             var projection = options.Projection ?? new ClientSideDeserializationProjectionDefinition<TDocument, TProjection>();
             var renderedProjection = projection.Render(_documentSerializer, _settings.SerializerRegistry);
@@ -897,7 +900,8 @@ namespace MongoDB.Driver
             return new FindOperation<TProjection>(
                 _collectionNamespace,
                 renderedProjection.ProjectionSerializer,
-                _messageEncoderSettings)
+                _messageEncoderSettings,
+                retryRequested)
             {
                 AllowPartialResults = options.AllowPartialResults,
                 BatchSize = options.BatchSize,
