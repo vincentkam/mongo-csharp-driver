@@ -87,8 +87,7 @@ namespace MongoDB.Driver.Tests.Specifications.retryable_reads
                 "data", 
                 "tests", 
                 "database_name", 
-                "collection_name",
-                "count_command_started_event");
+                "collection_name");
             JsonDrivenHelper.EnsureAllFieldsAreValid(
                 test, 
                 "description", 
