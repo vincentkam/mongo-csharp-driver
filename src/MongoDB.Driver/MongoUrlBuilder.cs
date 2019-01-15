@@ -675,7 +675,7 @@ namespace MongoDB.Driver
                 _readPreference = new ReadPreference(connectionString.ReadPreference.Value, connectionString.ReadPreferenceTags, connectionString.MaxStaleness);
             }
             _replicaSetName = connectionString.ReplicaSet;
-            _retryWrites = connectionString.RetryReads;
+            _retryReads = connectionString.RetryReads;
             _retryWrites = connectionString.RetryWrites;
             _localThreshold = connectionString.LocalThreshold.GetValueOrDefault(MongoDefaults.LocalThreshold);
             _scheme = connectionString.Scheme;
