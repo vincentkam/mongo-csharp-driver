@@ -313,7 +313,7 @@ namespace MongoDB.Driver
         {
             return UsingImplicitSession(session =>
             {
-                var operation = CreateEstimatedDocumentCountOperation(options);
+                var operation = CreateEstimatedDocumentCountOperation(options, _database.Client.Settings.RetryReads);
                 return ExecuteReadOperation(session, operation, cancellationToken);
             });
         }
@@ -322,7 +322,7 @@ namespace MongoDB.Driver
         {
             return UsingImplicitSessionAsync(session =>
             {
-                var operation = CreateEstimatedDocumentCountOperation(options);
+                var operation = CreateEstimatedDocumentCountOperation(options, _database.Client.Settings.RetryReads);
                 return ExecuteReadOperationAsync(session, operation, cancellationToken);
             });
         }
@@ -812,12 +812,22 @@ namespace MongoDB.Driver
             };
         }
 
-        private CountOperation CreateEstimatedDocumentCountOperation(EstimatedDocumentCountOptions options)
+        private RetryableCountCommandOperation CreateEstimatedDocumentCountOperation(
+            EstimatedDocumentCountOptions options, 
+            bool retryRequested)
         {
-            return new CountOperation(_collectionNamespace, _messageEncoderSettings)
-            {
-                MaxTime = options?.MaxTime
-            };
+            return new RetryableCountCommandOperation(
+                    collectionNamespace: _collectionNamespace,
+                    collation: null,
+                    filter: null,
+                    hint: null,
+                    limit: null,
+                    maxTime: options?.MaxTime,
+                    readConcern: _settings.ReadConcern,
+                    skip: null,
+                    messageEncoderSettings: _messageEncoderSettings,
+                    retryRequested: retryRequested)
+                ;
         }
 
         private FindOneAndDeleteOperation<TProjection> CreateFindOneAndDeleteOperation<TProjection>(FilterDefinition<TDocument> filter, FindOneAndDeleteOptions<TDocument, TProjection> options)

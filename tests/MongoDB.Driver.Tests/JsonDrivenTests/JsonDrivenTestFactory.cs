@@ -69,6 +69,7 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
                 {
                     case "aggregate": return new JsonDrivenAggregateTest(collection, _objectMap);
                     case "bulkWrite": return new JsonDrivenBulkWriteTest(collection, _objectMap);
+                    case "estimatedDocumentCount": return new JsonDrivenEstimatedCountTest(collection, _objectMap);
                     case "count": return new JsonDrivenCountTest(collection, _objectMap);
                     case "deleteMany": return new JsonDrivenDeleteManyTest(collection, _objectMap);
                     case "deleteOne": return new JsonDrivenDeleteOneTest(collection, _objectMap);
