@@ -11,10 +11,7 @@
       },
       "operation": {
         "name": "listIndexes",
-        "object": "collection",
-        "result": {
-          "error": false
-        }
+        "object": "collection"
       },
       "expectations": [
         {
@@ -46,12 +43,17 @@
       },
       "operation": {
         "name": "listIndexes",
-        "object": "collection",
-        "result": {
-          "error": false
-        }
+        "object": "collection"
       },
       "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listIndexes": "coll"
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
         {
           "command_started_event": {
             "command": {

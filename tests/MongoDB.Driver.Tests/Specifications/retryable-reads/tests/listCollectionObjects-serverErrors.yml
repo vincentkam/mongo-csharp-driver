@@ -14,15 +14,13 @@ tests:
             mode: { times: 1 }
             data: { failCommands: [listCollections], errorCode: 11600 }
         operation:  &retryable_operation
-            name: "listCollectionObjects"
+            name: listCollectionObjects
             object: database
-            result:
-                error: false
         expectations:
             -  &retryable_command_started_event
                 command_started_event:
                     command:
-                        listCollections: *database_name
+                        listCollections: 1
             - *retryable_command_started_event
     -
         description: "ListCollectionObjects succeeds after InterruptedDueToStepDown"
@@ -133,4 +131,33 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event 
+             - *retryable_command_started_event
+    -
+        description: "ListCollectionObjects fails after two NotMaster errors"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            <<: *failCommand_failPoint
+            mode: { times: 2 }
+            data: { failCommands: [listCollections], errorCode: 10107 }
+        operation:
+            <<: *retryable_operation
+            result: 
+                error: true
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event               
+    -
+        description: "ListCollectionObjects fails after NotMaster when retryReads is false"
+        clientOptions:
+            retryReads: false
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [listCollections], errorCode: 10107 }
+        operation:
+            <<: *retryable_operation
+            result: 
+                error: true
+        expectations:
+             - *retryable_command_started_event                           
+

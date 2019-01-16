@@ -16,15 +16,13 @@
       },
       "operation": {
         "name": "watch",
-        "object": "database",
-        "result": []
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "aggregate": null,
-              "$numberInt": "1",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -58,15 +56,13 @@
       },
       "operation": {
         "name": "watch",
-        "object": "database",
-        "result": []
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "aggregate": null,
-              "$numberInt": "1",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -82,8 +78,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": null,
-              "$numberInt": "1",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -126,8 +121,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": null,
-              "$numberInt": "1",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -170,8 +164,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": null,
-              "$numberInt": "1",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -187,8 +180,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": null,
-              "$numberInt": "1",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {

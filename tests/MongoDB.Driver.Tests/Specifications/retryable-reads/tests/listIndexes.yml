@@ -10,10 +10,8 @@ tests:
         clientOptions:
             retryReads: true
         operation: &retryable_operation
-            name: "listIndexes"
+            name: listIndexes
             object: collection
-            result:
-                error: false
         expectations:
             -  &retryable_command_started_event
                 command_started_event:
@@ -33,6 +31,7 @@ tests:
                 closeConnection: true
         operation: *retryable_operation                
         expectations:
+             - *retryable_command_started_event
              - *retryable_command_started_event
     -
         description: "ListIndexes fails on first attempt"

@@ -10,15 +10,13 @@ tests:
         clientOptions:
             retryReads: true
         operation: &retryable_operation
-            name: "listCollectionObjects"
+            name: listCollectionObjects
             object: database
-            result:
-                error: false
         expectations:
             -  &retryable_command_started_event
                 command_started_event:
                     command:
-                        listCollections: *database_name
+                        listCollections: 1
     -
         description: "ListCollectionObjects succeeds on second attempt"
         clientOptions:
@@ -32,6 +30,7 @@ tests:
                 closeConnection: true
         operation: *retryable_operation                
         expectations:
+             - *retryable_command_started_event
              - *retryable_command_started_event
     -
         description: "ListCollectionObjects fails on first attempt"

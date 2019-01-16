@@ -23,23 +23,20 @@
       },
       "operation": {
         "name": "listCollectionObjects",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         },
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }
@@ -64,23 +61,20 @@
       },
       "operation": {
         "name": "listCollectionObjects",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         },
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }
@@ -105,23 +99,20 @@
       },
       "operation": {
         "name": "listCollectionObjects",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         },
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }
@@ -146,23 +137,20 @@
       },
       "operation": {
         "name": "listCollectionObjects",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         },
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }
@@ -187,23 +175,20 @@
       },
       "operation": {
         "name": "listCollectionObjects",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         },
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }
@@ -228,23 +213,20 @@
       },
       "operation": {
         "name": "listCollectionObjects",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         },
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }
@@ -269,23 +251,20 @@
       },
       "operation": {
         "name": "listCollectionObjects",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         },
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }
@@ -310,23 +289,20 @@
       },
       "operation": {
         "name": "listCollectionObjects",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         },
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }
@@ -351,23 +327,20 @@
       },
       "operation": {
         "name": "listCollectionObjects",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         },
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }
@@ -392,23 +365,20 @@
       },
       "operation": {
         "name": "listCollectionObjects",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         },
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }
@@ -433,23 +403,95 @@
       },
       "operation": {
         "name": "listCollectionObjects",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         },
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListCollectionObjects fails after two NotMaster errors",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "listCollections"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "listCollectionObjects",
+        "object": "database",
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": 1
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "description": "ListCollectionObjects fails after NotMaster when retryReads is false",
+      "clientOptions": {
+        "retryReads": false
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "listCollections"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "listCollectionObjects",
+        "object": "database",
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": 1
             }
           }
         }

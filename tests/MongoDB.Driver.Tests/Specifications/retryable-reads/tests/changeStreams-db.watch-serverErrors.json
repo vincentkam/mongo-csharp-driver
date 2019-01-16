@@ -36,14 +36,13 @@
       },
       "operation": {
         "name": "watch",
-        "object": "database",
-        "result": []
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -59,7 +58,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -93,14 +92,13 @@
       },
       "operation": {
         "name": "watch",
-        "object": "database",
-        "result": []
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -116,7 +114,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -150,14 +148,13 @@
       },
       "operation": {
         "name": "watch",
-        "object": "database",
-        "result": []
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -173,7 +170,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -207,14 +204,13 @@
       },
       "operation": {
         "name": "watch",
-        "object": "database",
-        "result": []
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -230,7 +226,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -264,14 +260,13 @@
       },
       "operation": {
         "name": "watch",
-        "object": "database",
-        "result": []
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -287,7 +282,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -321,14 +316,13 @@
       },
       "operation": {
         "name": "watch",
-        "object": "database",
-        "result": []
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -344,7 +338,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -378,14 +372,13 @@
       },
       "operation": {
         "name": "watch",
-        "object": "database",
-        "result": []
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -401,7 +394,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -435,14 +428,13 @@
       },
       "operation": {
         "name": "watch",
-        "object": "database",
-        "result": []
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -458,7 +450,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -492,14 +484,13 @@
       },
       "operation": {
         "name": "watch",
-        "object": "database",
-        "result": []
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -515,7 +506,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -549,14 +540,13 @@
       },
       "operation": {
         "name": "watch",
-        "object": "database",
-        "result": []
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -572,7 +562,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -606,14 +596,13 @@
       },
       "operation": {
         "name": "watch",
-        "object": "database",
-        "result": []
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -629,7 +618,109 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": "coll",
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "db.watch fails after two NotMaster errors",
+      "clientOptions": {
+        "retryReads": true
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 2
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "watch",
+        "object": "database",
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
+              "cursor": {},
+              "pipeline": [
+                {
+                  "$changeStream": {
+                    "fullDocument": "default"
+                  }
+                }
+              ]
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        }
+      ]
+    },
+    {
+      "description": "db.watch fails after NotMaster when retryReads is false",
+      "clientOptions": {
+        "retryReads": false
+      },
+      "failPoint": {
+        "configureFailPoint": "failCommand",
+        "mode": {
+          "times": 1
+        },
+        "data": {
+          "failCommands": [
+            "aggregate"
+          ],
+          "errorCode": 10107
+        }
+      },
+      "operation": {
+        "name": "watch",
+        "object": "database",
+        "result": {
+          "error": true
+        }
+      },
+      "expectations": [
+        {
+          "command_started_event": {
+            "command": {
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {

@@ -14,12 +14,9 @@ tests:
         clientOptions:
             retryReads: true
         operation:  &retryable_operation
-            name: "distinct"
+            name: distinct
             object: collection
-            arguments:
-                fieldName: "x"
-                filter: 
-                    _id: {$gt: 1}
+            arguments: { fieldName: "x", filter: { _id: { $gt: 1 } } }
             result:
                 - 22
                 - 33          
@@ -40,11 +37,11 @@ tests:
             configureFailPoint: failCommand
             mode: { times: 1 }
             data:
-                failCommands:
-                        - find
+                failCommands: [distinct]
                 closeConnection: true
         operation: *retryable_operation                
         expectations:
+             - *retryable_command_started_event
              - *retryable_command_started_event
     -
         description: "Distinct fails on first attempt"

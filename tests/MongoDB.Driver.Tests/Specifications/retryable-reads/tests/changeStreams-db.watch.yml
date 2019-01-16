@@ -14,17 +14,13 @@ tests:
         operation: &retryable_operation
             name: watch
             object: database
-            result: []
         expectations:
             - &retryable_command_started_event
                 command_started_event:
                     command:
-                        aggregate:
-                        $numberInt: "1"
+                        aggregate: 1
                         cursor: {}
-                        pipeline:
-                            - $changeStream:
-                                fullDocument: default
+                        pipeline: [ { $changeStream: { fullDocument: "default" } } ]
                     database_name: *database_name    
     -
         description: "db.watch succeeds on second attempt"
@@ -34,8 +30,7 @@ tests:
             configureFailPoint: failCommand
             mode: { times: 1 }
             data:
-                failCommands:
-                        - aggregate
+                failCommands: [aggregate]
                 closeConnection: true
         operation: *retryable_operation
         expectations:

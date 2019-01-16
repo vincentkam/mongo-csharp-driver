@@ -14,10 +14,8 @@ tests:
             mode: { times: 1 }
             data: { failCommands: [listIndexes], errorCode: 11600 }
         operation:  &retryable_operation
-            name: "listIndexes"
+            name: listIndexes
             object: collection
-            result:
-                error: false
         expectations:
             - &retryable_command_started_event
                 command_started_event:
@@ -134,4 +132,33 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event 
+             - *retryable_command_started_event
+    -
+        description: "ListIndexes fails after two NotMaster errors"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            <<: *failCommand_failPoint
+            mode: { times: 2 }
+            data: { failCommands: [listIndexes], errorCode: 10107 }
+        operation:
+            <<: *retryable_operation
+            result: 
+                error: true
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event               
+    -
+        description: "ListIndexes fails after NotMaster when retryReads is false"
+        clientOptions:
+            retryReads: false
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [listIndexes], errorCode: 10107 }
+        operation:
+            <<: *retryable_operation
+            result: 
+                error: true
+        expectations:
+             - *retryable_command_started_event                            
+

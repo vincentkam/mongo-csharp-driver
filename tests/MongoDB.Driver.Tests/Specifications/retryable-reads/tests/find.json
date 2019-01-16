@@ -38,8 +38,7 @@
           "sort": {
             "_id": 1
           },
-          "limit": 4,
-          "batchSize": 2
+          "limit": 4
         },
         "result": [
           {
@@ -69,8 +68,7 @@
               "sort": {
                 "_id": 1
               },
-              "limit": 4,
-              "batchSize": 2
+              "limit": 4
             },
             "database_name": "retryable-reads-tests"
           }
@@ -102,8 +100,7 @@
           "sort": {
             "_id": 1
           },
-          "limit": 4,
-          "batchSize": 2
+          "limit": 4
         },
         "result": [
           {
@@ -133,8 +130,20 @@
               "sort": {
                 "_id": 1
               },
-              "limit": 4,
-              "batchSize": 2
+              "limit": 4
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "coll",
+              "filter": {},
+              "sort": {
+                "_id": 1
+              },
+              "limit": 4
             },
             "database_name": "retryable-reads-tests"
           }
@@ -166,8 +175,7 @@
           "sort": {
             "_id": 1
           },
-          "limit": 4,
-          "batchSize": 2
+          "limit": 4
         },
         "result": {
           "error": true
@@ -182,8 +190,7 @@
               "sort": {
                 "_id": 1
               },
-              "limit": 4,
-              "batchSize": 2
+              "limit": 4
             },
             "database_name": "retryable-reads-tests"
           }
@@ -215,8 +222,7 @@
           "sort": {
             "_id": 1
           },
-          "limit": 4,
-          "batchSize": 2
+          "limit": 4
         },
         "result": {
           "error": true
@@ -231,8 +237,7 @@
               "sort": {
                 "_id": 1
               },
-              "limit": 4,
-              "batchSize": 2
+              "limit": 4
             },
             "database_name": "retryable-reads-tests"
           }
@@ -245,8 +250,7 @@
               "sort": {
                 "_id": 1
               },
-              "limit": 4,
-              "batchSize": 2
+              "limit": 4
             },
             "database_name": "retryable-reads-tests"
           }

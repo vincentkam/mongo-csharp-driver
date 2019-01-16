@@ -16,16 +16,13 @@
       },
       "operation": {
         "name": "watch",
-        "object": "client",
-        "result": []
+        "object": "client"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "aggregate": {
-                "$numberInt": "1"
-              },
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -60,16 +57,13 @@
       },
       "operation": {
         "name": "watch",
-        "object": "client",
-        "result": []
+        "object": "client"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "aggregate": {
-                "$numberInt": "1"
-              },
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -86,9 +80,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": {
-                "$numberInt": "1"
-              },
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -132,9 +124,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": {
-                "$numberInt": "1"
-              },
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -178,9 +168,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": {
-                "$numberInt": "1"
-              },
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {
@@ -197,9 +185,7 @@
         {
           "command_started_event": {
             "command": {
-              "aggregate": {
-                "$numberInt": "1"
-              },
+              "aggregate": 1,
               "cursor": {},
               "pipeline": [
                 {

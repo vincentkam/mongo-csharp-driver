@@ -5,22 +5,19 @@
   "minServerVersion": "4.1.6",
   "tests": [
     {
-      "description": "ListCollections succeeds on first attempt",
+      "description": "ListCollectionNames succeeds on first attempt",
       "clientOptions": {
         "retryReads": true
       },
       "operation": {
         "name": "listCollectionNames",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }
@@ -45,16 +42,20 @@
       },
       "operation": {
         "name": "listCollectionNames",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": 1
             }
           }
         }
@@ -88,7 +89,7 @@
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }
@@ -122,14 +123,14 @@
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         },
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }

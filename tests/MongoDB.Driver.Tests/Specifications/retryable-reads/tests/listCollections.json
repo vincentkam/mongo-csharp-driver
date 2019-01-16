@@ -11,16 +11,13 @@
       },
       "operation": {
         "name": "listCollections",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }
@@ -45,16 +42,20 @@
       },
       "operation": {
         "name": "listCollections",
-        "object": "database",
-        "result": {
-          "error": false
-        }
+        "object": "database"
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
+            }
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "listCollections": 1
             }
           }
         }
@@ -88,7 +89,7 @@
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }
@@ -122,14 +123,14 @@
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         },
         {
           "command_started_event": {
             "command": {
-              "listCollections": "retryable-reads-tests"
+              "listCollections": 1
             }
           }
         }

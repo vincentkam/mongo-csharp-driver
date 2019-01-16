@@ -22,10 +22,9 @@ tests:
             object: collection
             arguments:
                 pipeline:
-                    - $sort: {x: 1}
                     - $match: 
                         _id: {$gt: 1}
-                batchSize: 2
+                    - $sort: {x: 1}                        
             result:
                 - {_id: 2, x: 22}
                 - {_id: 3, x: 33}
@@ -34,8 +33,7 @@ tests:
                 command_started_event:
                     command:
                         aggregate: *collection_name
-                        pipeline: [{'$sort': {'x': 1}}, {'$match': {'_id': {'$gt': 1}}}]
-                        cursor: { 'batchSize': 2}
+                        pipeline: [{$match: {_id: {$gt: 1}}}, {$sort: {x: 1}}]
                     database_name: *database_name
             - *retryable_command_started_event
     -
@@ -147,4 +145,32 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event 
+             - *retryable_command_started_event
+    -
+        description: "Aggregate fails after two NotMaster errors"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            <<: *failCommand_failPoint
+            mode: { times: 2 }
+            data: { failCommands: [aggregate], errorCode: 10107 }
+        operation:
+            <<: *retryable_operation
+            result: 
+                error: true
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event               
+    -
+        description: "Aggregate fails after NotMaster when retryReads is false"
+        clientOptions:
+            retryReads: false
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [aggregate], errorCode: 10107 }
+        operation:
+            <<: *retryable_operation
+            result: 
+                error: true
+        expectations:
+             - *retryable_command_started_event              
