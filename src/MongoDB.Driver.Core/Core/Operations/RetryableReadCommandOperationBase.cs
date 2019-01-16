@@ -35,6 +35,8 @@ namespace MongoDB.Driver.Core.Operations
     /// </summary>
     public abstract class RetryableReadCommandOperationBase<TResult> : IReadOperation<TResult>, IRetryableReadOperation<TResult>
     {
+        private ReadConcern _readConcern = ReadConcern.Default;
+
         // constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="RetryableReadCommandOperationBase{TResult}" /> class.
@@ -47,7 +49,7 @@ namespace MongoDB.Driver.Core.Operations
             : this (
                 databaseNamespace: databaseNamespace,
                 retryRequested: false,
-                readConcern: new ReadConcern(),
+                readConcern: ReadConcern.Default,
                 messageEncoderSettings: messageEncoderSettings)
         {
             DatabaseNamespace = Ensure.IsNotNull(databaseNamespace, nameof(databaseNamespace));
@@ -109,7 +111,11 @@ namespace MongoDB.Driver.Core.Operations
         /// <value>
         /// The Read concern.
         /// </value>
-        public ReadConcern ReadConcern { get; } = ReadConcern.Default;
+        public ReadConcern ReadConcern
+        {
+            get { return _readConcern;}
+            set { _readConcern = Ensure.IsNotNull(value, nameof(value)); }
+        }
 
         // public methods
         /// <inheritdoc />
