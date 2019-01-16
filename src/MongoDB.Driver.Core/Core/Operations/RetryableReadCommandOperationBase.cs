@@ -149,27 +149,28 @@ namespace MongoDB.Driver.Core.Operations
         }
 
         /// <inheritdoc />
-        public TResult ExecuteAttempt(RetryableReadContext context, int attempt, long? transactionNumber, CancellationToken cancellationToken)
-        {
+        public virtual TResult ExecuteAttempt(RetryableReadContext context, int attempt, long? transactionNumber, CancellationToken cancellationToken)
+        { //TODO: lookatme
             var args = GetCommandArgs(context, attempt, transactionNumber);
 
-            return ParseCommandResult(context, context.Channel.Command<BsonDocument>(
-                session: context.ChannelSource.Session,
-                readPreference: ReadPreference.Primary,
-                databaseNamespace: DatabaseNamespace,
-                command: args.Command,
-                commandPayloads: null,
-                commandValidator: NoOpElementNameValidator.Instance,
-                additionalOptions: null, 
-                postWriteAction: args.PostReadAction,
-                responseHandling: args.ResponseHandling,
-                resultSerializer: BsonDocumentSerializer.Instance,
-                messageEncoderSettings: args.MessageEncoderSettings,
-                cancellationToken: cancellationToken));
+            return ParseCommandResult(context, 
+                context.Channel.Command<BsonDocument>(
+                    session: context.ChannelSource.Session,
+                    readPreference: ReadPreference.Primary,
+                    databaseNamespace: DatabaseNamespace,
+                    command: args.Command,
+                    commandPayloads: null,
+                    commandValidator: NoOpElementNameValidator.Instance,
+                    additionalOptions: null, 
+                    postWriteAction: args.PostReadAction,
+                    responseHandling: args.ResponseHandling,
+                    resultSerializer: BsonDocumentSerializer.Instance,
+                    messageEncoderSettings: args.MessageEncoderSettings,
+                    cancellationToken: cancellationToken));
         }
 
         /// <inheritdoc />
-        public Task<TResult> ExecuteAttemptAsync(RetryableReadContext context, int attempt, long? transactionNumber, CancellationToken cancellationToken)
+        public virtual Task<TResult> ExecuteAttemptAsync(RetryableReadContext context, int attempt, long? transactionNumber, CancellationToken cancellationToken)
         {
             var args = GetCommandArgs(context, attempt, transactionNumber);
 
