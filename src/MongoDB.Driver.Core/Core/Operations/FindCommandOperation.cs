@@ -88,7 +88,7 @@ namespace MongoDB.Driver.Core.Operations
             bool retryRequested = false) 
             : this(collectionNamespace: collectionNamespace,
                    resultSerializer: resultSerializer,
-                   readConcern: new ReadConcern(), 
+                   readConcern: ReadConcern.Default, 
                    messageEncoderSettings: messageEncoderSettings,
                    retryRequested: retryRequested)
         {
@@ -533,6 +533,74 @@ namespace MongoDB.Driver.Core.Operations
                     return CreateCursor(channelSource, commandResult);
                 }
             }
+        }
+        
+        /// <inheritdoc />
+        public override IAsyncCursor<TDocument> ExecuteAttempt(RetryableReadContext context, int attempt, long? transactionNumber, CancellationToken cancellationToken)
+        { //TODO: lookatme
+            var args = GetCommandArgs(context, attempt, transactionNumber);
+            
+
+            using (EventContext.BeginOperation())
+            {
+                var readPreference = context.Binding.ReadPreference;
+
+                using (EventContext.BeginFind(_batchSize, _limit))
+                {
+                    var operation = CreateOperation(context.Channel, context.Binding);
+                    var commandResult = operation.Execute(context.Binding, cancellationToken);
+                    return CreateCursor(context.ChannelSource, commandResult);
+                }
+            }
+
+//            return ParseCommandResult(context, 
+//                context.Channel.Command<BsonDocument>(
+//                    session: context.ChannelSource.Session,
+//                    readPreference: ReadPreference.Primary,
+//                    databaseNamespace: DatabaseNamespace,
+//                    command: args.Command,
+//                    commandPayloads: null,
+//                    commandValidator: NoOpElementNameValidator.Instance,
+//                    additionalOptions: null, 
+//                    postWriteAction: args.PostReadAction,
+//                    responseHandling: args.ResponseHandling,
+//                    resultSerializer: BsonDocumentSerializer.Instance,
+//                    messageEncoderSettings: args.MessageEncoderSettings,
+//                    cancellationToken: cancellationToken));
+        }
+        
+        /// <inheritdoc />
+        public override async Task<IAsyncCursor<TDocument>> ExecuteAttemptAsync(RetryableReadContext context, int attempt, long? transactionNumber, CancellationToken cancellationToken)
+        { //TODO: lookatme
+            var args = GetCommandArgs(context, attempt, transactionNumber);
+            
+
+            using (EventContext.BeginOperation())
+            {
+                var readPreference = context.Binding.ReadPreference;
+
+                using (EventContext.BeginFind(_batchSize, _limit))
+                {
+                    var operation = CreateOperation(context.Channel, context.Binding);
+                    var commandResult = await operation.ExecuteAsync(context.Binding, cancellationToken).ConfigureAwait(false);
+                    return CreateCursor(context.ChannelSource, commandResult);
+                }
+            }
+
+//            return ParseCommandResult(context, 
+//                context.Channel.Command<BsonDocument>(
+//                    session: context.ChannelSource.Session,
+//                    readPreference: ReadPreference.Primary,
+//                    databaseNamespace: DatabaseNamespace,
+//                    command: args.Command,
+//                    commandPayloads: null,
+//                    commandValidator: NoOpElementNameValidator.Instance,
+//                    additionalOptions: null, 
+//                    postWriteAction: args.PostReadAction,
+//                    responseHandling: args.ResponseHandling,
+//                    resultSerializer: BsonDocumentSerializer.Instance,
+//                    messageEncoderSettings: args.MessageEncoderSettings,
+//                    cancellationToken: cancellationToken));
         }
         
         // TODO: Remove this

@@ -444,7 +444,17 @@ namespace MongoDB.Driver.Core.Operations
             using (var channelBinding = new ChannelReadBinding(channelSource.Server, channel, binding.ReadPreference, binding.Session.Fork()))
             {
                 var operation = CreateOperation(channel.ConnectionDescription.ServerVersion);
-                return operation.Execute(channelBinding, cancellationToken);
+                var retryableOperation = operation as IRetryableReadOperation<IAsyncCursor<TDocument>>;
+                if (retryableOperation == null)
+                {
+                    return operation.Execute(channelBinding, cancellationToken);
+                }
+
+                using (var context = RetryableReadContext.Create(binding, _retryRequested, cancellationToken))
+                {
+                    return retryableOperation.Execute(context, cancellationToken);     
+                }
+                    
             }
         }
 
@@ -458,7 +468,17 @@ namespace MongoDB.Driver.Core.Operations
             using (var channelBinding = new ChannelReadBinding(channelSource.Server, channel, binding.ReadPreference, binding.Session.Fork()))
             {
                 var operation = CreateOperation(channel.ConnectionDescription.ServerVersion);
-                return await operation.ExecuteAsync(channelBinding, cancellationToken).ConfigureAwait(false);
+                var retryableOperation = operation as IRetryableReadOperation<IAsyncCursor<TDocument>>;
+                if (retryableOperation == null)
+                {
+                    return await operation.ExecuteAsync(channelBinding, cancellationToken).ConfigureAwait(false);
+                }
+                using (var context = await RetryableReadContext
+                    .CreateAsync(binding, _retryRequested, cancellationToken)
+                    .ConfigureAwait(false))
+                {
+                    return await retryableOperation.ExecuteAsync(context, cancellationToken).ConfigureAwait(false);     
+                }
             }
         }
 
