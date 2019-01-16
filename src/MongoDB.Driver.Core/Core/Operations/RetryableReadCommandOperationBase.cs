@@ -248,7 +248,8 @@ namespace MongoDB.Driver.Core.Operations
             return clone;
         }
 
-        private CommandArgs GetCommandArgs(RetryableReadContext context, int attempt, long? transactionNumber)
+        /// <inheritdoc/>
+        protected CommandArgs GetCommandArgs(RetryableReadContext context, int attempt, long? transactionNumber)
         {
             return new CommandArgs(
                 command: CreateCommand(context.Binding.Session, context.Channel.ConnectionDescription, attempt,
@@ -271,9 +272,20 @@ namespace MongoDB.Driver.Core.Operations
         }
 
         // nested types
-        private class CommandArgs
+        //TODO: Fill out comments
+        /// <summary>
+        /// 
+        /// </summary>
+        protected class CommandArgs
         {
 
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="command"></param>
+            /// <param name="postReadAction"></param>
+            /// <param name="responseHandling"></param>
+            /// <param name="messageEncoderSettings"></param>
             public CommandArgs(
                 BsonDocument command,
                 Action<IMessageEncoderPostProcessor> postReadAction,
@@ -288,10 +300,22 @@ namespace MongoDB.Driver.Core.Operations
 
 
             }
+            /// <summary>
+            /// 
+            /// </summary>
             public BsonDocument Command { get; }
             // public List<Type1CommandMessageSection> CommandPayloads { get; set; }
+            /// <summary>
+            /// 
+            /// </summary>
             public Action<IMessageEncoderPostProcessor> PostReadAction { get; }
+            /// <summary>
+            /// 
+            /// </summary>
             public CommandResponseHandling ResponseHandling { get; }
+            /// <summary>
+            /// 
+            /// </summary>
             public MessageEncoderSettings MessageEncoderSettings { get; }
         }
     }
