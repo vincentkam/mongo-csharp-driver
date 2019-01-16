@@ -38,12 +38,13 @@ namespace MongoDB.Driver.Core.Operations
 
         public static TResult Execute<TResult>(IRetryableReadOperation<TResult> operation, RetryableReadContext context, CancellationToken cancellationToken)
         {
-            var retrySupported = AreRetryableReadsSupported(context.Channel.ConnectionDescription);
-            var isStandAlone = context.Channel.ConnectionDescription.IsMasterResult.ServerType == ServerType.Standalone;
+            var initialServerVersion = context.Channel.ConnectionDescription.ServerVersion;
             ExecuteAttempt<TResult> executeOperation = attempt => 
                 operation.ExecuteAttempt(context, attempt, transactionNumber: null, cancellationToken: cancellationToken);
-            var shouldNotRetry = !context.RetryRequested || !retrySupported || context.Binding.Session.IsInTransaction; // is it okay to retry reads in a transaction?
-            if (shouldNotRetry)    
+            var shouldNotRetry = !context.RetryRequested 
+                                 || !AreRetryableReadsSupported(context.Channel.ConnectionDescription) 
+                                 || context.Binding.Session.IsInTransaction; 
+            if (shouldNotRetry) // TODO: rename variable, reorder flow (currently parallels retry-writes executor)   
             {
                 return executeOperation(attempt: 1);
             }
@@ -69,7 +70,12 @@ namespace MongoDB.Driver.Core.Operations
                 throw originalException;
             }
 
-            if (!retrySupported)
+            if (context.Channel.ConnectionDescription.ServerVersion < initialServerVersion)
+            {
+                throw originalException;
+            }
+            
+            if (!AreRetryableReadsSupported(context.Channel.ConnectionDescription))
             {
                 throw originalException;
             }
@@ -94,11 +100,11 @@ namespace MongoDB.Driver.Core.Operations
 
         public static async Task<TResult> ExecuteAsync<TResult>(IRetryableReadOperation<TResult> operation, RetryableReadContext context, CancellationToken cancellationToken)
         {
+            var initialServerVersion = context.Channel.ConnectionDescription.ServerVersion;
             Func<bool> isRetrySupported = () => AreRetryableReadsSupported(context.Channel.ConnectionDescription);
-            var isStandAlone = context.Channel.ConnectionDescription.IsMasterResult.ServerType == ServerType.Standalone;
             ExecuteAttempt<Task<TResult>> executeOperationAsync = attempt => 
                 operation.ExecuteAttemptAsync(context, attempt, transactionNumber: null, cancellationToken: cancellationToken);
-            var shouldNotRetry = !context.RetryRequested || isRetrySupported()|| context.Binding.Session.IsInTransaction; 
+            var shouldNotRetry = !context.RetryRequested || !isRetrySupported()|| context.Binding.Session.IsInTransaction; 
             
             if (shouldNotRetry)
             {
@@ -125,6 +131,11 @@ namespace MongoDB.Driver.Core.Operations
             {
                 throw originalException;
             }
+            
+            if (context.Channel.ConnectionDescription.ServerVersion < initialServerVersion)
+            {
+                throw originalException;
+            }
 
             if (!isRetrySupported())
             {
@@ -144,9 +155,7 @@ namespace MongoDB.Driver.Core.Operations
         // privates static methods
         private static bool AreRetryableReadsSupported(ConnectionDescription connectionDescription)
         {
-            return
-                connectionDescription.IsMasterResult.LogicalSessionTimeout != null &&
-                Feature.RetryableReads.IsSupported(connectionDescription.ServerVersion);
+            return Feature.RetryableReads.IsSupported(connectionDescription.ServerVersion);
         }
 
         private static bool ShouldThrowOriginalException(Exception retryException)
