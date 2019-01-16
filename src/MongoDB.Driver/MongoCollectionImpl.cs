@@ -120,7 +120,10 @@ namespace MongoDB.Driver
             }
             else
             {
-                var aggregateOperation = CreateAggregateOperation(renderedPipeline, options);
+                var aggregateOperation = CreateAggregateOperation(
+                    renderedPipeline, 
+                    options, 
+                    _database.Client.Settings.RetryReads);
                 return ExecuteReadOperation(session, aggregateOperation, cancellationToken);
             }
         }
@@ -154,7 +157,7 @@ namespace MongoDB.Driver
             }
             else
             {
-                var aggregateOperation = CreateAggregateOperation(renderedPipeline, options);
+                var aggregateOperation = CreateAggregateOperation(renderedPipeline, options, _database.Client.Settings.RetryReads);
                 return await ExecuteReadOperationAsync(session, aggregateOperation, cancellationToken).ConfigureAwait(false);
             }
         }
@@ -692,13 +695,17 @@ namespace MongoDB.Driver
             }
         }
 
-        private AggregateOperation<TResult> CreateAggregateOperation<TResult>(RenderedPipelineDefinition<TResult> renderedPipeline, AggregateOptions options)
+        private AggregateOperation<TResult> CreateAggregateOperation<TResult>(
+            RenderedPipelineDefinition<TResult> renderedPipeline, 
+            AggregateOptions options,
+            bool retryReads)
         {
             return new AggregateOperation<TResult>(
                 _collectionNamespace,
                 renderedPipeline.Documents,
                 renderedPipeline.OutputSerializer,
-                _messageEncoderSettings)
+                _messageEncoderSettings,
+                retryReads)
             {
                 AllowDiskUse = options.AllowDiskUse,
                 BatchSize = options.BatchSize,
