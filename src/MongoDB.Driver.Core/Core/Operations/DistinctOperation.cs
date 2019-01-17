@@ -139,8 +139,6 @@ namespace MongoDB.Driver.Core.Operations
         public override IAsyncCursor<TValue> Execute(IReadBinding binding, CancellationToken cancellationToken)
         {
             Ensure.IsNotNull(binding, nameof(binding));
-            using (var channelSource = binding.GetReadChannelSource(cancellationToken))
-            using (var channel = channelSource.GetChannel(cancellationToken))
             using (var retryableReadContext = RetryableReadContext.Create(binding, RetryRequested, cancellationToken))
             {
                 return Execute(retryableReadContext, cancellationToken);
@@ -165,9 +163,19 @@ namespace MongoDB.Driver.Core.Operations
         public override IAsyncCursor<TValue> ExecuteAttempt(RetryableReadContext context, int attempt, long? transactionNumber,
             CancellationToken cancellationToken)
         {
-            var operation = CreateOperation(context.Channel, context.Binding);
-            var result = operation.Execute(context.Binding, cancellationToken);
-            return new SingleBatchAsyncCursor<TValue>(result);
+            
+            var binding = context.Binding;
+            var session = binding.Session;
+            var channelSource = context.ChannelSource;
+            var server = channelSource.Server;
+            var channel = context.Channel;
+            var readPreference = context.Binding.ReadPreference;
+            using (var channelBinding = new ChannelReadBinding(server, channel, readPreference, session.Fork()))
+            {
+                var operation = CreateOperation(channel, channelBinding);
+                var result = operation.Execute(channelBinding, cancellationToken);
+                return new SingleBatchAsyncCursor<TValue>(result);
+            }
         }
 
         /// <inheritdoc/>

@@ -155,7 +155,7 @@ namespace MongoDB.Driver.Core.Operations
 
             return ParseCommandResult(context, 
                 context.Channel.Command<BsonDocument>(
-                    session: context.ChannelSource.Session,
+                    session: context.ChannelSource.Session.Fork(),
                     readPreference: ReadPreference.Primary,
                     databaseNamespace: DatabaseNamespace,
                     command: args.Command,
@@ -175,7 +175,7 @@ namespace MongoDB.Driver.Core.Operations
             var args = GetCommandArgs(context, attempt, transactionNumber);
 
             return ParseCommandResultAsync(context, context.Channel.CommandAsync<BsonDocument>(
-                session: context.ChannelSource.Session,
+                session: context.ChannelSource.Session.Fork(),
                 readPreference: ReadPreference.Primary,
                 databaseNamespace: DatabaseNamespace,
                 command: args.Command,

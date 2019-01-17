@@ -439,22 +439,22 @@ namespace MongoDB.Driver.Core.Operations
         {
             Ensure.IsNotNull(binding, nameof(binding));
 
-            using (var channelSource = binding.GetReadChannelSource(cancellationToken))
-            using (var channel = channelSource.GetChannel(cancellationToken))
-            using (var channelBinding = new ChannelReadBinding(channelSource.Server, channel, binding.ReadPreference, binding.Session.Fork()))
+            using (var context = RetryableReadContext.Create(binding, _retryRequested, cancellationToken))
             {
-                var operation = CreateOperation(channel.ConnectionDescription.ServerVersion);
+                var operation = CreateOperation(context.Channel.ConnectionDescription.ServerVersion);
                 var retryableOperation = operation as IRetryableReadOperation<IAsyncCursor<TDocument>>;
-                if (retryableOperation == null)
+                if (retryableOperation != null)
+                {
+                    return retryableOperation.Execute(context, cancellationToken);
+                }
+                using (var channelBinding = new ChannelReadBinding(
+                    context.ChannelSource.Server, 
+                    context.Channel,
+                    context.Binding.ReadPreference, 
+                    context.Binding.Session.Fork()))
                 {
                     return operation.Execute(channelBinding, cancellationToken);
                 }
-
-                using (var context = RetryableReadContext.Create(binding, _retryRequested, cancellationToken))
-                {
-                    return retryableOperation.Execute(context, cancellationToken);     
-                }
-                    
             }
         }
 

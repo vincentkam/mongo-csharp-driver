@@ -233,9 +233,6 @@ namespace MongoDB.Driver.Core.Operations
             EnsureIsReadOnlyPipeline();
 
             using (EventContext.BeginOperation())
-            using (var channelSource = binding.GetReadChannelSource(cancellationToken))
-            using (var channel = channelSource.GetChannel(cancellationToken))
-            // using (var channelBinding = new ChannelReadBinding(channelSource.Server, channel, binding.ReadPreference, binding.Session.Fork()))
             using (var retryableReadContext = RetryableReadContext.Create(binding, RetryRequested, cancellationToken))
             {
                 return Execute(retryableReadContext, cancellationToken);
@@ -263,9 +260,18 @@ namespace MongoDB.Driver.Core.Operations
         public override IAsyncCursor<TResult> ExecuteAttempt(RetryableReadContext context, int attempt, long? transactionNumber,
             CancellationToken cancellationToken)
         {
-            var operation = CreateOperation(context.Channel, context.Binding);
-            var result = operation.Execute(context.Binding, cancellationToken);
-            return CreateCursor(context.ChannelSource, context.Channel, operation.Command, result);
+            var binding = context.Binding;
+            var session = binding.Session;
+            var channelSource = context.ChannelSource;
+            var server = channelSource.Server;
+            var channel = context.Channel;
+            var readPreference = context.Binding.ReadPreference;
+            using (var channelBinding = new ChannelReadBinding(server, channel, readPreference, session.Fork()))
+            {
+                var operation = CreateOperation(channel, channelBinding);
+                var commandResult = operation.Execute(channelBinding, cancellationToken);
+                return CreateCursor(channelSource, channel, operation.Command, commandResult);
+            }
         }
         
         /// <inheritdoc/>

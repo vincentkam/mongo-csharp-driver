@@ -543,13 +543,19 @@ namespace MongoDB.Driver.Core.Operations
 
             using (EventContext.BeginOperation())
             {
+                var binding = context.Binding;
+                var session = binding.Session;
+                var channelSource = context.ChannelSource;
+                var server = channelSource.Server;
+                var channel = context.Channel;
                 var readPreference = context.Binding.ReadPreference;
 
                 using (EventContext.BeginFind(_batchSize, _limit))
+                using (var channelBinding = new ChannelReadBinding(server, channel, readPreference, session.Fork()))
                 {
-                    var operation = CreateOperation(context.Channel, context.Binding);
-                    var commandResult = operation.Execute(context.Binding, cancellationToken);
-                    return CreateCursor(context.ChannelSource, commandResult);
+                    var operation = CreateOperation(channel, channelBinding);
+                    var commandResult = operation.Execute(channelBinding, cancellationToken);
+                    return CreateCursor(channelSource, commandResult);
                 }
             }
         }
@@ -562,13 +568,19 @@ namespace MongoDB.Driver.Core.Operations
 
             using (EventContext.BeginOperation())
             {
+                var binding = context.Binding;
+                var session = binding.Session;
+                var channelSource = context.ChannelSource;
+                var server = channelSource.Server;
+                var channel = context.Channel;
                 var readPreference = context.Binding.ReadPreference;
-
+                
                 using (EventContext.BeginFind(_batchSize, _limit))
+                using (var channelBinding = new ChannelReadBinding(server, channel, readPreference, session.Fork()))    
                 {
-                    var operation = CreateOperation(context.Channel, context.Binding);
-                    var commandResult = await operation.ExecuteAsync(context.Binding, cancellationToken).ConfigureAwait(false);
-                    return CreateCursor(context.ChannelSource, commandResult);
+                    var operation = CreateOperation(channel, channelBinding);
+                    var commandResult = await operation.ExecuteAsync(channelBinding, cancellationToken).ConfigureAwait(false);
+                    return CreateCursor(channelSource, commandResult);
                 }
             }
         }
