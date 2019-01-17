@@ -31,7 +31,7 @@ using MongoDB.Driver.Core.WireProtocol.Messages.Encoders;
 namespace MongoDB.Driver.Core.Operations
 {
     /// <summary>
-    /// Represents a base class for a delete, insert or update command operation.
+    /// Represents a base class for retryable read operation
     /// </summary>
     public abstract class RetryableReadCommandOperationBase<TResult> : IReadOperation<TResult>, IRetryableReadOperation<TResult>
     {
