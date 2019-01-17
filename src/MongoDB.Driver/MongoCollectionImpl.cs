@@ -1469,7 +1469,10 @@ namespace MongoDB.Driver
 
             private ListIndexesOperation CreateListIndexesOperation()
             {
-                return new ListIndexesOperation(_collection._collectionNamespace, _collection._messageEncoderSettings);
+                return new ListIndexesOperation(_collection._collectionNamespace, _collection._messageEncoderSettings) 
+                {
+                    RetryRequested = _collection.Database.Client.Settings.RetryReads                    
+                };
             }
         }
     }
