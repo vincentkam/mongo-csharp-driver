@@ -58,6 +58,8 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
                 switch (name)
                 {
                     case "runCommand": return new JsonDrivenRunCommandTest(database, _objectMap);
+                    case "listCollections": return new JsonDrivenListCollectionsTest(database, _objectMap);
+                    case "listCollectionNames": return new JsonDrivenListCollectionNamesTest(database, _objectMap);
                     default: throw new FormatException($"Invalid method name: \"{name}\".");
                 }
             }
