@@ -783,7 +783,8 @@ namespace MongoDB.Driver
                 Limit = options.Limit,
                 MaxTime = options.MaxTime,
                 ReadConcern = _settings.ReadConcern,
-                Skip = options.Skip
+                Skip = options.Skip,
+                RetryRequested = _database.Client.Settings.RetryReads
             };
         }
 
