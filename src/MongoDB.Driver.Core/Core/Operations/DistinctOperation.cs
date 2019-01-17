@@ -162,8 +162,7 @@ namespace MongoDB.Driver.Core.Operations
         /// <inheritdoc/>
         public override IAsyncCursor<TValue> ExecuteAttempt(RetryableReadContext context, int attempt, long? transactionNumber,
             CancellationToken cancellationToken)
-        {
-            
+        {   
             var binding = context.Binding;
             var session = binding.Session;
             var channelSource = context.ChannelSource;
