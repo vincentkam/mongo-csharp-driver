@@ -81,6 +81,7 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
                     case "findOneAndUpdate": return new JsonDrivenFindOneAndUpdateTest(collection, _objectMap);
                     case "insertMany": return new JsonDrivenInsertManyTest(collection, _objectMap);
                     case "insertOne": return new JsonDrivenInsertOneTest(collection, _objectMap);
+                    case "mapReduce": return new JsonDrivenMapReduceTest(collection, _objectMap);
                     case "replaceOne": return new JsonDrivenReplaceOneTest(collection, _objectMap);
                     case "updateMany": return new JsonDrivenUpdateManyTest(collection, _objectMap);
                     case "updateOne": return new JsonDrivenUpdateOneTest(collection, _objectMap);

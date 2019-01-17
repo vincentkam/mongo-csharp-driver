@@ -957,6 +957,7 @@ namespace MongoDB.Driver
                 Limit = options.Limit,
                 MaxTime = options.MaxTime,
                 ReadConcern = _settings.ReadConcern,
+                RetryRequested = _database.Client.Settings.RetryReads,
                 Scope = options.Scope,
                 Sort = options.Sort == null ? null : options.Sort.Render(_documentSerializer, _settings.SerializerRegistry),
                 Verbose = options.Verbose
