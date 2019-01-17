@@ -238,26 +238,40 @@ namespace MongoDB.Driver.Core.Operations
             clone.Add(MessageEncoderSettingsName.MaxWireDocumentSize, channel.ConnectionDescription.MaxWireDocumentSize);
             return clone;
         }
-
-        /// <inheritdoc/>
+        
+        // TODO: Fill me out
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="attempt"></param>
+        /// <param name="transactionNumber"></param>
+        /// <returns></returns>
         protected CommandArgs GetCommandArgs(RetryableReadContext context, int attempt, long? transactionNumber)
         {
             return new CommandArgs(
                 command: CreateCommand(context.Binding.Session, context.Channel.ConnectionDescription, attempt,
                     transactionNumber),
-                // args.CommandPayloads = CreateCommandPayloads(context.Channel, attempt).ToList();
                 postReadAction: GetPostReadAction(),
                 responseHandling: GetResponseHandling(),
                 messageEncoderSettings: CreateMessageEncoderSettings(context.Channel)
             );
         }
-
-        private Action<IMessageEncoderPostProcessor> GetPostReadAction()
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        protected Action<IMessageEncoderPostProcessor> GetPostReadAction()
         {
             return null;
         }
 
-        private CommandResponseHandling GetResponseHandling()
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        protected CommandResponseHandling GetResponseHandling()
         {
             return CommandResponseHandling.Return;
         }
@@ -281,8 +295,7 @@ namespace MongoDB.Driver.Core.Operations
                 BsonDocument command,
                 Action<IMessageEncoderPostProcessor> postReadAction,
                 CommandResponseHandling responseHandling,
-                MessageEncoderSettings messageEncoderSettings 
-            )
+                MessageEncoderSettings messageEncoderSettings)
             {
                 Command = command;
                 PostReadAction = postReadAction;
