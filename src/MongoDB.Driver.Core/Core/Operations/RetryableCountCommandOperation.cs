@@ -158,15 +158,6 @@ namespace MongoDB.Driver.Core.Operations
         protected override BsonDocument CreateCommand(ICoreSessionHandle session, ConnectionDescription connectionDescription, int attempt, long? transactionNumber)
         {
            
-//            var writeConcern = WriteConcernHelper.GetWriteConcernForWriteCommand(session, WriteConcern);
-//            return new BsonDocument
-//            {
-//                { "count", _collectionNamespace.CollectionName },
-//                { "ordered", IsOrdered },
-//                { "writeConcern", writeConcern, writeConcern != null },
-//                { "txnNumber", () => transactionNumber.Value, transactionNumber.HasValue }
-//            };
-
             var operation = new CountOperation(CollectionNamespace, MessageEncoderSettings)
             {
                 Collation = Collation,
@@ -193,45 +184,5 @@ namespace MongoDB.Driver.Core.Operations
             return commandResult["n"].ToInt64();
         }
 
-//        /// <inheritdoc />
-//        protected override IEnumerable<Type1CommandMessageSection> CreateCommandPayloads(IChannelHandle channel, int attempt)
-//        {
-//            BatchableSource<CountRequest> counts;
-//            if (attempt == 1)
-//            {
-//                counts = _counts;
-//            }
-//            else
-//            {
-//                counts = new BatchableSource<CountRequest>(_counts.Items, _counts.Offset, _counts.ProcessedCount, canBeSplit: false);
-//            }
-//            var maxBatchCount = Math.Min(MaxBatchCount ?? int.MaxValue, channel.ConnectionDescription.MaxBatchCount);
-//            var maxDocumentSize = channel.ConnectionDescription.MaxWireDocumentSize;
-//            var payload = new Type1CommandMessageSection<CountRequest>("counts", counts, CountRequestSerializer.Instance, NoOpElementNameValidator.Instance, maxBatchCount, maxDocumentSize);
-//            return new Type1CommandMessageSection[] { payload };
-//            return null;
-//        }
-
-        // nested types
-//        private class CountRequestSerializer : SealedClassSerializerBase<CountRequest>
-//        {
-//            public static readonly IBsonSerializer<CountRequest> Instance = new CountRequestSerializer();
-//
-//            protected override void SerializeValue(BsonSerializationContext context, BsonSerializationArgs args, CountRequest value)
-//            {
-//                var writer = context.Writer;
-//                writer.WriteStartDocument();
-//                writer.WriteName("q");
-//                BsonDocumentSerializer.Instance.Serialize(context, value.Filter);
-//                writer.WriteName("limit");
-//                writer.WriteInt32(value.Limit);
-//                if (value.Collation != null)
-//                {
-//                    writer.WriteName("collation");
-//                    BsonDocumentSerializer.Instance.Serialize(context, value.Collation.ToBsonDocument());
-//                }
-//                writer.WriteEndDocument();
-//            }
-//        }
     }
 }

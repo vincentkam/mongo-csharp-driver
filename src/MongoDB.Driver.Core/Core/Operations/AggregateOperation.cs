@@ -239,9 +239,6 @@ namespace MongoDB.Driver.Core.Operations
             using (var retryableReadContext = RetryableReadContext.Create(binding, RetryRequested, cancellationToken))
             {
                 return Execute(retryableReadContext, cancellationToken);
-//                var operation = CreateOperation(retryableReadContext.Channel, retryableReadContext.Binding);
-//                var result = operation.Execute(retryableReadContext.Binding, cancellationToken);
-//                return CreateCursor(retryableReadContext.ChannelSource, retryableReadContext.Channel, operation.Command, result);
             }
         }
 

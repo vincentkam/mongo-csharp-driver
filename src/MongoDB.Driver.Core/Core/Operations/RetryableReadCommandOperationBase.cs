@@ -228,15 +228,6 @@ namespace MongoDB.Driver.Core.Operations
         }
         
 
-//        /// <summary>
-//        /// Creates the command payloads.
-//        /// </summary>
-//        /// <param name="channel">The channel.</param>
-//        /// <param name="attempt">The attempt.</param>
-//        /// <returns>
-//        /// The command payloads.
-//        /// </returns>
-//        protected abstract IEnumerable<Type1CommandMessageSection> CreateCommandPayloads(IChannelHandle channel, int attempt);
 
         // private methods
         private MessageEncoderSettings CreateMessageEncoderSettings(IChannelHandle channel)
@@ -297,14 +288,11 @@ namespace MongoDB.Driver.Core.Operations
                 PostReadAction = postReadAction;
                 ResponseHandling = responseHandling;
                 MessageEncoderSettings = messageEncoderSettings;
-
-
             }
             /// <summary>
             /// 
             /// </summary>
             public BsonDocument Command { get; }
-            // public List<Type1CommandMessageSection> CommandPayloads { get; set; }
             /// <summary>
             /// 
             /// </summary>

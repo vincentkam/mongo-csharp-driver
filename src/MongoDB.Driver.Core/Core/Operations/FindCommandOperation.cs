@@ -552,21 +552,6 @@ namespace MongoDB.Driver.Core.Operations
                     return CreateCursor(context.ChannelSource, commandResult);
                 }
             }
-
-//            return ParseCommandResult(context, 
-//                context.Channel.Command<BsonDocument>(
-//                    session: context.ChannelSource.Session,
-//                    readPreference: ReadPreference.Primary,
-//                    databaseNamespace: DatabaseNamespace,
-//                    command: args.Command,
-//                    commandPayloads: null,
-//                    commandValidator: NoOpElementNameValidator.Instance,
-//                    additionalOptions: null, 
-//                    postWriteAction: args.PostReadAction,
-//                    responseHandling: args.ResponseHandling,
-//                    resultSerializer: BsonDocumentSerializer.Instance,
-//                    messageEncoderSettings: args.MessageEncoderSettings,
-//                    cancellationToken: cancellationToken));
         }
         
         /// <inheritdoc />
@@ -586,21 +571,6 @@ namespace MongoDB.Driver.Core.Operations
                     return CreateCursor(context.ChannelSource, commandResult);
                 }
             }
-
-//            return ParseCommandResult(context, 
-//                context.Channel.Command<BsonDocument>(
-//                    session: context.ChannelSource.Session,
-//                    readPreference: ReadPreference.Primary,
-//                    databaseNamespace: DatabaseNamespace,
-//                    command: args.Command,
-//                    commandPayloads: null,
-//                    commandValidator: NoOpElementNameValidator.Instance,
-//                    additionalOptions: null, 
-//                    postWriteAction: args.PostReadAction,
-//                    responseHandling: args.ResponseHandling,
-//                    resultSerializer: BsonDocumentSerializer.Instance,
-//                    messageEncoderSettings: args.MessageEncoderSettings,
-//                    cancellationToken: cancellationToken));
         }
         
         // TODO: Remove this
