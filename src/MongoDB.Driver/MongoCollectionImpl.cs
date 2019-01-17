@@ -815,7 +815,8 @@ namespace MongoDB.Driver
                 Collation = options.Collation,
                 Filter = filter.Render(_documentSerializer, _settings.SerializerRegistry),
                 MaxTime = options.MaxTime,
-                ReadConcern = _settings.ReadConcern
+                ReadConcern = _settings.ReadConcern,
+                RetryRequested = _database.Client.Settings.RetryReads,
             };
         }
 
