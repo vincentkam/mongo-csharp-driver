@@ -478,7 +478,12 @@ namespace MongoDB.Driver
             PipelineDefinition<ChangeStreamDocument<BsonDocument>, TResult> pipeline,
             ChangeStreamOptions options)
         {
-            return ChangeStreamHelper.CreateChangeStreamOperation(pipeline, options, _settings.ReadConcern, GetMessageEncoderSettings());
+            return ChangeStreamHelper.CreateChangeStreamOperation(
+                pipeline, 
+                options, 
+                _settings.ReadConcern, 
+                GetMessageEncoderSettings(), 
+                _settings.RetryReads);
         }
 
         private TResult ExecuteReadOperation<TResult>(IClientSessionHandle session, IReadOperation<TResult> operation, CancellationToken cancellationToken = default(CancellationToken))

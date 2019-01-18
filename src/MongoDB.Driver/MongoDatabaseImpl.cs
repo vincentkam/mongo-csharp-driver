@@ -527,7 +527,13 @@ namespace MongoDB.Driver
             PipelineDefinition<ChangeStreamDocument<BsonDocument>, TResult> pipeline,
             ChangeStreamOptions options)
         {
-            return ChangeStreamHelper.CreateChangeStreamOperation(this, pipeline, options, _settings.ReadConcern, GetMessageEncoderSettings());
+            return ChangeStreamHelper.CreateChangeStreamOperation(
+                database: this, 
+                pipeline: pipeline, 
+                options: options, 
+                readConcern: _settings.ReadConcern, 
+                messageEncoderSettings: GetMessageEncoderSettings(),
+                retryRequested: _client.Settings.RetryReads);
         }
 
         private IEnumerable<string> ExtractCollectionNames(IEnumerable<BsonDocument> collections)

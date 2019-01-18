@@ -58,6 +58,7 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
                 {
                     case "listDatabases": return new JsonDrivenListDatabasesTest(_client, _objectMap);
                     case "listDatabaseNames": return new JsonDrivenListDatabaseNamesTest(_client, _objectMap);
+                    case "watch": return new JsonDrivenClientWatchTest(_client, _objectMap);
                     default: throw new FormatException($"Invalid method name: \"{name}\".");
                 }
             }
@@ -70,6 +71,7 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
                     case "runCommand": return new JsonDrivenRunCommandTest(database, _objectMap);
                     case "listCollections": return new JsonDrivenListCollectionsTest(database, _objectMap);
                     case "listCollectionNames": return new JsonDrivenListCollectionNamesTest(database, _objectMap);
+                    case "watch": return new JsonDrivenDatabaseWatchTest(database, _objectMap);
                     default: throw new FormatException($"Invalid method name: \"{name}\".");
                 }
             }
@@ -98,6 +100,7 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
                     case "replaceOne": return new JsonDrivenReplaceOneTest(collection, _objectMap);
                     case "updateMany": return new JsonDrivenUpdateManyTest(collection, _objectMap);
                     case "updateOne": return new JsonDrivenUpdateOneTest(collection, _objectMap);
+                    case "watch": return new JsonDrivenCollectionWatchTest(collection, _objectMap);
                     default: throw new FormatException($"Invalid method name: \"{name}\".");
                 }
             }

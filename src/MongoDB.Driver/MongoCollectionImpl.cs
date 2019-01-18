@@ -770,7 +770,13 @@ namespace MongoDB.Driver
             PipelineDefinition<ChangeStreamDocument<TDocument>, TResult> pipeline,
             ChangeStreamOptions options)
         {
-            return ChangeStreamHelper.CreateChangeStreamOperation(this, pipeline, _documentSerializer, options, _settings.ReadConcern, _messageEncoderSettings);
+            return ChangeStreamHelper.CreateChangeStreamOperation(
+                collection: this, 
+                pipeline: pipeline, 
+                documentSerializer: _documentSerializer, 
+                options: options, 
+                readConcern: _settings.ReadConcern, messageEncoderSettings: _messageEncoderSettings,
+                retryRequested: _database.Client.Settings.RetryReads);
         }
 
         private CountDocumentsOperation CreateCountDocumentsOperation(FilterDefinition<TDocument> filter, CountOptions options)
