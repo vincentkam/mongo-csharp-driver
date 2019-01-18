@@ -51,6 +51,16 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
                     default: throw new FormatException($"Invalid method name: \"{name}\".");
                 }
             }
+            
+            if (receiver == "client")
+            {
+                switch (name)
+                {
+                    case "listDatabases": return new JsonDrivenListDatabasesTest(_client, _objectMap);
+                    case "listDatabaseNames": return new JsonDrivenListDatabaseNamesTest(_client, _objectMap);
+                    default: throw new FormatException($"Invalid method name: \"{name}\".");
+                }
+            }
 
             var database = _client.GetDatabase(_databaseName);
             if (receiver == "database")

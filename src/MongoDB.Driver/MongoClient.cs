@@ -451,7 +451,8 @@ namespace MongoDB.Driver
             return new ListDatabasesOperation(messageEncoderSettings)
             {
                 Filter = options.Filter?.Render(BsonDocumentSerializer.Instance, BsonSerializer.SerializerRegistry),
-                NameOnly = options.NameOnly
+                NameOnly = options.NameOnly,
+                RetryRequested = Settings.RetryReads
             };
         }
 
