@@ -5,12 +5,13 @@ data:
     - {_id: 1, x: 11}
     - {_id: 2, x: 22}
     - {_id: 3, x: 33}
-    
+
 minServerVersion: '4.1.6' # 4.2
 
 tests:
     -
         description: "db.watch succeeds after InterruptedAtShutdown"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: true
         failPoint: &failCommand_failPoint
@@ -31,6 +32,7 @@ tests:
             - *retryable_command_started_event
     -
         description: "db.watch succeeds after InterruptedDueToStepDown"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: true
         failPoint:
@@ -39,9 +41,10 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "db.watch succeeds after NotMaster"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: true
         failPoint:
@@ -50,9 +53,10 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "db.watch succeeds after NotMasterNoSlaveOk"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: true
         failPoint:
@@ -61,9 +65,10 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "db.watch succeeds after NotMasterOrSecondary"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: true
         failPoint:
@@ -72,9 +77,10 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "db.watch succeeds after PrimarySteppedDown"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: true
         failPoint:
@@ -83,64 +89,70 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "db.watch succeeds after ShutdownInProgress"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [aggregate], errorCode: 91 }            
+            data: { failCommands: [aggregate], errorCode: 91 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "db.watch succeeds after HostNotFound"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [aggregate], errorCode: 7 }            
+            data: { failCommands: [aggregate], errorCode: 7 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "db.watch succeeds after HostUnreachable"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [aggregate], errorCode: 6 }            
+            data: { failCommands: [aggregate], errorCode: 6 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "db.watch succeeds after NetworkTimeout"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [aggregate], errorCode: 89 }            
+            data: { failCommands: [aggregate], errorCode: 89 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "db.watch succeeds after SocketException"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [aggregate], errorCode: 9001 }            
+            data: { failCommands: [aggregate], errorCode: 9001 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
     -
         description: "db.watch fails after two NotMaster errors"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: true
         failPoint:
@@ -149,13 +161,14 @@ tests:
             data: { failCommands: [aggregate], errorCode: 10107 }
         operation:
             <<: *retryable_operation
-            result: 
+            result:
                 error: true
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event               
+             - *retryable_command_started_event
     -
         description: "db.watch fails after NotMaster when retryReads is false"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: false
         failPoint:
@@ -163,10 +176,10 @@ tests:
             data: { failCommands: [aggregate], errorCode: 10107 }
         operation:
             <<: *retryable_operation
-            result: 
+            result:
                 error: true
         expectations:
-             - *retryable_command_started_event                                       
+             - *retryable_command_started_event
 
 
 

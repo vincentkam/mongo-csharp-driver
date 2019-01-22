@@ -79,6 +79,11 @@ namespace MongoDB.Driver.Tests.Specifications.retryable_reads
             {
                 throw new SkipException(test["skipReason"].AsString);
             }
+            if (test.Contains("topology"))
+            {
+                var topologies = test["topology"].AsBsonArray.Cast<BsonString>().Select(t => ToClusterType(t.ToString()));
+                RequireServer.Check().ClusterTypes(topologies.ToArray());
+            };
            
             JsonDrivenHelper.EnsureAllFieldsAreValid(
                 shared, 
@@ -97,7 +102,8 @@ namespace MongoDB.Driver.Tests.Specifications.retryable_reads
                 "operation", 
                 "result",
                 "expectations",
-                "async");
+                "async",
+                "topology");
 
             DropCollection();
             CreateCollection();
@@ -206,6 +212,13 @@ namespace MongoDB.Driver.Tests.Specifications.retryable_reads
             var options = CreateSessionOptions(test, sessionKey);
             return client.StartSession(options);
         }
+
+        private static ClusterType ToClusterType(string s) => 
+            s == "single" ? ClusterType.Standalone :
+            s == "replicaset" ? ClusterType.ReplicaSet :
+            s == "sharded" ? ClusterType.Sharded :
+            ClusterType.Unknown;
+        
 
         private ClientSessionOptions CreateSessionOptions(BsonDocument test, string sessionKey)
         {

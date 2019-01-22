@@ -3,12 +3,13 @@ collection_name: &collection_name "coll"
 
 data:
     - {_id: 1, x: 11}
-    
+
 minServerVersion: '4.1.6' # 4.2
 
 tests:
     -
         description: "client.watch succeeds on first attempt"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: true
         operation: &retryable_operation
@@ -21,9 +22,10 @@ tests:
                         aggregate: 1
                         cursor: {}
                         pipeline: [ { $changeStream: { fullDocument: "default", "allChangesForCluster": true } } ]
-                    database_name: admin         
+                    database_name: admin
     -
         description: "client.watch succeeds on second attempt"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: true
         failPoint:  &failCommand_failPoint
@@ -34,10 +36,11 @@ tests:
                 closeConnection: true
         operation: *retryable_operation
         expectations:
-             - *retryable_command_started_event  
-             - *retryable_command_started_event                                      
+             - *retryable_command_started_event
+             - *retryable_command_started_event
     -
         description: "client.watch fails on first attempt"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: false
         failPoint: *failCommand_failPoint
@@ -45,17 +48,18 @@ tests:
             <<: *retryable_operation
             error: true
         expectations:
-             - *retryable_command_started_event  
+             - *retryable_command_started_event
     -
         description: "client.watch fails on second attempt"
+        topology: [replicaset, sharded]
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            mode: { times: 2 }           
+            mode: { times: 2 }
         operation:
             <<: *retryable_operation
             error: true
         expectations:
-             - *retryable_command_started_event  
-             - *retryable_command_started_event                 
+             - *retryable_command_started_event
+             - *retryable_command_started_event
