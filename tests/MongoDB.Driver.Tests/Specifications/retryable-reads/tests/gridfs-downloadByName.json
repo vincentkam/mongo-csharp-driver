@@ -1,8 +1,8 @@
 {
   "database_name": "retryable-reads-tests",
-  "collection_name": "files",
+  "bucket_name": "fs",
   "data": {
-    "files": [
+    "fs.files": [
       {
         "_id": {
           "$oid": "000000000000000000000001"
@@ -12,50 +12,64 @@
         "uploadDate": {
           "$date": "1970-01-01T00:00:00.000Z"
         },
-        "md5": "47ed733b8d10be225eceba344d533586",
         "filename": "abc",
-        "contentType": "application/octet-stream",
-        "aliases": [],
         "metadata": {}
       }
     ],
-    "chunks": [
+    "fs.chunks": [
       {
         "_id": {
-          "$oid": "000000000000000000000001"
+          "$oid": "000000000000000000000002"
         },
         "files_id": {
           "$oid": "000000000000000000000001"
         },
         "n": 0,
         "data": {
-          "$hex": "11"
+          "$binary": {
+            "base64": "EQ==",
+            "subType": "00"
+          }
         }
       }
     ]
   },
   "tests": [
     {
-      "description": "Download_by_name succeeds on first attempt",
+      "description": "DownloadByName succeeds on first attempt",
       "clientOptions": {
         "retryReads": true
       },
       "operation": {
-        "operation": "download_by_name",
+        "name": "download_by_name",
+        "object": "gridfsbucket",
         "arguments": {
           "filename": "abc"
-        },
-        "result": {
-          "error": false
         }
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
               "filter": {
                 "filename": "abc"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.chunks",
+              "filter": {
+                "files_id": {
+                  "$oid": "000000000000000000000001"
+                }
+              },
+              "sort": {
+                "n": 1
               }
             },
             "database_name": "retryable-reads-tests"
@@ -64,7 +78,7 @@
       ]
     },
     {
-      "description": "Download_by_name succeeds on second attempt",
+      "description": "DownloadByName succeeds on second attempt",
       "clientOptions": {
         "retryReads": true
       },
@@ -81,21 +95,46 @@
         }
       },
       "operation": {
-        "operation": "download_by_name",
+        "name": "download_by_name",
+        "object": "gridfsbucket",
         "arguments": {
           "filename": "abc"
-        },
-        "result": {
-          "error": false
         }
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
               "filter": {
                 "filename": "abc"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.files",
+              "filter": {
+                "filename": "abc"
+              }
+            },
+            "database_name": "retryable-reads-tests"
+          }
+        },
+        {
+          "command_started_event": {
+            "command": {
+              "find": "fs.chunks",
+              "filter": {
+                "files_id": {
+                  "$oid": "000000000000000000000001"
+                }
+              },
+              "sort": {
+                "n": 1
               }
             },
             "database_name": "retryable-reads-tests"
@@ -104,7 +143,7 @@
       ]
     },
     {
-      "description": "Download_by_name fails on first attempt",
+      "description": "DownloadByName fails on first attempt",
       "clientOptions": {
         "retryReads": false
       },
@@ -121,19 +160,18 @@
         }
       },
       "operation": {
-        "operation": "download_by_name",
+        "name": "download_by_name",
+        "object": "gridfsbucket",
         "arguments": {
           "filename": "abc"
         },
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
               "filter": {
                 "filename": "abc"
               }
@@ -144,7 +182,7 @@
       ]
     },
     {
-      "description": "Download_by_name fails on second attempt",
+      "description": "DownloadByName fails on second attempt",
       "clientOptions": {
         "retryReads": true
       },
@@ -161,19 +199,18 @@
         }
       },
       "operation": {
-        "operation": "download_by_name",
+        "name": "download_by_name",
+        "object": "gridfsbucket",
         "arguments": {
           "filename": "abc"
         },
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
               "filter": {
                 "filename": "abc"
               }
@@ -184,7 +221,7 @@
         {
           "command_started_event": {
             "command": {
-              "find": "files",
+              "find": "fs.files",
               "filter": {
                 "filename": "abc"
               }

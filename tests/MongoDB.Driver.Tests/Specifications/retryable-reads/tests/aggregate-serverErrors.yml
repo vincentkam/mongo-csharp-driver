@@ -5,7 +5,7 @@ data:
     - {_id: 1, x: 11}
     - {_id: 2, x: 22}
     - {_id: 3, x: 33}
-    
+
 minServerVersion: '4.1.6' # 4.2
 
 tests:
@@ -17,14 +17,15 @@ tests:
             configureFailPoint: failCommand
             mode: { times: 1 }
             data: { failCommands: [aggregate], errorCode: 11600 }
-        operation: &retryable_operation
-            name: aggregate
-            object: collection
-            arguments:
-                pipeline:
-                    - $match: 
-                        _id: {$gt: 1}
-                    - $sort: {x: 1}                        
+        operation: &retryable_operation_succeeds
+            <<: &retryable_operation
+                name: aggregate
+                object: collection
+                arguments:
+                    pipeline:
+                        - $match:
+                            _id: {$gt: 1}
+                        - $sort: {x: 1}
             result:
                 - {_id: 2, x: 22}
                 - {_id: 3, x: 33}
@@ -43,10 +44,10 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 11602 }
-        operation: *retryable_operation
+        operation: *retryable_operation_succeeds
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "Aggregate succeeds after NotMaster"
         clientOptions:
@@ -54,10 +55,10 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 10107 }
-        operation: *retryable_operation
+        operation: *retryable_operation_succeeds
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "Aggregate succeeds after NotMasterNoSlaveOk"
         clientOptions:
@@ -65,10 +66,10 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 13435 }
-        operation: *retryable_operation
+        operation: *retryable_operation_succeeds
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "Aggregate succeeds after NotMasterOrSecondary"
         clientOptions:
@@ -76,10 +77,10 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 13436 }
-        operation: *retryable_operation
+        operation: *retryable_operation_succeeds
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "Aggregate succeeds after PrimarySteppedDown"
         clientOptions:
@@ -87,62 +88,62 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 189 }
-        operation: *retryable_operation
+        operation: *retryable_operation_succeeds
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "Aggregate succeeds after ShutdownInProgress"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [aggregate], errorCode: 91 }            
-        operation: *retryable_operation
+            data: { failCommands: [aggregate], errorCode: 91 }
+        operation: *retryable_operation_succeeds
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "Aggregate succeeds after HostNotFound"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [aggregate], errorCode: 7 }            
-        operation: *retryable_operation
+            data: { failCommands: [aggregate], errorCode: 7 }
+        operation: *retryable_operation_succeeds
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "Aggregate succeeds after HostUnreachable"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [aggregate], errorCode: 6 }            
-        operation: *retryable_operation
+            data: { failCommands: [aggregate], errorCode: 6 }
+        operation: *retryable_operation_succeeds
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "Aggregate succeeds after NetworkTimeout"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [aggregate], errorCode: 89 }            
-        operation: *retryable_operation
+            data: { failCommands: [aggregate], errorCode: 89 }
+        operation: *retryable_operation_succeeds
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
     -
         description: "Aggregate succeeds after SocketException"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [aggregate], errorCode: 9001 }            
-        operation: *retryable_operation
+            data: { failCommands: [aggregate], errorCode: 9001 }
+        operation: *retryable_operation_succeeds
         expectations:
              - *retryable_command_started_event
              - *retryable_command_started_event
@@ -154,13 +155,12 @@ tests:
             <<: *failCommand_failPoint
             mode: { times: 2 }
             data: { failCommands: [aggregate], errorCode: 10107 }
-        operation:
+        operation: &retryable_operation_fails
             <<: *retryable_operation
-            result: 
-                error: true
+            error: true
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event               
+             - *retryable_command_started_event
     -
         description: "Aggregate fails after NotMaster when retryReads is false"
         clientOptions:
@@ -168,9 +168,6 @@ tests:
         failPoint:
             <<: *failCommand_failPoint
             data: { failCommands: [aggregate], errorCode: 10107 }
-        operation:
-            <<: *retryable_operation
-            result: 
-                error: true
+        operation: *retryable_operation_fails
         expectations:
-             - *retryable_command_started_event              
+             - *retryable_command_started_event

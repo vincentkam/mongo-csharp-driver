@@ -12,10 +12,11 @@ tests:
         description: "CountDocuments succeeds on first attempt"
         clientOptions:
             retryReads: true
-        operation: &retryable_operation
-            name: countDocuments
-            object: collection
-            arguments: { filter: { } }
+        operation: &retryable_operation_succeeds
+            <<: &retryable_operation
+                name: countDocuments
+                object: collection
+                arguments: { filter: { } }
             result: 2
         expectations:
             -  &retryable_command_started_event
@@ -23,7 +24,7 @@ tests:
                   command:
                         aggregate: *collection_name
                         pipeline: [{'$match': {}}, {'$group': {'_id': null, 'n': {'$sum': 1}}}]
-                  database_name: *database_name    
+                  database_name: *database_name
     -
         description: "CountDocuments succeeds on second attempt"
         clientOptions:
@@ -33,31 +34,29 @@ tests:
             mode: { times: 1 }
             data:
                 failCommands: [aggregate]
-                closeConnection: true  
-        operation: *retryable_operation
+                closeConnection: true
+        operation: *retryable_operation_succeeds
         expectations:
-             - *retryable_command_started_event  
-             - *retryable_command_started_event                                      
+             - *retryable_command_started_event
+             - *retryable_command_started_event
     -
         description: "CountDocuments fails on first attempt"
         clientOptions:
             retryReads: false
         failPoint: *failCommand_failPoint
-        operation:
+        operation: &retryable_operation_fails
             <<: *retryable_operation
             error: true
         expectations:
-             - *retryable_command_started_event  
+             - *retryable_command_started_event
     -
         description: "CountDocuments fails on second attempt"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            mode: { times: 2 }           
-        operation:
-            <<: *retryable_operation
-            error: true
+            mode: { times: 2 }
+        operation: *retryable_operation_fails
         expectations:
-             - *retryable_command_started_event  
-             - *retryable_command_started_event                 
+             - *retryable_command_started_event
+             - *retryable_command_started_event

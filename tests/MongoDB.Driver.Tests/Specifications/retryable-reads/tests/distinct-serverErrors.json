@@ -749,9 +749,7 @@
             }
           }
         },
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {
@@ -812,9 +810,7 @@
             }
           }
         },
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {

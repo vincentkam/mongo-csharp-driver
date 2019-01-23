@@ -873,9 +873,7 @@
             "inline": 1
           }
         },
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {
@@ -945,9 +943,7 @@
             "inline": 1
           }
         },
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {

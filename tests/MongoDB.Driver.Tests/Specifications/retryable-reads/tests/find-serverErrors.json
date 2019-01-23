@@ -877,9 +877,7 @@
           },
           "limit": 4
         },
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {
@@ -937,9 +935,7 @@
           },
           "limit": 4
         },
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {

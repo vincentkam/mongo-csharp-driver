@@ -520,9 +520,7 @@
         "arguments": {
           "filter": {}
         },
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {
@@ -566,9 +564,7 @@
         "arguments": {
           "filter": {}
         },
-        "result": {
-          "error": true
-        }
+        "error": true
       },
       "expectations": [
         {

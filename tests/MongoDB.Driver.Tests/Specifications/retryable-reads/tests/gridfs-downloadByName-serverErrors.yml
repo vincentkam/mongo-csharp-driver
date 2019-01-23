@@ -1,24 +1,21 @@
 database_name: &database_name "retryable-reads-tests"
-collection_name: &collection_name "files"
+bucket_name: "fs"
 
 data:
-    files:
+    fs.files:
         -
-            _id: { "$oid" : "000000000000000000000001" }
+            _id: { $oid : "000000000000000000000001" }
             length: 1
             chunkSize: 4
-            uploadDate: { "$date" : "1970-01-01T00:00:00.000Z" }
-            md5: "47ed733b8d10be225eceba344d533586"
-            filename: "abc"
-            contentType: "application/octet-stream"
-            aliases: []
+            uploadDate: { $date : "1970-01-01T00:00:00.000Z" }
+            filename: abc
             metadata: {}
-    chunks:
-        - { _id : { "$oid" : "000000000000000000000001" }, files_id : { "$oid" : "000000000000000000000001" }, n : 0, data : { $hex : "11" } }
+    fs.chunks:
+        - { _id: { $oid: "000000000000000000000002" }, files_id: { $oid: "000000000000000000000001" }, n: 0, data: { $binary: { base64: "EQ==", subType: "00" } } }
 
 tests:
     -
-        description: "Download_by_name succeeds after InterruptedAtShutdown"
+        description: "DownloadByName succeeds after InterruptedAtShutdown"
         clientOptions:
             retryReads: true
         failPoint: &failCommand_failPoint
@@ -26,19 +23,27 @@ tests:
             mode: { times: 1 }
             data: { failCommands: [find], errorCode: 11600 }
         operation: &retryable_operation
-            operation: download_by_name
+            name: download_by_name
+            object: gridfsbucket
             arguments:
-                filename: "abc" 
+                filename: abc
         expectations:
             - &retryable_command_started_event
                 command_started_event:
                     command:
-                        find: *collection_name
-                        filter: { "filename" : "abc" }
+                        find: fs.files
+                        filter: { filename : "abc" }
                     database_name: *database_name
             - *retryable_command_started_event
+            - &find_chunks_command_started_event
+                command_started_event:
+                    command:
+                        find: fs.chunks
+                        filter: { files_id: { $oid : "000000000000000000000001" }}
+                        sort: { n: 1 }
+                    database_name: *database_name
     -
-        description: "Download_by_name succeeds after InterruptedDueToStepDown"
+        description: "DownloadByName succeeds after InterruptedDueToStepDown"
         clientOptions:
             retryReads: true
         failPoint:
@@ -47,9 +52,10 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
+             - *find_chunks_command_started_event
     -
-        description: "Download_by_name succeeds after NotMaster"
+        description: "DownloadByName succeeds after NotMaster"
         clientOptions:
             retryReads: true
         failPoint:
@@ -58,9 +64,10 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
+             - *find_chunks_command_started_event
     -
-        description: "Download_by_name succeeds after NotMasterNoSlaveOk"
+        description: "DownloadByName succeeds after NotMasterNoSlaveOk"
         clientOptions:
             retryReads: true
         failPoint:
@@ -69,9 +76,10 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
+             - *find_chunks_command_started_event
     -
-        description: "Download_by_name succeeds after NotMasterOrSecondary"
+        description: "DownloadByName succeeds after NotMasterOrSecondary"
         clientOptions:
             retryReads: true
         failPoint:
@@ -80,9 +88,10 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
+             - *find_chunks_command_started_event
     -
-        description: "Download_by_name succeeds after PrimarySteppedDown"
+        description: "DownloadByName succeeds after PrimarySteppedDown"
         clientOptions:
             retryReads: true
         failPoint:
@@ -91,59 +100,91 @@ tests:
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
+             - *find_chunks_command_started_event
     -
-        description: "Download_by_name succeeds after ShutdownInProgress"
+        description: "DownloadByName succeeds after ShutdownInProgress"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [find], errorCode: 91 }            
+            data: { failCommands: [find], errorCode: 91 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
+             - *find_chunks_command_started_event
     -
-        description: "Download_by_name succeeds after HostNotFound"
+        description: "DownloadByName succeeds after HostNotFound"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [find], errorCode: 7 }            
+            data: { failCommands: [find], errorCode: 7 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
+             - *find_chunks_command_started_event
     -
-        description: "Download_by_name succeeds after HostUnreachable"
+        description: "DownloadByName succeeds after HostUnreachable"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [find], errorCode: 6 }            
+            data: { failCommands: [find], errorCode: 6 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
+             - *find_chunks_command_started_event
     -
-        description: "Download_by_name succeeds after NetworkTimeout"
+        description: "DownloadByName succeeds after NetworkTimeout"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [find], errorCode: 89 }            
+            data: { failCommands: [find], errorCode: 89 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event    
+             - *retryable_command_started_event
+             - *find_chunks_command_started_event
     -
-        description: "Download_by_name succeeds after SocketException"
+        description: "DownloadByName succeeds after SocketException"
         clientOptions:
             retryReads: true
         failPoint:
             <<: *failCommand_failPoint
-            data: { failCommands: [find], errorCode: 9001 }            
+            data: { failCommands: [find], errorCode: 9001 }
         operation: *retryable_operation
         expectations:
              - *retryable_command_started_event
-             - *retryable_command_started_event 
+             - *retryable_command_started_event
+             - *find_chunks_command_started_event
+    -
+        description: "DownloadByName fails after two NotMaster errors"
+        clientOptions:
+            retryReads: true
+        failPoint:
+            <<: *failCommand_failPoint
+            mode: { times: 2 }
+            data: { failCommands: [find], errorCode: 10107 }
+        operation:
+            <<: *retryable_operation
+            error: true
+        expectations:
+             - *retryable_command_started_event
+             - *retryable_command_started_event
+    -
+        description: "DownloadByName fails after NotMaster when retryReads is false"
+        clientOptions:
+            retryReads: false
+        failPoint:
+            <<: *failCommand_failPoint
+            data: { failCommands: [find], errorCode: 10107 }
+        operation:
+            <<: *retryable_operation
+            error: true
+        expectations:
+             - *retryable_command_started_event
