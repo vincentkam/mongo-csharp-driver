@@ -54,6 +54,7 @@ namespace MongoDB.Driver.Tests.Specifications.retryable_reads
         // private fields
         private string _databaseName = "retryable-reads-tests";
         private string _collectionName = "coll";
+        private string _bucketName = "fs";
 
         // public methods
         [SkippableTheory]
@@ -92,7 +93,8 @@ namespace MongoDB.Driver.Tests.Specifications.retryable_reads
                 "data", 
                 "tests", 
                 "database_name", 
-                "collection_name");
+                "collection_name",
+                "bucket_name");
             JsonDrivenHelper.EnsureAllFieldsAreValid(
                 test, 
                 "description", 
@@ -155,17 +157,45 @@ namespace MongoDB.Driver.Tests.Specifications.retryable_reads
 
         private void InsertData(BsonDocument shared)
         {
-            if (shared.Contains("data"))
+            if (!shared.Contains("data"))
             {
-                var documents = shared["data"].AsBsonArray.Cast<BsonDocument>().ToList();
-                if (documents.Count > 0)
-                {
-                    var client = DriverTestConfiguration.Client;
-                    var database = client.GetDatabase(_databaseName);
-                    var collection = database.GetCollection<BsonDocument>(_collectionName).WithWriteConcern(WriteConcern.WMajority);
-                    collection.InsertMany(documents);
-                }
+                return;
             }
+
+            if (shared.Contains("bucket_name"))
+            {
+                InsertGridFsData(shared);
+                return;
+            }
+            var documents = shared["data"].AsBsonArray.Cast<BsonDocument>().ToList();
+            if (documents.Count <= 0)
+            {
+                return;
+            }
+            var client = DriverTestConfiguration.Client;
+            var database = client.GetDatabase(_databaseName);
+            var collection = database.GetCollection<BsonDocument>(_collectionName).WithWriteConcern(WriteConcern.WMajority);
+            collection.InsertMany(documents);
+        }
+
+        private void InsertGridFsData(BsonDocument shared)
+        {
+            var bucketName = shared["bucket_name"].AsString;
+            var filesCollectionName = $"{bucketName}.files";
+            var chunksCollectionName = $"{bucketName}.chunks";
+            var filesDocuments = shared["data"][filesCollectionName].AsBsonArray.Cast<BsonDocument>().ToList();
+            var chunksDocuments = shared["data"][chunksCollectionName].AsBsonArray.Cast<BsonDocument>().ToList();
+            var client = DriverTestConfiguration.Client;
+            var database = client.GetDatabase(_databaseName);
+            
+            database.DropCollection(filesCollectionName);
+            database.DropCollection(chunksCollectionName);
+            database.GetCollection<BsonDocument>(filesCollectionName)
+                .WithWriteConcern(WriteConcern.WMajority)
+                .InsertMany(filesDocuments);
+            database.GetCollection<BsonDocument>(chunksCollectionName)
+                .WithWriteConcern(WriteConcern.WMajority)
+                .InsertMany(chunksDocuments);
         }
 
         private DisposableMongoClient CreateDisposableClient(BsonDocument test, EventCapturer eventCapturer)
@@ -266,7 +296,7 @@ namespace MongoDB.Driver.Tests.Specifications.retryable_reads
 
         private void ExecuteOperation(IMongoClient client, Dictionary<string, object> objectMap, BsonDocument test)
         {
-            var factory = new JsonDrivenTestFactory(client, _databaseName, _collectionName, objectMap);
+            var factory = new JsonDrivenTestFactory(client, _databaseName, _collectionName, _bucketName, objectMap);
 
             var operation = test["operation"].AsBsonDocument;
 

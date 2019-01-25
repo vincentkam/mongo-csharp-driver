@@ -28,13 +28,15 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
         private readonly string _databaseName;
         private readonly string _collectionName;
         private readonly Dictionary<string, object> _objectMap;
+        private readonly string _bucketName;
 
         // public constructors
-        public JsonDrivenTestFactory(IMongoClient client, string databaseName, string collectionName, Dictionary<string, object> objectMap)
+        public JsonDrivenTestFactory(IMongoClient client, string databaseName, string collectionName, string bucketName, Dictionary<string, object> objectMap)
         {
             _client = client;
             _databaseName = databaseName;
             _collectionName = collectionName;
+            _bucketName = bucketName;
             _objectMap = objectMap;
         }
 
@@ -72,6 +74,16 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
                     case "listCollections": return new JsonDrivenListCollectionsTest(database, _objectMap);
                     case "listCollectionNames": return new JsonDrivenListCollectionNamesTest(database, _objectMap);
                     case "watch": return new JsonDrivenDatabaseWatchTest(database, _objectMap);
+                    default: throw new FormatException($"Invalid method name: \"{name}\".");
+                }
+            }
+
+            if (receiver == "gridfsbucket")
+            {
+                switch (name)
+                {
+                    case "download": return new JsonDrivenDownloadTest(database, _bucketName, _objectMap);
+                    case "download_by_name": return new JsonDrivenDownloadByNameTest(database, _bucketName, _objectMap);
                     default: throw new FormatException($"Invalid method name: \"{name}\".");
                 }
             }
