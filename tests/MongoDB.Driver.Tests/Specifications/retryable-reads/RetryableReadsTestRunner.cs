@@ -101,7 +101,7 @@ namespace MongoDB.Driver.Tests.Specifications.retryable_reads
                 "clientOptions", 
                 "retryableReads", 
                 "failPoint", 
-                "operation", 
+                "operations", 
                 "result",
                 "expectations",
                 "async",
@@ -133,7 +133,7 @@ namespace MongoDB.Driver.Tests.Specifications.retryable_reads
                         { "session1", session1.ServerSession.Id }
                     };
 
-                    ExecuteOperation(client, objectMap, test);
+                    ExecuteOperations(client, objectMap, test);
                 }
 
                 AssertEvents(eventCapturer, test, sessionIdMap);
@@ -294,28 +294,30 @@ namespace MongoDB.Driver.Tests.Specifications.retryable_reads
             return null;
         }
 
-        private void ExecuteOperation(IMongoClient client, Dictionary<string, object> objectMap, BsonDocument test)
+        private void ExecuteOperations(IMongoClient client, Dictionary<string, object> objectMap, BsonDocument test)
         {
             var factory = new JsonDrivenTestFactory(client, _databaseName, _collectionName, _bucketName, objectMap);
-
-            var operation = test["operation"].AsBsonDocument;
-
-            var receiver = operation["object"].AsString;
-            var name = operation["name"].AsString;
-            var jsonDrivenTest = factory.CreateTest(receiver, name);
-
-            jsonDrivenTest.Arrange(operation);
-            if (test["async"].AsBoolean)
-            {
-                jsonDrivenTest.ActAsync(CancellationToken.None).GetAwaiter().GetResult();
-            }
-            else
-            {
-                jsonDrivenTest.Act(CancellationToken.None);
-            }
-            jsonDrivenTest.Assert();
             
+            foreach (var operation in test["operations"].AsBsonArray.Cast<BsonDocument>())
+            {
+                var receiver = operation["object"].AsString;
+                var name = operation["name"].AsString;
+                var jsonDrivenTest = factory.CreateTest(receiver, name);
+
+                jsonDrivenTest.Arrange(operation);
+                if (test["async"].AsBoolean)
+                {
+                    jsonDrivenTest.ActAsync(CancellationToken.None).GetAwaiter().GetResult();
+                }
+                else
+                {
+                    jsonDrivenTest.Act(CancellationToken.None);
+                }
+                jsonDrivenTest.Assert();
+            }            
         }
+        
+        
 
         private void AssertEvents(EventCapturer actualEvents, BsonDocument test, Dictionary<string, BsonValue> sessionIdMap)
         {
