@@ -128,13 +128,6 @@ namespace MongoDB.Driver.Core.Bindings
         }
 
         /// <inheritdoc />
-        public IServer PinnedServer
-        {
-            get => _wrapped.PinnedServer;
-            set => _wrapped.PinnedServer = value;
-        }
-
-        /// <inheritdoc />
         public virtual ICoreServerSession ServerSession
         {
             get

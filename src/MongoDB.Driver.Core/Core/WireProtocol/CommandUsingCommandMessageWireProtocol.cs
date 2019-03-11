@@ -109,6 +109,12 @@ namespace MongoDB.Driver.Core.WireProtocol
             catch (MongoException exception) when (ShouldAddTransientTransactionError(exception))
             {
                 exception.AddErrorLabel("TransientTransactionError");
+                TransactionHelper.UnpinServerIfNeeded(_session, exception);
+                throw;
+            }
+            catch (Exception exception)
+            {
+                TransactionHelper.UnpinServerIfNeeded(_session, exception);
                 throw;
             }
         }
@@ -142,6 +148,12 @@ namespace MongoDB.Driver.Core.WireProtocol
             catch (MongoException exception) when (ShouldAddTransientTransactionError(exception))
             {
                 exception.AddErrorLabel("TransientTransactionError");
+                TransactionHelper.UnpinServerIfNeeded(_session, exception);
+                throw;
+            }
+            catch (Exception exception)
+            {
+                TransactionHelper.UnpinServerIfNeeded(_session, exception);
                 throw;
             }
         }
@@ -266,7 +278,16 @@ namespace MongoDB.Driver.Core.WireProtocol
                     _session.AdvanceOperationTime(operationTime.AsBsonTimestamp);
                 }
 
-                if (!rawDocument.GetValue("ok", false).ToBoolean())
+                if (rawDocument.GetValue("ok", false).ToBoolean())
+                {
+                    if (rawDocument.Contains("recoveryToken"))
+                    {
+                        var materializedDocument = rawDocument.Materialize(binaryReaderSettings);
+                        var recoveryToken = materializedDocument["recoveryToken"].AsBsonDocument;
+                        _session.CurrentTransaction.RecoveryToken = recoveryToken;
+                    }
+                }
+                else
                 {
                     var materializedDocument = rawDocument.Materialize(binaryReaderSettings);
 

@@ -78,13 +78,6 @@ namespace MongoDB.Driver.Core.Bindings
         public CoreSessionOptions Options => null;
 
         /// <inheritdoc />
-        public IServer PinnedServer
-        {
-            get => throw new NotSupportedException($"NoCoreSession does not support {nameof(PinnedServer)}.");
-            set => throw new NotSupportedException($"NoCoreSession does not support {nameof(PinnedServer)}.");
-        }
-
-        /// <inheritdoc />
         public ICoreServerSession ServerSession => NoCoreServerSession.Instance;
 
         // public methods

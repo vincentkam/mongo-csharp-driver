@@ -24,6 +24,7 @@ namespace MongoDB.Bson.TestHelpers.JsonDrivenTests
     {
         // protected fields
         protected Exception _actualException;
+        protected List<IDisposable> _disposables = new List<IDisposable>();
         protected BsonDocument _expectedException;
         protected BsonValue _expectedResult;
         protected Dictionary<string, object> _objectMap;

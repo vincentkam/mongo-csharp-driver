@@ -49,18 +49,7 @@ namespace MongoDB.Driver.Core.TestHelpers
         public static FailPoint Configure(ICluster cluster, ICoreSessionHandle session, BsonDocument command)
         {
             var server = GetWriteableServer(cluster);
-            var binding = new SingleServerReadWriteBinding(server, session.Fork());
-            var failpoint = new FailPoint(server, binding, command);
-            try
-            {
-                failpoint.Configure();
-                return failpoint;
-            }
-            catch
-            {
-                try { failpoint.Dispose(); } catch { }
-                throw;
-            }
+            return FailPoint.Configure(server, session, command);
         }
 
         /// <summary>
@@ -77,6 +66,29 @@ namespace MongoDB.Driver.Core.TestHelpers
             Ensure.IsNotNull(args, nameof(args));
             var command = new BsonDocument("configureFailPoint", name).Merge(args, overwriteExistingElements: false);
             return Configure(cluster, session, command);
+        }
+
+        /// <summary>
+        /// Create a FailPoint and executes a configureFailPoint command on the selected server.
+        /// </summary>
+        /// <param name="server">The server.</param>
+        /// <param name="session">The session.</param>
+        /// <param name="command">The command.</param>
+        /// <returns>A FailPoint containing the proper binding.</returns>
+        public static FailPoint Configure(IServer server, ICoreSessionHandle session, BsonDocument command)
+        {
+            var binding = new SingleServerReadWriteBinding(server, session.Fork());
+            var failpoint = new FailPoint(server, binding, command);
+            try
+            {
+                failpoint.Configure();
+                return failpoint;
+            }
+            catch
+            {
+                try { failpoint.Dispose(); } catch { }
+                throw;
+            }
         }
 
         /// <summary>

@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using FluentAssertions;
 using MongoDB.Bson;
 using MongoDB.Bson.TestHelpers.JsonDrivenTests;
@@ -28,6 +29,7 @@ using MongoDB.Driver.Core.Clusters;
 using MongoDB.Driver.Core.Clusters.ServerSelectors;
 using MongoDB.Driver.Core.Events;
 using MongoDB.Driver.Core.Misc;
+using MongoDB.Driver.Core.Servers;
 using MongoDB.Driver.Core.TestHelpers;
 using MongoDB.Driver.Core.TestHelpers.JsonDrivenTests;
 using MongoDB.Driver.Core.TestHelpers.XunitExtensions;
@@ -37,11 +39,12 @@ using Xunit;
 
 namespace MongoDB.Driver.Tests.Specifications.transactions
 {
-    public sealed class TransactionTestRunner
+    public sealed class TransactionTestRunner : ITestRunner
     {
         #region static
         private static readonly HashSet<string> __commandsToNotCapture = new HashSet<string>
         {
+            "configureFailPoint",
             "isMaster",
             "buildInfo",
             "getLastError",
@@ -54,21 +57,34 @@ namespace MongoDB.Driver.Tests.Specifications.transactions
 
         // private fields
         private string _databaseName = "transaction-tests";
+        private readonly List<IDisposable> _disposables = new List<IDisposable>();
         private string _collectionName = "test";
 
         // public methods
+        public void ConfigureFailPoint(IServer server, ICoreSessionHandle session, BsonDocument failCommand)
+        {
+            var failPoint = FailPoint.Configure(server, session, failCommand);
+            _disposables.Add(failPoint);
+        }
+
+        public async Task ConfigureFailpointAsync(IServer server, ICoreSessionHandle session, BsonDocument failCommand)
+        {
+            var failPoint = await Task.Run(() => FailPoint.Configure(server, session, failCommand)).ConfigureAwait(false);
+            _disposables.Add(failPoint);
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
         [SkippableTheory]
         [ClassData(typeof(TestCaseFactory))]
         public void Run(JsonDrivenTestCase testCase)
         {
-            if (CoreTestConfiguration.Cluster.Description.Type == ClusterType.Sharded)
-            {
-                RequireServer.Check().Supports(Feature.ShardedTransactions);
-            } 
-            else
-            {
-                RequireServer.Check().Supports(Feature.Transactions).ClusterType(ClusterType.ReplicaSet);
-            }
+            var allowedTopologies = testCase.Shared.GetValue("topology", defaultValue: new BsonArray()).AsBsonArray;
+            CheckClusterTopology(allowedTopologies);
 
             if (testCase.Test.Contains("skipReason"))
             {
@@ -79,19 +95,65 @@ namespace MongoDB.Driver.Tests.Specifications.transactions
         }
 
         // private methods
+        private void CheckClusterTopology(BsonArray allowedTopologies)
+        {
+            var allowedClusterTypes = allowedTopologies.Select(MapToplogyToClusterType);
+            RequireServer.Check().ClusterTypes(allowedClusterTypes.ToArray());
+
+            var clusterType = CoreTestConfiguration.Cluster.Description.Type;
+            switch (clusterType)
+            {
+                case ClusterType.Sharded:
+                    RequireServer.Check().Supports(Feature.ShardedTransactions);
+                    break;
+                case ClusterType.ReplicaSet:
+                    RequireServer.Check().Supports(Feature.Transactions);
+                    break;
+                default:
+                    throw new Exception("Topology type for transactions must be replicaset or sharded.");
+
+            }
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (!disposing) return;
+            foreach (var disposable in _disposables)
+            {
+                disposable.Dispose();
+            }
+        }
+
+        private ClusterType MapToplogyToClusterType(BsonValue topology)
+        {
+            switch (topology.AsString)
+            {
+                case "single": return ClusterType.Standalone;
+                case "replicaset": return ClusterType.ReplicaSet;
+                case "sharded": return ClusterType.Sharded;
+                default: throw new Exception("Unknown topology type");
+            }
+        }
+
         private void Run(BsonDocument shared, BsonDocument test)
         {
-            if (test.Contains("skipReason"))
-            {
-                throw new SkipException(test["skipReason"].AsString);
-            }
-            //if (test["description"].AsString != "rerun commit after empty transaction")
-            //{
-            //    return;
-            //}
-
-            JsonDrivenHelper.EnsureAllFieldsAreValid(shared, "_path", "database_name", "collection_name", "data", "tests");
-            JsonDrivenHelper.EnsureAllFieldsAreValid(test, "description", "clientOptions", "failPoint", "sessionOptions", "operations", "expectations", "outcome", "async");
+            JsonDrivenHelper.EnsureAllFieldsAreValid(shared,
+                "_path",
+                "database_name",
+                "collection_name",
+                "data",
+                "tests",
+                "topology");
+            JsonDrivenHelper.EnsureAllFieldsAreValid(test,
+                "description",
+                "clientOptions",
+                "failPoint",
+                "sessionOptions",
+                "operations",
+                "expectations",
+                "outcome",
+                "async",
+                "useMultipleMongoses");
 
             _databaseName = shared["database_name"].AsString;
             _collectionName = shared["collection_name"].AsString;
@@ -101,21 +163,20 @@ namespace MongoDB.Driver.Tests.Specifications.transactions
             CreateCollection();
             InsertData(shared);
 
-            using (ConfigureFailPoint(test))
+            if (CoreTestConfiguration.Cluster.Description.Type == ClusterType.Sharded)
             {
-                var eventCapturer = new EventCapturer()
-                    .Capture<CommandStartedEvent>(e => !__commandsToNotCapture.Contains(e.CommandName));
+                PrimeShardRoutersWithDistinctCommand();
+            }
 
+            var eventCapturer = new EventCapturer()
+                .Capture<CommandStartedEvent>(e => !__commandsToNotCapture.Contains(e.CommandName));
+
+            var useMultipleShardRouters = test.GetValue("useMultipleMongoses", false).AsBoolean;
+            using (var client = CreateDisposableClient(test, eventCapturer, useMultipleShardRouters))
+            using (ConfigureFailPointOnPrimaryOrShardRoutersIfNeeded(client, test))
+            {
                 Dictionary<string, BsonValue> sessionIdMap;
 
-                var useMultipleShardRouters = shared["_path"].AsString.EndsWith("pin-mongos.json") 
-                    && CoreTestConfiguration.Cluster.Description.Type == ClusterType.Sharded;
-                if (useMultipleShardRouters)
-                {
-                    PrimeShardRoutersWithDistinctCommand();
-                }
-                
-                using (var client = CreateDisposableClient(test, eventCapturer, useMultipleShardRouters))
                 using (var session0 = StartSession(client, test, "session0"))
                 using (var session1 = StartSession(client, test, "session1"))
                 {
@@ -185,14 +246,10 @@ namespace MongoDB.Driver.Tests.Specifications.transactions
         /// <summary>
         /// Temporary patch until SERVER-39704 is resolved.
         /// </summary>
-        public void PrimeShardRoutersWithDistinctCommand()
+        private void PrimeShardRoutersWithDistinctCommand()
         {
-            var connectionString = CoreTestConfiguration.ConnectionStringWithMultipleShardRouters;
-            foreach (var endPoint in connectionString.Hosts.Cast<DnsEndPoint>())
+            foreach (var client in DriverTestConfiguration.DirectClientsToShardRouters)
             {
-                var clientSettings = MongoClientSettings.FromConnectionString(connectionString.ToString());
-                clientSettings.Server = new MongoServerAddress(endPoint.Host, endPoint.Port);
-                var client = new MongoClient(clientSettings);
                 var database = client.GetDatabase(_databaseName);
                 var collection = database.GetCollection<BsonDocument>(_collectionName);
                 collection.Distinct<BsonValue>("_id", "{ }");
@@ -218,6 +275,10 @@ namespace MongoDB.Driver.Tests.Specifications.transactions
                 {
                     switch (option.Name)
                     {
+                        case "heartbeatFrequencyMS":
+                            settings.HeartbeatInterval = TimeSpan.FromMilliseconds(option.Value.AsInt32);
+                            break;
+
                         case "readConcernLevel":
                             var level = (ReadConcernLevel)Enum.Parse(typeof(ReadConcernLevel), option.Value.AsString, ignoreCase: true);
                             settings.ReadConcern = new ReadConcern(level);
@@ -295,24 +356,50 @@ namespace MongoDB.Driver.Tests.Specifications.transactions
             return options;
         }
 
-        private FailPoint ConfigureFailPoint(BsonDocument test)
+        private FailPoint ConfigureFailPoint(IServer server, BsonValue failPoint)
         {
-            BsonValue failPoint;
-            if (test.TryGetValue("failPoint", out failPoint))
+            var session = NoCoreSession.NewHandle();
+            var command = failPoint.AsBsonDocument;
+            return FailPoint.Configure(server, session, command);
+
+        }
+
+        private DisposableBundle<FailPoint> ConfigureFailPointOnPrimaryOrShardRoutersIfNeeded(IMongoClient client, BsonDocument test)
+        {
+            if (!test.TryGetValue("failPoint", out var failPoint))
             {
-                var cluster = DriverTestConfiguration.Client.Cluster;
-                var server = cluster.SelectServer(WritableServerSelector.Instance, CancellationToken.None);
-                var session = NoCoreSession.NewHandle();
-                var command = failPoint.AsBsonDocument;
-                return FailPoint.Configure(cluster, session, command);
+                return null;
             }
 
-            return null;
+            var cluster = client.Cluster;
+            var timeOut = TimeSpan.FromSeconds(60);
+            SpinWait.SpinUntil(() => cluster.Description.Type != ClusterType.Unknown, timeOut).Should().BeTrue();
+
+            IEnumerable<IServer> failPointServers;
+            switch (cluster.Description.Type)
+            {
+                case ClusterType.ReplicaSet:
+                    var primary = cluster.SelectServer(WritableServerSelector.Instance, CancellationToken.None);
+                    failPointServers = new[] {primary};
+                    break;
+                
+                case ClusterType.Sharded:
+                    failPointServers = cluster.Description.Servers
+                        .Select(server => server.EndPoint)
+                        .Select(endPoint => cluster.SelectServer(new EndPointServerSelector(endPoint), CancellationToken.None));
+                    break;
+                default:
+                    throw new Exception($"Unsupported cluster type: {cluster.Description.Type}");
+            }
+
+            var failPoints = failPointServers.Select(s => ConfigureFailPoint(s, failPoint)).Where(fp => fp != null).ToList();
+
+            return new DisposableBundle<FailPoint>(failPoints);
         }
 
         private void ExecuteOperations(IMongoClient client, Dictionary<string, object> objectMap, BsonDocument test)
         {
-            var factory = new JsonDrivenTestFactory(client, _databaseName, _collectionName, objectMap);
+            var factory = new JsonDrivenTestFactory(this, client, _databaseName, _collectionName, objectMap);
 
             foreach (var operation in test["operations"].AsBsonArray.Cast<BsonDocument>())
             {
