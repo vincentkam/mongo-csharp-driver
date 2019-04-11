@@ -35,6 +35,7 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
             : this(null, client, databaseName, collectionName, objectMap)
         {
         }
+
         public JsonDrivenTestFactory(ITestRunner testRunner, IMongoClient client, string databaseName, string collectionName, Dictionary<string, object> objectMap)
         {
             _client = client;
