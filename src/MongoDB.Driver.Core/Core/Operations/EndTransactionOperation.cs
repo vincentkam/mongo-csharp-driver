@@ -149,7 +149,7 @@ namespace MongoDB.Driver.Core.Operations
     /// </summary>
     public sealed class CommitTransactionOperation : EndTransactionOperation
     {
-        private readonly BsonDocument _recoveryToken = null;
+        private readonly BsonDocument _recoveryToken;
 
         // public constructors
         /// <summary>
@@ -172,6 +172,9 @@ namespace MongoDB.Driver.Core.Operations
             _recoveryToken = recoveryToken;
         }
 
+        // internal properties
+        internal BsonDocument RecoveryToken => _recoveryToken;
+        
         // protected properties
         /// <inheritdoc />
         protected override string CommandName => "commitTransaction";

@@ -28,7 +28,7 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
         private readonly string _databaseName;
         private readonly string _collectionName;
         private readonly Dictionary<string, object> _objectMap;
-        private readonly ITestRunner _testRunner;
+        private readonly IJsonDrivenTestRunner _testRunner;
 
         // public constructors
         public JsonDrivenTestFactory(IMongoClient client, string databaseName, string collectionName, Dictionary<string, object> objectMap)
@@ -36,7 +36,7 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
         {
         }
 
-        public JsonDrivenTestFactory(ITestRunner testRunner, IMongoClient client, string databaseName, string collectionName, Dictionary<string, object> objectMap)
+        public JsonDrivenTestFactory(IJsonDrivenTestRunner testRunner, IMongoClient client, string databaseName, string collectionName, Dictionary<string, object> objectMap)
         {
             _client = client;
             _databaseName = databaseName;
@@ -53,9 +53,9 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
                 case "testRunner":
                     switch (name)
                     {
-                        case "targetedFailPoint": return new JsonDrivenTargetedFailPointTest(_testRunner.ConfigureFailPoint, _testRunner.ConfigureFailpointAsync, _objectMap);
-                        case "assertSessionPinned": return new JsonDrivenAssertSessionPinnedTest(_objectMap);
-                        case "assertSessionUnpinned": return new JsonDrivenAssertSessionUnpinnedTest(_objectMap);
+                        case "targetedFailPoint": return new JsonDrivenTargetedFailPointTest(_testRunner, _objectMap);
+                        case "assertSessionPinned": return new JsonDrivenAssertSessionPinnedTest(_testRunner, _objectMap);
+                        case "assertSessionUnpinned": return new JsonDrivenAssertSessionUnpinnedTest(_testRunner, _objectMap);
                         default: throw new FormatException($"Invalid method name: \"{name}\".");
                     }
                 case var _ when receiver.StartsWith("session"):

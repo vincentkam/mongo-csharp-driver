@@ -18,16 +18,15 @@ using System.Collections.Generic;
 
 namespace MongoDB.Driver.Core.TestHelpers
 {
-    public sealed class DisposableBundle<T> : IDisposable
-        where T : IDisposable
+    public sealed class DisposableBundle : IDisposable
     {
-        private readonly IEnumerable<T> _disposables;
+        private readonly IEnumerable<IDisposable> _disposables;
 
         /// <summary>
         /// Creates a new DisposableBundle.
         /// </summary>
         /// <param name="disposables">Non-null sequence of IDisposables</param>
-        public DisposableBundle(IEnumerable<T> disposables)
+        public DisposableBundle(IEnumerable<IDisposable> disposables)
         {
             _disposables = disposables;
         }

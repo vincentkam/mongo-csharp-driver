@@ -24,8 +24,8 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
 {
     public sealed class JsonDrivenAssertSessionPinnedTest : JsonDrivenTestRunnerTest
     {
-        public JsonDrivenAssertSessionPinnedTest(Dictionary<string, object> objectMap)
-            : base(objectMap)
+        public JsonDrivenAssertSessionPinnedTest(IJsonDrivenTestRunner testRunner, Dictionary<string, object> objectMap)
+            : base(testRunner, objectMap)
         {
         }
 
@@ -35,19 +35,7 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
 
         public override void Assert()
         {
-            GetPinnedServer().Should().NotBeNull();
-        }
-
-        protected override void SetArgument(string name, BsonValue value)
-        {
-            switch (name)
-            {
-                case "session":
-                    base.SetArgument(name, value);
-                    return;
-            }
-
-            base.SetArgument(name, value);
+            PinnedServer.Should().NotBeNull();
         }
     }
 }

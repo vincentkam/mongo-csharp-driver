@@ -22,25 +22,29 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
 {
     public abstract class JsonDrivenTestRunnerTest : JsonDrivenCommandTest
     {
-        protected Func<IServer> GetPinnedServer;
+        private IClientSessionHandle _session;
 
         // protected constructors
-        protected JsonDrivenTestRunnerTest(Dictionary<string, object> objectMap)
+        protected JsonDrivenTestRunnerTest(IJsonDrivenTestRunner testRunner, Dictionary<string, object> objectMap)
             : base(objectMap)
         {
+            TestRunner = testRunner;
         }
+
+        protected IJsonDrivenTestRunner TestRunner { get; }
+        protected IServer PinnedServer => _session?.WrappedCoreSession?.CurrentTransaction?.PinnedServer;
 
         protected override void SetArgument(string name, BsonValue value)
         {
             switch (name)
             {
                 case "session":
-                    var session = (IClientSessionHandle) _objectMap[value.AsString];
-                    GetPinnedServer = () => session.WrappedCoreSession.CurrentTransaction.PinnedServer;
+                    _session = (IClientSessionHandle)_objectMap[value.AsString];
+                    return;
+                default:
+                    base.SetArgument(name, value);
                     return;
             }
-
-            base.SetArgument(name, value);
         }
     }
 }

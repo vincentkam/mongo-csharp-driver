@@ -20,7 +20,6 @@ using MongoDB.Bson;
 using MongoDB.Driver.Core.Clusters;
 using MongoDB.Driver.Core.Misc;
 using MongoDB.Driver.Core.Operations;
-using MongoDB.Driver.Core.Servers;
 
 namespace MongoDB.Driver.Core.Bindings
 {
@@ -269,8 +268,8 @@ namespace MongoDB.Driver.Core.Bindings
                 }
                 catch (Exception exception) when (ShouldRetryEndTransactionException(exception))
                 {
-                    // unpin server if needed, ignore exception and retry
-                    TransactionHelper.UnpinServerIfNeededOnRetryableCommit(_currentTransaction, exception);
+                    // unpin server if needed, then ignore exception and retry
+                    TransactionHelper.UnpinServerIfNeededOnRetryableCommitException(_currentTransaction, exception);
                 }
 
                 var secondAttempt = CreateCommitTransactionOperation(isCommitRetry: true);
@@ -304,7 +303,8 @@ namespace MongoDB.Driver.Core.Bindings
                 }
                 catch (Exception exception) when (ShouldRetryEndTransactionException(exception))
                 {
-                    // ignore exception and retry
+                    // unpin server if needed, then ignore exception and retry
+                    TransactionHelper.UnpinServerIfNeededOnRetryableCommitException(_currentTransaction, exception);
                 }
 
                 var secondAttempt = CreateCommitTransactionOperation(isCommitRetry: true);

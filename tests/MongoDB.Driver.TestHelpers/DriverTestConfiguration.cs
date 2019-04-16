@@ -34,15 +34,15 @@ namespace MongoDB.Driver.Tests
         private static Lazy<MongoClient> __client;
         private static CollectionNamespace __collectionNamespace;
         private static DatabaseNamespace __databaseNamespace;
-        private static Lazy<IEnumerable<IMongoClient>> __directClientsToShardRouters;
+        private static Lazy<IReadOnlyList<IMongoClient>> __directClientsToShardRouters;
 
         // static constructor
         static DriverTestConfiguration()
         {
             __client = new Lazy<MongoClient>(() => new MongoClient(GetClientSettings()), true);
             __databaseNamespace = CoreTestConfiguration.DatabaseNamespace;
-            __directClientsToShardRouters = new Lazy<IEnumerable<IMongoClient>>(
-                () => CreateDirectClientsToHostsInConnectionString(CoreTestConfiguration.ConnectionStringWithMultipleShardRouters),
+            __directClientsToShardRouters = new Lazy<IReadOnlyList<IMongoClient>>(
+                () => CreateDirectClientsToHostsInConnectionString(CoreTestConfiguration.ConnectionStringWithMultipleShardRouters).ToList().AsReadOnly(),
                 isThreadSafe: true);
             __collectionNamespace = new CollectionNamespace(__databaseNamespace, "testcollection");
         }
@@ -59,7 +59,7 @@ namespace MongoDB.Driver.Tests
         /// <summary>
         /// Sequence of clients that connect directly to the shard routers
         /// </summary>
-        public static IEnumerable<IMongoClient> DirectClientsToShardRouters
+        public static IReadOnlyList<IMongoClient> DirectClientsToShardRouters
         {
             get => __directClientsToShardRouters.Value;
         }

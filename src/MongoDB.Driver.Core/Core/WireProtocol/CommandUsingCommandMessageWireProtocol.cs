@@ -106,15 +106,13 @@ namespace MongoDB.Driver.Core.WireProtocol
                     return default(TCommandResult);
                 }
             }
-            catch (MongoException exception) when (ShouldAddTransientTransactionError(exception))
-            {
-                exception.AddErrorLabel("TransientTransactionError");
-                TransactionHelper.UnpinServerIfNeeded(_session, exception);
-                throw;
-            }
             catch (Exception exception)
             {
-                TransactionHelper.UnpinServerIfNeeded(_session, exception);
+                if (exception is MongoException mongoException && ShouldAddTransientTransactionError(mongoException))
+                {
+                    mongoException.AddErrorLabel("TransientTransactionError");
+                }
+                TransactionHelper.UnpinServerIfNeededOnCommandException(_session, exception);
                 throw;
             }
         }
@@ -145,15 +143,13 @@ namespace MongoDB.Driver.Core.WireProtocol
                     return default(TCommandResult);
                 }
             }
-            catch (MongoException exception) when (ShouldAddTransientTransactionError(exception))
-            {
-                exception.AddErrorLabel("TransientTransactionError");
-                TransactionHelper.UnpinServerIfNeeded(_session, exception);
-                throw;
-            }
             catch (Exception exception)
             {
-                TransactionHelper.UnpinServerIfNeeded(_session, exception);
+                if (exception is MongoException mongoException && ShouldAddTransientTransactionError(mongoException))
+                {
+                    mongoException.AddErrorLabel("TransientTransactionError");
+                }
+                TransactionHelper.UnpinServerIfNeededOnCommandException(_session, exception);
                 throw;
             }
         }
@@ -278,16 +274,13 @@ namespace MongoDB.Driver.Core.WireProtocol
                     _session.AdvanceOperationTime(operationTime.AsBsonTimestamp);
                 }
 
-                if (rawDocument.GetValue("ok", false).ToBoolean())
+                if (rawDocument.TryGetValue("recoveryToken", out var rawRecoveryToken))
                 {
-                    if (rawDocument.Contains("recoveryToken"))
-                    {
-                        var materializedDocument = rawDocument.Materialize(binaryReaderSettings);
-                        var recoveryToken = materializedDocument["recoveryToken"].AsBsonDocument;
-                        _session.CurrentTransaction.RecoveryToken = recoveryToken;
-                    }
+                    var recoveryToken = ((RawBsonDocument)rawRecoveryToken).Materialize(binaryReaderSettings);
+                    _session.CurrentTransaction.RecoveryToken = recoveryToken;
                 }
-                else
+
+                if (!rawDocument.GetValue("ok", false).ToBoolean())
                 {
                     var materializedDocument = rawDocument.Materialize(binaryReaderSettings);
 

@@ -178,6 +178,7 @@ namespace MongoDB.Driver.Core.Operations
             var result = new CommitTransactionOperation(writeConcern);
 
             result.CommandName().Should().Be("commitTransaction");
+            result.RecoveryToken.Should().BeNull();
             result.WriteConcern.Should().BeSameAs(writeConcern);
         }
 

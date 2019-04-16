@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using MongoDB.Bson;
 using MongoDB.Driver.Core.Bindings;
 using MongoDB.Driver.Core.Misc;
@@ -28,33 +29,24 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
     public sealed class JsonDrivenTargetedFailPointTest : JsonDrivenTestRunnerTest
     {
         private BsonDocument _failCommand;
-        private readonly Action<IServer, ICoreSessionHandle, BsonDocument> _sendAndSaveFailPoint;
-        private readonly Func<IServer, ICoreSessionHandle, BsonDocument, Task> _sendAndSaveFailPointAsync;
 
-        public JsonDrivenTargetedFailPointTest(
-            Action<IServer, ICoreSessionHandle, BsonDocument> sendAndSaveFailPoint,
-            Func<IServer, ICoreSessionHandle, BsonDocument, Task> sendAndSaveFailPointAsync,
-            Dictionary<string, object> objectMap)
-            : base(objectMap)
+
+        public JsonDrivenTargetedFailPointTest(IJsonDrivenTestRunner testRunner, Dictionary<string, object> objectMap)
+            : base(testRunner, objectMap)
         {
-            _sendAndSaveFailPoint = sendAndSaveFailPoint;
-            _sendAndSaveFailPointAsync = sendAndSaveFailPointAsync;
         }
 
         protected override void CallMethod(CancellationToken cancellationToken)
         {
-            var pinnedServer = GetPinnedServer();
-            Ensure.IsNotNull(pinnedServer, nameof(pinnedServer));
-            _sendAndSaveFailPoint(GetPinnedServer(), NoCoreSession.NewHandle(), _failCommand);
+            PinnedServer.Should().NotBeNull();
+            TestRunner.ConfigureFailPoint(PinnedServer, NoCoreSession.NewHandle(), _failCommand);
         }
 
         protected override Task CallMethodAsync(CancellationToken cancellationToken)
         {
-            var pinnedServer = GetPinnedServer();
-            Ensure.IsNotNull(pinnedServer, nameof(pinnedServer));
-            return _sendAndSaveFailPointAsync(GetPinnedServer(), NoCoreSession.NewHandle(), _failCommand);
+            PinnedServer.Should().NotBeNull();
+            return TestRunner.ConfigureFailPointAsync(PinnedServer, NoCoreSession.NewHandle(), _failCommand);
         }
-
 
         public override void Assert()
         {
@@ -64,15 +56,13 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
         {
             switch (name)
             {
-                case "session":
-                    base.SetArgument(name, value);
-                    return;
                 case "failPoint":
                     _failCommand = (BsonDocument)value;
                     return;
+                default:
+                    base.SetArgument(name, value);
+                    return;
             }
-
-            base.SetArgument(name, value);
         }
     }
 }

@@ -55,22 +55,6 @@ namespace MongoDB.Driver.Core.TestHelpers
         /// <summary>
         /// Create a FailPoint and executes a configureFailPoint command on the selected server.
         /// </summary>
-        /// <param name="cluster">The cluster.</param>
-        /// <param name="session">The session.</param>
-        /// <param name="name">The name.</param>
-        /// <param name="args">The arguments for the FailPoint.</param>
-        /// <returns>A FailPoint containing the proper binding.</returns>
-        public static FailPoint Configure(ICluster cluster, ICoreSessionHandle session, string name, BsonDocument args)
-        {
-            Ensure.IsNotNull(name, nameof(name));
-            Ensure.IsNotNull(args, nameof(args));
-            var command = new BsonDocument("configureFailPoint", name).Merge(args, overwriteExistingElements: false);
-            return Configure(cluster, session, command);
-        }
-
-        /// <summary>
-        /// Create a FailPoint and executes a configureFailPoint command on the selected server.
-        /// </summary>
         /// <param name="server">The server.</param>
         /// <param name="session">The session.</param>
         /// <param name="command">The command.</param>
@@ -89,6 +73,22 @@ namespace MongoDB.Driver.Core.TestHelpers
                 try { failpoint.Dispose(); } catch { }
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Create a FailPoint and executes a configureFailPoint command on the selected server.
+        /// </summary>
+        /// <param name="cluster">The cluster.</param>
+        /// <param name="session">The session.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="args">The arguments for the FailPoint.</param>
+        /// <returns>A FailPoint containing the proper binding.</returns>
+        public static FailPoint Configure(ICluster cluster, ICoreSessionHandle session, string name, BsonDocument args)
+        {
+            Ensure.IsNotNull(name, nameof(name));
+            Ensure.IsNotNull(args, nameof(args));
+            var command = new BsonDocument("configureFailPoint", name).Merge(args, overwriteExistingElements: false);
+            return Configure(cluster, session, command);
         }
 
         /// <summary>

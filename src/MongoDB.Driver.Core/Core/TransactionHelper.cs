@@ -20,23 +20,23 @@ namespace MongoDB.Driver.Core
 {
     internal static class TransactionHelper
     {
-        internal static void UnpinServerIfNeeded(ICoreSession session, Exception exception)
+        internal static void UnpinServerIfNeededOnCommandException(ICoreSession session, Exception exception)
         {
-            if (session.IsInTransaction && ShouldExceptionUnpinServer(exception))
+            if (session.IsInTransaction && ShouldUnpinServerOnCommandException(exception))
             {
                 session.CurrentTransaction.PinnedServer = null;
             }
         }
 
-        internal static void UnpinServerIfNeededOnRetryableCommit(CoreTransaction transaction, Exception exception)
+        internal static void UnpinServerIfNeededOnRetryableCommitException(CoreTransaction transaction, Exception exception)
         {
-            if (ShouldRetryableCommitExceptionUnpinServer(exception))
+            if (ShouldUnpinServerOnRetryableCommitException(exception))
             {
                 transaction.PinnedServer = null;
             }
         }
 
-        private static bool ShouldExceptionUnpinServer(Exception exception)
+        private static bool ShouldUnpinServerOnCommandException(Exception exception)
         {
             return
                 exception is MongoException mongoException &&
@@ -44,7 +44,7 @@ namespace MongoDB.Driver.Core
                  mongoException.HasErrorLabel("UnknownTransactionCommitResult"));
         }
 
-        private static bool ShouldRetryableCommitExceptionUnpinServer(Exception exception)
+        private static bool ShouldUnpinServerOnRetryableCommitException(Exception exception)
         {
             return
                 exception is MongoException mongoException &&
