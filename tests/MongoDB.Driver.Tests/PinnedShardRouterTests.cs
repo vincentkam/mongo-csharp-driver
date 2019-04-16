@@ -131,7 +131,7 @@ namespace MongoDB.Driver.Tests
                 {
                     await collection.InsertOneAsync(new BsonDocument()).ConfigureAwait(false);
                     await session.CommitTransactionAsync().ConfigureAwait(false);
-                    for (var i = 0; i < 20; i++)
+                    for (var i = 0; i < 50; i++)
                     {
                         var cursor = await collection.FindAsync(session, filter: new BsonDocument()).ConfigureAwait(false);
                         listOfFindResults.Add(cursor.ToList());
@@ -140,7 +140,7 @@ namespace MongoDB.Driver.Tests
                 else
                 { 
                     session.CommitTransaction();
-                    for (var i = 0; i < 20; i++)
+                    for (var i = 0; i < 50; i++)
                     {
                         listOfFindResults.Add(collection.Find(session, filter: new BsonDocument()).ToList());
                     }
