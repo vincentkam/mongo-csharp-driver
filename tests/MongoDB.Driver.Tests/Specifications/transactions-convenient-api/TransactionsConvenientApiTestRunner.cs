@@ -77,7 +77,6 @@ namespace MongoDB.Driver.Tests.Specifications.transactions_convenient_api
                     foreach (var async in new[] { false, true })
                     {
                         var name = $"{testCase.Name}:async={async}";
-                        if (!name.Contains("withTransaction explicit transaction options override client options")) continue;
                         var test = testCase.Test.DeepClone().AsBsonDocument.Add("async", async);
                         yield return new JsonDrivenTestCase(name, testCase.Shared, test);
                     }
