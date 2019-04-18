@@ -133,7 +133,7 @@ namespace MongoDB.Driver.Tests.Specifications.transactions
         {
             if (test.Contains("skipReason"))
             {
-                throw new SkipException($"skipReason: {test["skipReason"].AsString}");
+                throw new SkipException($"Test skipped because {test["skipReason"]}.");
             }
 
             if (shared.TryGetValue("topology", out var topology))
@@ -360,14 +360,6 @@ namespace MongoDB.Driver.Tests.Specifications.transactions
             return options;
         }
 
-        private FailPoint ConfigureFailPoint(IServer server, BsonValue failPoint)
-        {
-            var session = NoCoreSession.NewHandle();
-            var command = failPoint.AsBsonDocument;
-            return FailPoint.Configure(server, session, command);
-
-        }
-
         private DisposableBundle ConfigureFailPointOnPrimaryOrShardRoutersIfNeeded(IMongoClient client, BsonDocument test)
         {
             if (!test.TryGetValue("failPoint", out var failPoint))
@@ -379,18 +371,20 @@ namespace MongoDB.Driver.Tests.Specifications.transactions
             var timeOut = TimeSpan.FromSeconds(60);
             SpinWait.SpinUntil(() => cluster.Description.Type != ClusterType.Unknown, timeOut).Should().BeTrue();
 
-            IServer[] failPointServers;
+            List<IServer> failPointServers;
             switch (cluster.Description.Type)
             {
                 case ClusterType.ReplicaSet:
                     var primary = cluster.SelectServer(WritableServerSelector.Instance, CancellationToken.None);
-                    failPointServers = new[] { primary } ;
+                    failPointServers = new List<IServer> { primary };
                     break;
                 
                 case ClusterType.Sharded:
-                    failPointServers = cluster.Description.Servers
+                    failPointServers =
+                        cluster.Description.Servers
                         .Select(server => server.EndPoint)
-                        .Select(endPoint => cluster.SelectServer(new EndPointServerSelector(endPoint), CancellationToken.None)).ToArray();
+                        .Select(endPoint => cluster.SelectServer(new EndPointServerSelector(endPoint), CancellationToken.None))
+                        .ToList();
                     break;
                 default:
                     throw new Exception($"Unsupported cluster type: {cluster.Description.Type}");

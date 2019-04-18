@@ -38,14 +38,14 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
 
         protected override void CallMethod(CancellationToken cancellationToken)
         {
-            PinnedServer.Should().NotBeNull();
-            TestRunner.ConfigureFailPoint(PinnedServer, NoCoreSession.NewHandle(), _failCommand);
+            GetPinnedServer().Should().NotBeNull();
+            TestRunner.ConfigureFailPoint(GetPinnedServer(), NoCoreSession.NewHandle(), _failCommand);
         }
 
         protected override Task CallMethodAsync(CancellationToken cancellationToken)
         {
-            PinnedServer.Should().NotBeNull();
-            return TestRunner.ConfigureFailPointAsync(PinnedServer, NoCoreSession.NewHandle(), _failCommand);
+            GetPinnedServer().Should().NotBeNull();
+            return TestRunner.ConfigureFailPointAsync(GetPinnedServer(), NoCoreSession.NewHandle(), _failCommand);
         }
 
         public override void Assert()
@@ -59,10 +59,9 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
                 case "failPoint":
                     _failCommand = (BsonDocument)value;
                     return;
-                default:
-                    base.SetArgument(name, value);
-                    return;
             }
+
+            base.SetArgument(name, value);
         }
     }
 }

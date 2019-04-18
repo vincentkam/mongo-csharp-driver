@@ -13,7 +13,6 @@
 * limitations under the License.
 */
 
-using System;
 using System.Collections.Generic;
 using MongoDB.Bson;
 using MongoDB.Driver.Core.Servers;
@@ -23,16 +22,21 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
     public abstract class JsonDrivenTestRunnerTest : JsonDrivenCommandTest
     {
         private IClientSessionHandle _session;
+        private readonly IJsonDrivenTestRunner _testRunner;
 
         // protected constructors
         protected JsonDrivenTestRunnerTest(IJsonDrivenTestRunner testRunner, Dictionary<string, object> objectMap)
             : base(objectMap)
         {
-            TestRunner = testRunner;
+            _testRunner = testRunner;
         }
 
-        protected IJsonDrivenTestRunner TestRunner { get; }
-        protected IServer PinnedServer => _session?.WrappedCoreSession?.CurrentTransaction?.PinnedServer;
+        protected IJsonDrivenTestRunner TestRunner => _testRunner;
+
+        protected IServer GetPinnedServer()
+        {
+            return _session?.WrappedCoreSession?.CurrentTransaction?.PinnedServer;
+        }
 
         protected override void SetArgument(string name, BsonValue value)
         {
@@ -41,10 +45,9 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
                 case "session":
                     _session = (IClientSessionHandle)_objectMap[value.AsString];
                     return;
-                default:
-                    base.SetArgument(name, value);
-                    return;
             }
+
+            base.SetArgument(name, value);
         }
     }
 }

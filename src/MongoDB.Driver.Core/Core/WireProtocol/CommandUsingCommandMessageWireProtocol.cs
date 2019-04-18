@@ -274,13 +274,15 @@ namespace MongoDB.Driver.Core.WireProtocol
                     _session.AdvanceOperationTime(operationTime.AsBsonTimestamp);
                 }
 
-                if (rawDocument.TryGetValue("recoveryToken", out var rawRecoveryToken))
+                if (rawDocument.GetValue("ok", false).ToBoolean())
                 {
-                    var recoveryToken = ((RawBsonDocument)rawRecoveryToken).Materialize(binaryReaderSettings);
-                    _session.CurrentTransaction.RecoveryToken = recoveryToken;
+                    if (rawDocument.TryGetValue("recoveryToken", out var rawRecoveryToken))
+                    {
+                        var recoveryToken = ((RawBsonDocument)rawRecoveryToken).Materialize(binaryReaderSettings);
+                        _session.CurrentTransaction.RecoveryToken = recoveryToken;
+                    }
                 }
-
-                if (!rawDocument.GetValue("ok", false).ToBoolean())
+                else
                 {
                     var materializedDocument = rawDocument.Materialize(binaryReaderSettings);
 

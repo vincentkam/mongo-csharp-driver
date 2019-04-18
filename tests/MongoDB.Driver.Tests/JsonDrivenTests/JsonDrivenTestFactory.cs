@@ -58,6 +58,7 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
                         case "assertSessionUnpinned": return new JsonDrivenAssertSessionUnpinnedTest(_testRunner, _objectMap);
                         default: throw new FormatException($"Invalid method name: \"{name}\".");
                     }
+
                 case var _ when receiver.StartsWith("session"):
                     switch (name)
                     {
@@ -67,6 +68,7 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
                         case "withTransaction": return new JsonDrivenWithTransactionTest(this, _objectMap);
                         default: throw new FormatException($"Invalid method name: \"{name}\".");
                     }
+
                 case "database":
                     var database = _client.GetDatabase(_databaseName);
                     switch (name)
@@ -74,6 +76,7 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
                         case "runCommand": return new JsonDrivenRunCommandTest(database, _objectMap);
                         default: throw new FormatException($"Invalid method name: \"{name}\".");
                     }
+
                 case "collection":
                     var collection = _client.GetDatabase(_databaseName).GetCollection<BsonDocument>(_collectionName);
                     switch (name)
@@ -96,6 +99,7 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
                         case "updateOne": return new JsonDrivenUpdateOneTest(collection, _objectMap);
                         default: throw new FormatException($"Invalid method name: \"{name}\".");
                     }
+
                  default:
                      throw new FormatException($"Invalid receiver: \"{receiver}\".");
             }
