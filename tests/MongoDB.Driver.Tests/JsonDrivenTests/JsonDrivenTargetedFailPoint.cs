@@ -38,14 +38,16 @@ namespace MongoDB.Driver.Tests.JsonDrivenTests
 
         protected override void CallMethod(CancellationToken cancellationToken)
         {
-            GetPinnedServer().Should().NotBeNull();
-            TestRunner.ConfigureFailPoint(GetPinnedServer(), NoCoreSession.NewHandle(), _failCommand);
+            var pinnedServer = GetPinnedServer();
+            pinnedServer.Should().NotBeNull();
+            TestRunner.ConfigureFailPoint(pinnedServer, NoCoreSession.NewHandle(), _failCommand);
         }
 
         protected override Task CallMethodAsync(CancellationToken cancellationToken)
         {
-            GetPinnedServer().Should().NotBeNull();
-            return TestRunner.ConfigureFailPointAsync(GetPinnedServer(), NoCoreSession.NewHandle(), _failCommand);
+            var pinnedServer = GetPinnedServer();
+            pinnedServer.Should().NotBeNull();
+            return TestRunner.ConfigureFailPointAsync(pinnedServer, NoCoreSession.NewHandle(), _failCommand);
         }
 
         public override void Assert()

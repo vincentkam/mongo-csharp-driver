@@ -386,6 +386,7 @@ namespace MongoDB.Driver.Tests.Specifications.transactions
                         .Select(endPoint => cluster.SelectServer(new EndPointServerSelector(endPoint), CancellationToken.None))
                         .ToList();
                     break;
+
                 default:
                     throw new Exception($"Unsupported cluster type: {cluster.Description.Type}");
             }
