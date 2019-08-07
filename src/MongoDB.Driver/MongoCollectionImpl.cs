@@ -102,7 +102,7 @@ namespace MongoDB.Driver
             options = options ?? new AggregateOptions();
 
             var last = renderedPipeline.Documents.LastOrDefault();
-            if (last != null && last.GetElement(0).Name == "$out")
+            if (last != null && (last.GetElement(0).Name == "$out")) //|| last.GetElement(0).Name == "$merge"))
             {
                 var aggregateOperation = CreateAggregateToCollectionOperation(renderedPipeline, options);
                 ExecuteWriteOperation(session, aggregateOperation, cancellationToken);
