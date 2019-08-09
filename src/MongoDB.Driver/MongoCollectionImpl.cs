@@ -734,12 +734,11 @@ namespace MongoDB.Driver
 
         private FindOperation<TResult> CreateAggregateToCollectionFindOperation<TResult>(BsonDocument outStage, IBsonSerializer<TResult> resultSerializer, AggregateOptions options)
         {
-            //TODO: Support merge
-
-            var outputCollectionName = outStage.GetElement(0).Name == "$out"
-                ? outStage.GetElement(0).Value.AsString
-                : outStage.GetElement(1).Value.AsString;
-
+            var outputCollectionName = outStage.GetElement(0).Value.AsString;
+            if (outStage.GetElement(0).Name == "$merge")
+            {
+                //TODO: Support merge
+            }
 
             return new FindOperation<TResult>(
                 new CollectionNamespace(_collectionNamespace.DatabaseNamespace, outputCollectionName),
