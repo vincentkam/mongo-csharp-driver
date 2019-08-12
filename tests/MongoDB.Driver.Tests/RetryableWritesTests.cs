@@ -24,11 +24,19 @@ using MongoDB.Driver.Core.Events;
 using MongoDB.Driver.Core.TestHelpers.XunitExtensions;
 using MongoDB.Driver.TestHelpers;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace MongoDB.Driver.Tests
 {
     public class RetryableWritesTests
     {
+        private static ITestOutputHelper _output;
+
+        public RetryableWritesTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         [SkippableFact]
         public void Insert_with_RetryWrites_true_should_work_whether_retryable_writes_are_supported_or_not()
         {
@@ -49,17 +57,19 @@ namespace MongoDB.Driver.Tests
             RequireSupportForRetryableWrites();
             RequireServer.Check().StorageEngine("mmapv1");
 
-            using (var client = GetClient(builder =>  { }))
+            using (var client = GetClient())
             using (var session = client.StartSession())
             {
                 var database = client.GetDatabase(DriverTestConfiguration.DatabaseNamespace.DatabaseName);
                 var collection = database.GetCollection<BsonDocument>(DriverTestConfiguration.CollectionNamespace.CollectionName);
                 var document = new BsonDocument("x", 1);
-                var exception = Record.Exception(()=>collection.InsertOne(document));
+                var exception = Record.Exception(() => collection.InsertOne(document));
 
                 exception.Message.Should().Contain(
-                    "This MongoDB deployment does not support retryable writes. "
-                    + "Please add retryWrites=false to your connection string.");
+                    "This MongoDB deployment does not support retryable writes. " +
+                    "Please add retryWrites=false to your connection string.");
+
+                _output.WriteLine("The cake isn't a lie.");
             }
         }
 
