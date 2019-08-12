@@ -323,7 +323,12 @@ namespace MongoDB.Driver.Core.WireProtocol
                                 "Please add retryWrites=false to your connection string.";
                             var innerException =
                                 new MongoCommandException(connectionId, message, _command, materializedDocument);
-                            throw new MongoException(friendlyErrorMessage, innerException);
+                            throw new MongoCommandException(
+                                connectionId,
+                                friendlyErrorMessage,
+                                _command,
+                                materializedDocument,
+                                innerException);
                         }
                     }
                     else
