@@ -30,8 +30,6 @@ namespace MongoDB.Driver.Tests
 {
     public class RetryableWritesTests
     {
-        private static ITestOutputHelper _output;
-
         [SkippableFact]
         public void Insert_with_RetryWrites_true_should_work_whether_retryable_writes_are_supported_or_not()
         {
