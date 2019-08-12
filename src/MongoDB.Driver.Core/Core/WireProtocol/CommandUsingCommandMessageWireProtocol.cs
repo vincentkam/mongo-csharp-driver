@@ -314,9 +314,9 @@ namespace MongoDB.Driver.Core.WireProtocol
                         var errmsg = errmsgBsonValue.ToString();
                         message = string.Format("Command {0} failed: {1}.", commandName, errmsg);
                         // https://jira.mongodb.org/browse/CSHARP-2678
-                        if (materializedDocument.TryGetValue("code", out var errorCode)
-                            && errorCode.ToInt32() == 20
-                            && errmsg.StartsWith("Transaction numbers"))
+                        if (materializedDocument.TryGetValue("code", out var errorCode) &&
+                            errorCode.ToInt32() == 20 &&
+                            errmsg.StartsWith("Transaction numbers"))
                         {
                             const string friendlyErrorMessage =
                                 "This MongoDB deployment does not support retryable writes. " +

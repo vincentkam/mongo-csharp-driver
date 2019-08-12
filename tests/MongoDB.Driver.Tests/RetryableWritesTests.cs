@@ -32,11 +32,6 @@ namespace MongoDB.Driver.Tests
     {
         private static ITestOutputHelper _output;
 
-        public RetryableWritesTests(ITestOutputHelper output)
-        {
-            _output = output;
-        }
-
         [SkippableFact]
         public void Insert_with_RetryWrites_true_should_work_whether_retryable_writes_are_supported_or_not()
         {
@@ -68,8 +63,6 @@ namespace MongoDB.Driver.Tests
                 exception.Message.Should().Contain(
                     "This MongoDB deployment does not support retryable writes. " +
                     "Please add retryWrites=false to your connection string.");
-
-                _output.WriteLine("The cake isn't a lie.");
             }
         }
 
