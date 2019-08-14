@@ -2,15 +2,19 @@
 
 The main new features in 2.9.0 are:
 
-* Sharded transactions using the same API as replica set transactions
-* Sharded transactions pinning to a single mongos router
-* Convenient API for transactions
+* Distributed transactions on sharded clusters
+* The sessions API supports the `IClientSession.WithTransaction()` method to conveniently run a transaction with automatic retries and at-most-once semantics.
 * Support for message compression
-* SRV polling for mongodb+srv connection scheme
-* Retryable reads on by default
-* Retryable writes on by default
+* SRV polling for `mongodb+srv` connection scheme:  DNS SRV records are periodically polled in order to update the mongos proxy list without having to change client configuration or even restart the client application. This feature is particularly useful when used with a sharded cluster on MongoDB Atlas, which dynamically updates SRV records whenever you resize your Atlas sharded cluster.
+* Retryable reads: The diver can automatically retry any read operation that has not yet received any results (due to a transient network error, a "not master" error after a replica set failover, etc.). This feature defaults to `on`.
+* Retryable writes now default to `on`
 * Update specification using an aggregation framework pipeline
 * SCRAM-SHA authentication caching
+* Connections to the replica set primary are no longer closed after a step-down, allowing in progress read operations to complete.
+* New aggregate helper methods support running database-level aggregations.
+* Aggregate helper methods now support the `$merge` pipeline stage, and builder methods support creation of the new pipeline stage.
+* Change stream helpers now support the `startAfter` option.
+* Index creation helpers now support wildcard indexes.
 
 An online version of these release notes is available at:
 
