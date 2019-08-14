@@ -25,6 +25,8 @@ Documentation on the .NET driver can be found at:
 
 http://mongodb.github.io/mongo-csharp-driver/
 
-Upgrading
+## Upgrading
 
-There are no known backwards breaking changes in this release.
+Applications with custom retry logic should note that that retryable reads and writes are now on by default. Any applications that rely on the old default of `off` should update their /connection strings to turn off retryable reads/writes as needed. Otherwise, the new default may cause unexpected behavior.
+
+For example, if an application has custom logic that retries reads `n` times and relies on retryable reads being off, then with the new default the application could end up retrying reads up to `2n` times.
