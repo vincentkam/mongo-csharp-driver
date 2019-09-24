@@ -39,6 +39,12 @@ var srcProjectNames = new[]
     "MongoDB.Driver.GridFS"
 };
 
+if (Environment.GetEnvironmentVariable("DOTNET_CLI_HOME") == null)
+{
+    Environment.SetEnvironmentVariable("DOTNET_CLI_HOME", solutionDirectory.ToString());
+}
+
+
 Task("Default")
     .IsDependentOn("TestAndPackage");
 
