@@ -30,9 +30,11 @@ final release (which will support MacOS and Linux).
 ## mongocryptd configuration
 
 Client-side field level encryption requires the `mongocryptd` daemon / process
-to be running. A specific daemon / process uri URI be configured in the
-`AutoEncryptionSettings` class by setting `mongocryptdURI` in the
-`extraOptions`.
+to be running. If `mongocryptd` isn't running, the driver will atempt to spawn
+an instance, utilizing the `PATH` environment variable. Alternatively, the path
+to `mongocryptd` can be specified by setting `mongocryptdSpawnPath` in
+`extraOptions`. A specific daemon / process URI can also be configured in the
+`AutoEncryptionSettings` class by setting `mongocryptdURI` in `extraOptions`.
 
 More information about `mongocryptd` will soon be available from the official
 documentation.
