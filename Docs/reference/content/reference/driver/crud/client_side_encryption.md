@@ -108,10 +108,11 @@ namespace MongoDB.Driver.Examples
 Auto encryption is an **enterprise** only feature.
 {{% /note %}}
 
-The following example shows how to configure the `AutoEncryptionSettings`
-instance to create a new key and setting the json schema map. The following
-example has been adapted from
-[`ClientSideEncryptionExamples.cs`](https://github.com/mongodb/mongo-csharp-driver/blob/master/tests/MongoDB.Driver.Examples/ClientEncryptionExamples.cs), which can be found on Github along with the driver source. 
+The following example shows how to configure the
+`AutoEncryptionSettings` instance to create a new key and how to set
+the json schema map. The following example has been adapted from
+[`ClientSideEncryptionExamples.cs`](https://github.com/mongodb/mongo-csharp-driver/blob/master/tests/MongoDB.Driver.Examples/ClientEncryptionExamples.cs),
+which can be found on Github along with the driver source.
 
 ```csharp
 using MongoDB.Driver.Core.Misc;
