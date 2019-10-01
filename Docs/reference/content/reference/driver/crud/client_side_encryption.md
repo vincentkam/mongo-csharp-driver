@@ -10,9 +10,9 @@ title = "Client Side Encryption"
 
 # Client Side Encryption
 
-New in MongoDB 4.2, client side encryption allows administrators and
-developers to encrypt specific data fields in addition to other
-MongoDB encryption features.
+New in MongoDB 4.2, client side encryption allows administrators and developers
+to encrypt specific data fields in addition to other MongoDB encryption
+features.
 
 With field level encryption, developers can encrypt fields client side without
 any server-side configuration or directives. Client-side field level encryption
@@ -28,22 +28,26 @@ final release (which will support MacOS and Linux).
 ## Installation
 
 The recommended way to get started using field level encryption in your project
-is with a package manager such as NuGet. Field level encryption requires
-one additional package, `MongoDB.Libmongocrypt`, in addition to the standard driver packages.
+is with a package manager such as NuGet. Field level encryption requires one
+additional package, `MongoDB.Libmongocrypt`, in addition to the standard driver
+packages.
 
 See the [installation]({{< relref "getting_started\installation.md" >}}) for instructions on how to install the MongoDB driver.
 
 
 ### libmongocrypt
 
-`libmongocrypt` is a required component for field level encryption and is included in `MongoDB.Libmongocrypt` package.
+`libmongocrypt` is a required component for field level encryption and is
+included in `MongoDB.Libmongocrypt` package.
 
 ### mongocryptd configuration
 
-`libmongocrypt` requires the `mongocryptd` daemon / process to be running. A specific daemon / process uri can be configured in the
-`AutoEncryptionSettings` class by setting `mongocryptdURI` in the `extraOptions`.
+`libmongocrypt` requires the `mongocryptd` daemon / process to be running. A
+specific daemon / process uri can be configured in the `AutoEncryptionSettings`
+class by setting `mongocryptdURI` in the `extraOptions`.
 
-More information about `mongocryptd` will soon be available from the official documentation.
+More information about `mongocryptd` will soon be available from the official
+documentation.
 
 
 ### Examples
@@ -108,9 +112,9 @@ namespace MongoDB.Driver.Examples
 Auto encryption is an **enterprise** only feature.
 {{% /note %}}
 
-The following example shows how to configure the
-`AutoEncryptionSettings` instance to create a new key and how to set
-the json schema map. The following example has been adapted from
+The following example shows how to configure the `AutoEncryptionSettings`
+instance to create a new key and how to set the json schema map. The following
+example has been adapted from
 [`ClientSideEncryptionExamples.cs`](https://github.com/mongodb/mongo-csharp-driver/blob/master/tests/MongoDB.Driver.Examples/ClientEncryptionExamples.cs),
 which can be found on Github along with the driver source.
 
