@@ -1,6 +1,7 @@
+
 +++
 date = "2019-09-30T20:38:-04:00"
-title = "Client Side Encryption"
+title = "Client-Side Field Level Encryption"
 [menu.main]
   parent = "Reference Reading and Writing"
   identifier = "Client-Side Field Level Encryption"
@@ -26,22 +27,12 @@ supports Windows. Backwards-breaking changes may be made before the
 final release (which will support MacOS and Linux).
 {{% /note %}}
 
-## Installation
-
-The recommended way to get started using client-side field level encryption in
-your project is with a package manager such as NuGet. Client-side field level
-encryption requires one additional package, `MongoDB.Libmongocrypt`, in addition
-to the standard driver packages.
-
-See the [installation]({{< relref "getting_started\installation.md" >}}) for instructions on how to install the MongoDB driver.
-
-
-### libmongocrypt
+## libmongocrypt
 
 `libmongocrypt` is a required component for client-side field level encryption
-and is included in `MongoDB.Libmongocrypt` package.
+and is included in the `MongoDB.Libmongocrypt` package.
 
-### mongocryptd configuration
+## mongocryptd configuration
 
 `libmongocrypt` requires the `mongocryptd` daemon / process to be running. A
 specific daemon / process uri can be configured in the `AutoEncryptionSettings`
@@ -51,7 +42,7 @@ More information about `mongocryptd` will soon be available from the official
 documentation.
 
 
-### Examples
+## Examples
 
 The following is a sample app that assumes the **key** and **schema** have
 already been created in MongoDB. The example uses a local key, however using AWS
