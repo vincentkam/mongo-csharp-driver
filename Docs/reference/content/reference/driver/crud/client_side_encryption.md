@@ -27,16 +27,12 @@ supports Windows. Backwards-breaking changes may be made before the
 final release (which will support MacOS and Linux).
 {{% /note %}}
 
-## libmongocrypt
-
-`libmongocrypt` is a required component for client-side field level encryption
-and is included in the `MongoDB.Libmongocrypt` package.
-
 ## mongocryptd configuration
 
-`libmongocrypt` requires the `mongocryptd` daemon / process to be running. A
-specific daemon / process uri can be configured in the `AutoEncryptionSettings`
-class by setting `mongocryptdURI` in the `extraOptions`.
+Client-side field level encryption requires the `mongocryptd` daemon / process
+to be running. A specific daemon / process uri URI be configured in the
+`AutoEncryptionSettings` class by setting `mongocryptdURI` in the
+`extraOptions`.
 
 More information about `mongocryptd` will soon be available from the official
 documentation.
