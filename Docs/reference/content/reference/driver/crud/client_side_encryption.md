@@ -1,5 +1,5 @@
 +++
-date = "2019-09-30T20:38:42-04:00"
+date = "2019-09-30T20:38:-04:00"
 title = "Client Side Encryption"
 [menu.main]
   parent = "Reference Reading and Writing"
@@ -91,70 +91,6 @@ namespace MongoDB.Driver.Examples
                 AutoEncryptionOptions = autoEncryptionOptions
             };
             var client = new MongoClient(mongoClientSettings);
-            var database = client.GetDatabase("test");
-            database.DropCollection("coll");
-            var collection = database.GetCollection<BsonDocument>("coll");
-
-            collection.InsertOne(new BsonDocument("encryptedField", "123456789"));
-
-            var result = collection.Find(FilterDefinition<BsonDocument>.Empty).First();
-            Console.WriteLine(result.ToJson());
-        }
-
-        public void ClientSideEncryptionAutoEncryptionSettingsTour()
-        {
-            var localMasterKey = Convert.FromBase64String(LocalMasterKey);
-
-            var kmsProviders = new Dictionary<string, IReadOnlyDictionary<string, object>>();
-            var localKey = new Dictionary<string, object>
-            {
-                { "key", localMasterKey }
-            };
-            kmsProviders.Add("local", localKey);
-
-            var keyVaultNamespace = CollectionNamespace.FromFullName("admin.datakeys");
-            var keyVaultMongoClient = new MongoClient();
-            var clientEncryptionSettings = new ClientEncryptionOptions(
-                keyVaultMongoClient,
-                keyVaultNamespace,
-                kmsProviders);
-
-            var clientEncryption = new ClientEncryption(clientEncryptionSettings);
-            var dataKeyId = clientEncryption.CreateDataKey("local", new DataKeyOptions(), CancellationToken.None);
-            var base64DataKeyId = Convert.ToBase64String(GuidConverter.ToBytes(dataKeyId, GuidRepresentation.Standard));
-            clientEncryption.Dispose();
-
-            var collectionNamespace = CollectionNamespace.FromFullName("test.coll");
-
-            var schemaMap = $@"{{
-                properties: {{
-                    encryptedField: {{
-                        encrypt: {{
-                            keyId: [{{
-                                '$binary' : {{
-                                    'base64' : '{base64DataKeyId}',
-                                    'subType' : '04'
-                                }}
-                            }}],
-                        bsonType: 'string',
-                        algorithm: 'AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic'
-                        }}
-                    }}
-                }},
-                'bsonType': 'object'
-            }}";
-            var autoEncryptionSettings = new AutoEncryptionOptions(
-                keyVaultNamespace,
-                kmsProviders,
-                schemaMap: new Dictionary<string, BsonDocument>()
-                {
-                    { collectionNamespace.ToString(), BsonDocument.Parse(schemaMap) }
-                });
-            var clientSettings = new MongoClientSettings
-            {
-                AutoEncryptionOptions = autoEncryptionSettings
-            };
-            var client = new MongoClient(clientSettings);
             var database = client.GetDatabase("test");
             database.DropCollection("coll");
             var collection = database.GetCollection<BsonDocument>("coll");
