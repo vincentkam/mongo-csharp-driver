@@ -10,9 +10,9 @@ title = "Client Side Encryption"
 
 # Client Side Encryption
 
-New in MongoDB 4.2 client side encryption allows administrators and developers
-to encrypt specific data fields in addition to other MongoDB encryption
-features.
+New in MongoDB 4.2, client side encryption allows administrators and
+developers to encrypt specific data fields in addition to other
+MongoDB encryption features.
 
 With field level encryption, developers can encrypt fields client side without
 any server-side configuration or directives. Client-side field level encryption
