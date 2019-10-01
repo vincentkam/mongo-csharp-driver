@@ -3,42 +3,43 @@ date = "2019-09-30T20:38:-04:00"
 title = "Client Side Encryption"
 [menu.main]
   parent = "Reference Reading and Writing"
-  identifier = "Client Side Encryption"
+  identifier = "Client-Side Field Level Encryption"
   weight = 40
   pre = "<i class='fa fa-lock'></i>"
 +++
 
-# Client Side Encryption
+# Client-Side Field Level Encryption
 
-New in MongoDB 4.2, client side encryption allows administrators and developers
-to encrypt specific data fields in addition to other MongoDB encryption
-features.
+New in MongoDB 4.2, client-side field level encryption allows administrators and
+developers to encrypt specific data fields in addition to other MongoDB
+encryption features.
 
-With field level encryption, developers can encrypt fields client side without
-any server-side configuration or directives. Client-side field level encryption
-supports workloads where applications must guarantee that unauthorized parties,
-including server administrators, cannot read the encrypted data.
+With client-side field level encryption, developers can encrypt fields
+client-side without any server-side configuration or directives. Client-side
+field level encryption supports workloads where applications must guarantee that
+unauthorized parties, including server administrators, cannot read the encrypted
+data.
 
 {{% note class="important" %}} 
-Support for client side encryption is in beta, and the beta only
+Support for client-side field level encryption is in beta, and the beta only
 supports Windows. Backwards-breaking changes may be made before the
 final release (which will support MacOS and Linux).
 {{% /note %}}
 
 ## Installation
 
-The recommended way to get started using field level encryption in your project
-is with a package manager such as NuGet. Field level encryption requires one
-additional package, `MongoDB.Libmongocrypt`, in addition to the standard driver
-packages.
+The recommended way to get started using client-side field level encryption in
+your project is with a package manager such as NuGet. Client-side field level
+encryption requires one additional package, `MongoDB.Libmongocrypt`, in addition
+to the standard driver packages.
 
 See the [installation]({{< relref "getting_started\installation.md" >}}) for instructions on how to install the MongoDB driver.
 
 
 ### libmongocrypt
 
-`libmongocrypt` is a required component for field level encryption and is
-included in `MongoDB.Libmongocrypt` package.
+`libmongocrypt` is a required component for client-side field level encryption
+and is included in `MongoDB.Libmongocrypt` package.
 
 ### mongocryptd configuration
 
@@ -56,7 +57,7 @@ The following is a sample app that assumes the **key** and **schema** have
 already been created in MongoDB. The example uses a local key, however using AWS
 Key Management Service is also an option. The data in the `encryptedField` field
 is automatically encrypted on the insert and decrypted when using find on the
-client side. The following example has been adapted from
+client-side. The following example has been adapted from
 [`ClientSideEncryptionExamples.cs`](https://github.com/mongodb/mongo-csharp-driver/blob/master/tests/MongoDB.Driver.Examples/ClientEncryptionExamples.cs), which can be found on GitHub along with the driver source. 
 
 ```csharp
