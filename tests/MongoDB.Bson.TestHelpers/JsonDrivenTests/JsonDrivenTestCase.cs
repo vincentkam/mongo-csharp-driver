@@ -53,6 +53,7 @@ namespace MongoDB.Bson.TestHelpers.JsonDrivenTests
             _name = info.GetValue<string>(nameof(_name));
             _shared = DeserializeBsonDocument(info.GetValue<string>(nameof(_shared)));
             _test = DeserializeBsonDocument(info.GetValue<string>(nameof(_test)));
+            File.AppendAllText(@"C:\temp\hello.txt", "Hello there!");
         }
 
         public void Serialize(IXunitSerializationInfo info)
