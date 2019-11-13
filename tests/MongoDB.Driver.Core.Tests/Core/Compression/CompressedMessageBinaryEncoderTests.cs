@@ -104,7 +104,6 @@ namespace MongoDB.Driver.Core.Compression
                 using (var memoryStream = new MemoryStream())
                 {
                     var subject = CreateSubject(memoryStream, compressionProperty);
-#if NET452 || NETSTANDARD2_0
                     subject.WriteMessage(compressedMessage);
                     memoryStream.Position = 0;
                     var result = subject.ReadMessage();
@@ -114,11 +113,6 @@ namespace MongoDB.Driver.Core.Compression
                         options =>
                             options
                                 .Excluding(p => p.OriginalMessageStream));
-#else
-                    var exception = Record.Exception(() => { subject.WriteMessage(compressedMessage); });
-                    
-                    exception.Should().BeOfType<NotSupportedException>();
-#endif
                 }
             }
         }
