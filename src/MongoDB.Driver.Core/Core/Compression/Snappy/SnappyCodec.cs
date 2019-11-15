@@ -38,29 +38,28 @@ namespace MongoDB.Driver.Core.Compression.Snappy
                 offset = 0;
             }
 
-            var inputPtr = Marshal.UnsafeAddrOfPinnedArrayElement(input, offset);
-            var outputPtr = Marshal.UnsafeAddrOfPinnedArrayElement(output, outOffset);
+            var inputHandle = GCHandle.Alloc(input, GCHandleType.Pinned);
+            var outputHandle = GCHandle.Alloc(output, GCHandleType.Pinned);
             try
             {
-                //fixed (byte* inputPtr = &input[offset])
-                //fixed (byte* outputPtr = &output[outOffset])
+                var inputPtr = Marshal.UnsafeAddrOfPinnedArrayElement(input, offset);
+                var outputPtr = Marshal.UnsafeAddrOfPinnedArrayElement(output, outOffset);
+
+                var status = SnappyNativeMethods.Instance.snappy_compress(inputPtr, length, outputPtr, ref outLength);
+                switch (status)
                 {
-                    var status = SnappyNativeMethods.Instance.snappy_compress(inputPtr, length, outputPtr, ref outLength);
-                    switch (status)
-                    {
-                        case SnappyStatus.Ok:
-                            return outLength;
-                        case SnappyStatus.BufferTooSmall:
-                            throw new ArgumentOutOfRangeException("Output array is too small.");
-                        default:
-                            throw new InvalidDataException("Invalid input.");
-                    }
+                    case SnappyStatus.Ok:
+                        return outLength;
+                    case SnappyStatus.BufferTooSmall:
+                        throw new ArgumentOutOfRangeException("Output array is too small.");
+                    default:
+                        throw new InvalidDataException("Invalid input.");
                 }
             }
             finally
             {
-                //Marshal.FreeHGlobal(inputPtr);
-                //Marshal.FreeHGlobal(outputPtr);
+                inputHandle.Free();
+                outputHandle.Free();
             }
         }
 
@@ -95,29 +94,28 @@ namespace MongoDB.Driver.Core.Compression.Snappy
                 outOffset = 0;
             }
 
-            var inputPtr = Marshal.UnsafeAddrOfPinnedArrayElement(input, offset);
-            var outputPtr = Marshal.UnsafeAddrOfPinnedArrayElement(output, outOffset);
+            var inputHandle = GCHandle.Alloc(input, GCHandleType.Pinned);
+            var outputHandle = GCHandle.Alloc(output, GCHandleType.Pinned);
             try
             {
-                //fixed (byte* inputPtr = &input[offset])
-                //fixed (byte* outputPtr = &output[outOffset])
+                var inputPtr = Marshal.UnsafeAddrOfPinnedArrayElement(input, offset);
+                var outputPtr = Marshal.UnsafeAddrOfPinnedArrayElement(output, outOffset);
+
+                var status = SnappyNativeMethods.Instance.snappy_uncompress(inputPtr, length, outputPtr, ref outLength);
+                switch (status)
                 {
-                    var status = SnappyNativeMethods.Instance.snappy_uncompress(inputPtr, length, outputPtr, ref outLength);
-                    switch (status)
-                    {
-                        case SnappyStatus.Ok:
-                            return outLength;
-                        case SnappyStatus.BufferTooSmall:
-                            throw new ArgumentOutOfRangeException("Output array is too small.");
-                        default:
-                            throw new InvalidDataException("Input is not a valid snappy-compressed block.");
-                    }
+                    case SnappyStatus.Ok:
+                        return outLength;
+                    case SnappyStatus.BufferTooSmall:
+                        throw new ArgumentOutOfRangeException("Output array is too small.");
+                    default:
+                        throw new InvalidDataException("Input is not a valid snappy-compressed block.");
                 }
             }
             finally
             {
-                //Marshal.FreeHGlobal(inputPtr);
-                //Marshal.FreeHGlobal(outputPtr);
+                inputHandle.Free();
+                outputHandle.Free();
             }
         }
 
@@ -148,10 +146,11 @@ namespace MongoDB.Driver.Core.Compression.Snappy
                 throw new InvalidDataException("Compressed block cannot be empty.");
             }
 
-            var inputPtr = Marshal.UnsafeAddrOfPinnedArrayElement(input, offset);
-            //fixed (byte* inputPtr = &input[offset])
+
+            var inputHandle = GCHandle.Alloc(input, GCHandleType.Pinned);
             try
             {
+                var inputPtr = Marshal.UnsafeAddrOfPinnedArrayElement(input, offset);
                 var status = SnappyNativeMethods.Instance.snappy_uncompressed_length(inputPtr, length, out var outLength);
                 switch (status)
                 {
@@ -163,7 +162,7 @@ namespace MongoDB.Driver.Core.Compression.Snappy
             }
             finally
             {
-                //Marshal.FreeHGlobal(inputPtr);
+                inputHandle.Free();
             }
         }
 
@@ -183,15 +182,15 @@ namespace MongoDB.Driver.Core.Compression.Snappy
                 return false;
             }
 
-            var inputPtr = Marshal.UnsafeAddrOfPinnedArrayElement(input, offset);
+            var inputHandle = GCHandle.Alloc(input, GCHandleType.Pinned);
             try
             {
-                //fixed (byte* inputPtr = &input[offset])
+                var inputPtr = Marshal.UnsafeAddrOfPinnedArrayElement(input, offset);
                 return SnappyNativeMethods.Instance.snappy_validate_compressed_buffer(inputPtr, length) == SnappyStatus.Ok;
             }
             finally
             {
-                //Marshal.FreeHGlobal(inputPtr);
+                inputHandle.Free();
             }
         }
 
