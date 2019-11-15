@@ -13,6 +13,7 @@
 * limitations under the License.
 */
 
+using System;
 using System.Collections.Generic;
 using MongoDB.Driver.Core.Compression.Native;
 using MongoDB.Driver.Core.NativeLibraryLoader;
@@ -21,15 +22,15 @@ namespace MongoDB.Driver.Core.Compression.Snappy.Native
 {
     internal interface ISnappyNativeMethods
     {
-        unsafe SnappyStatus snappy_compress(byte* input, int input_length, byte* output, ref int output_length);
+        SnappyStatus snappy_compress(IntPtr input, int input_length, IntPtr output, ref int output_length);
 
         int snappy_max_compressed_length(int input_length);
 
-        unsafe SnappyStatus snappy_uncompress(byte* input, int input_length, byte* output, ref int output_length);
+        SnappyStatus snappy_uncompress(IntPtr input, int input_length, IntPtr output, ref int output_length);
 
-        unsafe SnappyStatus snappy_uncompressed_length(byte* input, int input_length, out int output_length);
+        SnappyStatus snappy_uncompressed_length(IntPtr input, int input_length, out int output_length);
 
-        unsafe SnappyStatus snappy_validate_compressed_buffer(byte* input, int input_length);
+        SnappyStatus snappy_validate_compressed_buffer(IntPtr input, int input_length);
     }
 
     internal class SnappyNativeMethods : ISnappyNativeMethods
@@ -42,9 +43,9 @@ namespace MongoDB.Driver.Core.Compression.Snappy.Native
         private static readonly IDictionary<SupportedPlatforms, string> __libraryPaths = new Dictionary<SupportedPlatforms, string>()
         {
             { SupportedPlatforms.Windows, string.Empty }, // bin folder
-            { SupportedPlatforms.Linux, "../../native/linux/" }, // todo: check
             // On Linux, the snappy library depends on the Snappy package.
             // For Debian/Ubuntu: apt-get install libsnappy1 libsnappy-dev
+            { SupportedPlatforms.Linux, "../../native/linux/" }, // todo: check
             { SupportedPlatforms.MacOs, "../../native/osx/" } // todo: check
         };
 
@@ -64,7 +65,7 @@ namespace MongoDB.Driver.Core.Compression.Snappy.Native
         }
 
         // public methods
-        public unsafe SnappyStatus snappy_compress(byte* input, int input_length, byte* output, ref int output_length)
+        public SnappyStatus snappy_compress(IntPtr input, int input_length, IntPtr output, ref int output_length)
         {
             return _snappyNativeMethods.snappy_compress(input, input_length, output, ref output_length);
         }
@@ -74,17 +75,17 @@ namespace MongoDB.Driver.Core.Compression.Snappy.Native
             return _snappyNativeMethods.snappy_max_compressed_length(input_length);
         }
 
-        public unsafe SnappyStatus snappy_uncompress(byte* input, int input_length, byte* output, ref int output_length)
+        public SnappyStatus snappy_uncompress(IntPtr input, int input_length, IntPtr output, ref int output_length)
         {
             return _snappyNativeMethods.snappy_uncompress(input, input_length, output, ref output_length);
         }
 
-        public unsafe SnappyStatus snappy_uncompressed_length(byte* input, int input_length, out int output_length)
+        public SnappyStatus snappy_uncompressed_length(IntPtr input, int input_length, out int output_length)
         {
             return _snappyNativeMethods.snappy_uncompressed_length(input, input_length, out output_length);
         }
 
-        public unsafe SnappyStatus snappy_validate_compressed_buffer(byte* input, int input_length)
+        public SnappyStatus snappy_validate_compressed_buffer(IntPtr input, int input_length)
         {
             return _snappyNativeMethods.snappy_validate_compressed_buffer(input, input_length);
         }
@@ -108,7 +109,7 @@ namespace MongoDB.Driver.Core.Compression.Snappy.Native
             }
 
             // public methods
-            public unsafe SnappyStatus snappy_compress(byte* input, int input_length, byte* output, ref int output_length)
+            public SnappyStatus snappy_compress(IntPtr input, int input_length, IntPtr output, ref int output_length)
             {
                 return _snappy_compress(input, input_length, output, ref output_length);
             }
@@ -118,17 +119,17 @@ namespace MongoDB.Driver.Core.Compression.Snappy.Native
                 return _snappy_max_compressed_length(input_length);
             }
 
-            public unsafe SnappyStatus snappy_uncompress(byte* input, int input_length, byte* output, ref int output_length)
+            public SnappyStatus snappy_uncompress(IntPtr input, int input_length, IntPtr output, ref int output_length)
             {
                 return _snappy_uncompress(input, input_length, output, ref output_length);
             }
 
-            public unsafe SnappyStatus snappy_uncompressed_length(byte* input, int input_length, out int output_length)
+            public SnappyStatus snappy_uncompressed_length(IntPtr input, int input_length, out int output_length)
             {
                 return _snappy_uncompressed_length(input, input_length, out output_length);
             }
 
-            public unsafe SnappyStatus snappy_validate_compressed_buffer(byte* input, int input_length)
+            public SnappyStatus snappy_validate_compressed_buffer(IntPtr input, int input_length)
             {
                 return _snappy_validate_compressed_buffer(input, input_length);
             }
@@ -136,11 +137,11 @@ namespace MongoDB.Driver.Core.Compression.Snappy.Native
             // nested types
             private class Delegates32
             {
-                public unsafe delegate SnappyStatus snappy_compress(byte* input, int input_length, byte* output, ref int output_length);
+                public delegate SnappyStatus snappy_compress(IntPtr input, int input_length, IntPtr output, ref int output_length);
                 public delegate int snappy_max_compressed_length(int input_length);
-                public unsafe delegate SnappyStatus snappy_uncompress(byte* input, int input_length, byte* output, ref int output_length);
-                public unsafe delegate SnappyStatus snappy_uncompressed_length(byte* input, int input_length, out int output_length);
-                public unsafe delegate SnappyStatus snappy_validate_compressed_buffer(byte* input, int input_length);
+                public delegate SnappyStatus snappy_uncompress(IntPtr input, int input_length, IntPtr output, ref int output_length);
+                public delegate SnappyStatus snappy_uncompressed_length(IntPtr input, int input_length, out int output_length);
+                public delegate SnappyStatus snappy_validate_compressed_buffer(IntPtr input, int input_length);
             }
         }
 
@@ -162,7 +163,7 @@ namespace MongoDB.Driver.Core.Compression.Snappy.Native
             }
 
             // public methods
-            public unsafe SnappyStatus snappy_compress(byte* input, int input_length, byte* output, ref int output_length)
+            public SnappyStatus snappy_compress(IntPtr input, int input_length, IntPtr output, ref int output_length)
             {
                 var longOutput_length = (long)output_length;
                 var status = _snappy_compress(input, input_length, output, ref longOutput_length);
@@ -175,7 +176,7 @@ namespace MongoDB.Driver.Core.Compression.Snappy.Native
                 return (int)_snappy_max_compressed_length(input_length);
             }
 
-            public unsafe SnappyStatus snappy_uncompress(byte* input, int input_length, byte* output, ref int output_length)
+            public SnappyStatus snappy_uncompress(IntPtr input, int input_length, IntPtr output, ref int output_length)
             {
                 var longOutput_length = (long)output_length;
                 var status = _snappy_uncompress(input, input_length, output, ref longOutput_length);
@@ -183,14 +184,14 @@ namespace MongoDB.Driver.Core.Compression.Snappy.Native
                 return status;
             }
 
-            public unsafe SnappyStatus snappy_uncompressed_length(byte* input, int input_length, out int output_length)
+            public SnappyStatus snappy_uncompressed_length(IntPtr input, int input_length, out int output_length)
             {
                 var status = _snappy_uncompressed_length(input, input_length, out var longOutput_length);
                 output_length = (int)longOutput_length;
                 return status;
             }
 
-            public unsafe SnappyStatus snappy_validate_compressed_buffer(byte* input, int input_length)
+            public SnappyStatus snappy_validate_compressed_buffer(IntPtr input, int input_length)
             {
                 return _snappy_validate_compressed_buffer(input, input_length);
             }
@@ -198,11 +199,11 @@ namespace MongoDB.Driver.Core.Compression.Snappy.Native
             // nested types
             private class Delegates64
             {
-                public unsafe delegate SnappyStatus snappy_compress(byte* input, long input_length, byte* output, ref long output_length);
+                public delegate SnappyStatus snappy_compress(IntPtr input, long input_length, IntPtr output, ref long output_length);
                 public delegate long snappy_max_compressed_length(long input_length);
-                public unsafe delegate SnappyStatus snappy_uncompress(byte* input, long input_length, byte* output, ref long output_length);
-                public unsafe delegate SnappyStatus snappy_uncompressed_length(byte* input, long input_length, out long output_length);
-                public unsafe delegate SnappyStatus snappy_validate_compressed_buffer(byte* input, long input_length);
+                public delegate SnappyStatus snappy_uncompress(IntPtr input, long input_length, IntPtr output, ref long output_length);
+                public delegate SnappyStatus snappy_uncompressed_length(IntPtr input, long input_length, out long output_length);
+                public delegate SnappyStatus snappy_validate_compressed_buffer(IntPtr input, long input_length);
             }
         }
     }
