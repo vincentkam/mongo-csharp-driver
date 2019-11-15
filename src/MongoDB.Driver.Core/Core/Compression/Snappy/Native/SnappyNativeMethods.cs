@@ -40,13 +40,13 @@ namespace MongoDB.Driver.Core.Compression.Snappy.Native
         public static ISnappyNativeMethods Instance => __instance ?? (__instance = new SnappyNativeMethods());
         #endregion
 
-        private static readonly IDictionary<SupportedPlatforms, string> __libraryPaths = new Dictionary<SupportedPlatforms, string>()
+        private readonly IDictionary<SupportedPlatforms, string> __libraryPaths = new Dictionary<SupportedPlatforms, string>()
         {
             { SupportedPlatforms.Windows, string.Empty }, // bin folder
             // On Linux, the snappy library depends on the Snappy package.
             // For Debian/Ubuntu: apt-get install libsnappy1 libsnappy-dev
             { SupportedPlatforms.Linux, "../../native/linux/" }, // todo: check
-            { SupportedPlatforms.MacOs, "../../native/osx/" } // todo: check
+            { SupportedPlatforms.MacOS, "../../native/osx/" } // todo: check
         };
 
         private readonly ISnappyNativeMethods _snappyNativeMethods;

@@ -38,6 +38,8 @@ namespace MongoDB.Driver.Core.Compression.Snappy
                 offset = 0;
             }
 
+            // The array must be pinned by using a GCHandle before it is passed to UnsafeAddrOfPinnedArrayElement.
+            // For maximum performance, this method does not validate the array passed to it; this can result in unexpected behavior.
             var inputHandle = GCHandle.Alloc(input, GCHandleType.Pinned);
             var outputHandle = GCHandle.Alloc(output, GCHandleType.Pinned);
             try
@@ -87,7 +89,7 @@ namespace MongoDB.Driver.Core.Compression.Snappy
                 throw new InvalidDataException("Compressed block cannot be empty.");
             EnsureOutputRangeValid(outOffset, output.Length);
 
-            var outLength = (output.Length - outOffset);
+            var outLength = output.Length - outOffset;
             if (outOffset == output.Length)
             {
                 output = new byte[1];
@@ -145,7 +147,6 @@ namespace MongoDB.Driver.Core.Compression.Snappy
             {
                 throw new InvalidDataException("Compressed block cannot be empty.");
             }
-
 
             var inputHandle = GCHandle.Alloc(input, GCHandleType.Pinned);
             try

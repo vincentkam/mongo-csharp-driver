@@ -26,7 +26,7 @@ namespace MongoDB.Driver.Core.NativeLibraryLoader
     {
         Windows,
         Linux,
-        MacOs
+        MacOS
     }
 
     internal interface ILibraryLoaderSource
@@ -90,8 +90,8 @@ namespace MongoDB.Driver.Core.NativeLibraryLoader
             {
                 case SupportedPlatforms.Linux:
                     return new Linux.NativeMethods(path);
-                case SupportedPlatforms.MacOs:
-                    return new macOS.NativeMethods(path);
+                case SupportedPlatforms.MacOS:
+                    return new MacOS.NativeMethods(path);
                 case SupportedPlatforms.Windows:
                     return new Windows.NativeMethods(path);
                 default:
@@ -135,7 +135,7 @@ namespace MongoDB.Driver.Core.NativeLibraryLoader
 #if NETSTANDARD1_5
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                return SupportedPlatforms.MacOs;
+                return SupportedPlatforms.MacOS;
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {

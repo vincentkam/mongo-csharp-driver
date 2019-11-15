@@ -18,7 +18,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using MongoDB.Driver.Core.Misc;
 
-namespace MongoDB.Driver.Core.NativeLibraryLoader.macOS
+namespace MongoDB.Driver.Core.NativeLibraryLoader.MacOS
 {
     internal class NativeMethods : IPlatformLibraryLoader
     {
