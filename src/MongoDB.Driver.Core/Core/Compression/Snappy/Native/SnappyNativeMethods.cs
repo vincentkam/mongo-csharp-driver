@@ -150,10 +150,15 @@ namespace MongoDB.Driver.Core.Compression.Snappy.Native
             // nested types
             private class Delegates32
             {
+                [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
                 public delegate SnappyStatus snappy_compress(IntPtr input, uint input_length, IntPtr output, ref uint output_length);
+                [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
                 public delegate uint snappy_max_compressed_length(uint input_length);
+                [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
                 public delegate SnappyStatus snappy_uncompress(IntPtr input, uint input_length, IntPtr output, ref uint output_length);
+                [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
                 public delegate SnappyStatus snappy_uncompressed_length(IntPtr input, uint input_length, out uint output_length);
+                [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
                 public delegate SnappyStatus snappy_validate_compressed_buffer(IntPtr input, uint input_length);
             }
         }
@@ -180,45 +185,45 @@ namespace MongoDB.Driver.Core.Compression.Snappy.Native
             // public methods
             public SnappyStatus snappy_compress(IntPtr input, int input_length, IntPtr output, ref int output_length)
             {
-                var longOutput_length = (long)output_length;
-                var status = _snappy_compress(input, input_length, output, ref longOutput_length);
-                output_length = (int)longOutput_length;
+                var ulongOutput_length = (ulong)output_length;
+                var status = _snappy_compress(input, (ulong)input_length, output, ref ulongOutput_length);
+                output_length = (int)ulongOutput_length;
                 return status;
             }
 
             public int snappy_max_compressed_length(int input_length)
             {
-                return (int)_snappy_max_compressed_length(input_length);
+                return (int)_snappy_max_compressed_length((ulong)input_length);
             }
 
             public SnappyStatus snappy_uncompress(IntPtr input, int input_length, IntPtr output, ref int output_length)
             {
-                var longOutput_length = (long)output_length;
-                var status = _snappy_uncompress(input, input_length, output, ref longOutput_length);
-                output_length = (int)longOutput_length;
+                var ulongOutput_length = (ulong)output_length;
+                var status = _snappy_uncompress(input, (ulong)input_length, output, ref ulongOutput_length);
+                output_length = (int)ulongOutput_length;
                 return status;
             }
 
             public SnappyStatus snappy_uncompressed_length(IntPtr input, int input_length, out int output_length)
             {
-                var status = _snappy_uncompressed_length(input, input_length, out var longOutput_length);
-                output_length = (int)longOutput_length;
+                var status = _snappy_uncompressed_length(input, (ulong)input_length, out var ulongOutput_length);
+                output_length = (int)ulongOutput_length;
                 return status;
             }
 
             public SnappyStatus snappy_validate_compressed_buffer(IntPtr input, int input_length)
             {
-                return _snappy_validate_compressed_buffer(input, input_length);
+                return _snappy_validate_compressed_buffer(input, (ulong)input_length);
             }
 
             // nested types
             private class Delegates64
             {
-                public delegate SnappyStatus snappy_compress(IntPtr input, long input_length, IntPtr output, ref long output_length);
-                public delegate long snappy_max_compressed_length(long input_length);
-                public delegate SnappyStatus snappy_uncompress(IntPtr input, long input_length, IntPtr output, ref long output_length);
-                public delegate SnappyStatus snappy_uncompressed_length(IntPtr input, long input_length, out long output_length);
-                public delegate SnappyStatus snappy_validate_compressed_buffer(IntPtr input, long input_length);
+                public delegate SnappyStatus snappy_compress(IntPtr input, ulong input_length, IntPtr output, ref ulong output_length);
+                public delegate ulong snappy_max_compressed_length(ulong input_length);
+                public delegate SnappyStatus snappy_uncompress(IntPtr input, ulong input_length, IntPtr output, ref ulong output_length);
+                public delegate SnappyStatus snappy_uncompressed_length(IntPtr input, ulong input_length, out ulong output_length);
+                public delegate SnappyStatus snappy_validate_compressed_buffer(IntPtr input, ulong input_length);
             }
         }
     }

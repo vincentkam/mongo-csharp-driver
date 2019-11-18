@@ -96,8 +96,6 @@ Task("BuildArtifacts")
                     fileNames.Add("DnsClient.dll");
                     fileNames.Add("MongoDB.Libmongocrypt.dll");
                     fileNames.Add("SharpCompress.dll");
-                    fileNames.Add("snappy32.dll");
-                    fileNames.Add("snappy64.dll");
                 }
 
                 foreach (var fileName in fileNames)

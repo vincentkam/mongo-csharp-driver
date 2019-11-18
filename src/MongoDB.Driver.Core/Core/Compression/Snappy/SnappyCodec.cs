@@ -80,6 +80,46 @@ namespace MongoDB.Driver.Core.Compression.Snappy
             return truncated;
         }
 
+        public static int GetMaxCompressedLength(int inLength)
+        {
+            return SnappyNativeMethods.Instance.snappy_max_compressed_length(inLength);
+        }
+
+        public static int GetUncompressedLength(byte[] input, int offset, int length)
+        {
+            Ensure.IsNotNull(input, nameof(input));
+            EnsureInputRangeValid(offset, length, input.Length);
+            if (length == 0)
+            {
+                throw new InvalidDataException("Compressed block cannot be empty.");
+            }
+
+            var inputHandle = GCHandle.Alloc(input, GCHandleType.Pinned);
+            try
+            {
+                var inputPtr = Marshal.UnsafeAddrOfPinnedArrayElement(input, offset);
+                var status = SnappyNativeMethods.Instance.snappy_uncompressed_length(inputPtr, length, out var outLength);
+                switch (status)
+                {
+                    case SnappyStatus.Ok:
+                        return outLength;
+                    default:
+                        throw new InvalidDataException("Input is not a valid snappy-compressed block.");
+                }
+            }
+            finally
+            {
+                inputHandle.Free();
+            }
+        }
+
+        public static int GetUncompressedLength(byte[] input)
+        {
+            Ensure.IsNotNull(input, nameof(input));
+
+            return GetUncompressedLength(input, 0, input.Length);
+        }
+
         public static int Uncompress(byte[] input, int offset, int length, byte[] output, int outOffset)
         {
             Ensure.IsNotNull(input, nameof(input));
@@ -132,46 +172,6 @@ namespace MongoDB.Driver.Core.Compression.Snappy
             var truncated = new byte[outLength];
             Array.Copy(output, truncated, outLength);
             return truncated;
-        }
-
-        public static int GetMaxCompressedLength(int inLength)
-        {
-            return SnappyNativeMethods.Instance.snappy_max_compressed_length(inLength);
-        }
-
-        public static int GetUncompressedLength(byte[] input, int offset, int length)
-        {
-            Ensure.IsNotNull(input, nameof(input));
-            EnsureInputRangeValid(offset, length, input.Length);
-            if (length == 0)
-            {
-                throw new InvalidDataException("Compressed block cannot be empty.");
-            }
-
-            var inputHandle = GCHandle.Alloc(input, GCHandleType.Pinned);
-            try
-            {
-                var inputPtr = Marshal.UnsafeAddrOfPinnedArrayElement(input, offset);
-                var status = SnappyNativeMethods.Instance.snappy_uncompressed_length(inputPtr, length, out var outLength);
-                switch (status)
-                {
-                    case SnappyStatus.Ok:
-                        return outLength;
-                    default:
-                        throw new InvalidDataException("Input is not a valid snappy-compressed block.");
-                }
-            }
-            finally
-            {
-                inputHandle.Free();
-            }
-        }
-
-        public static int GetUncompressedLength(byte[] input)
-        {
-            Ensure.IsNotNull(input, nameof(input));
-
-            return GetUncompressedLength(input, 0, input.Length);
         }
 
         public static bool Validate(byte[] input, int offset, int length)
