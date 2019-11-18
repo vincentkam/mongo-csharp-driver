@@ -29,17 +29,17 @@ namespace MongoDB.Driver.Core.NativeLibraryLoader
         MacOS
     }
 
-    internal interface ILibraryLoaderSource
+    internal interface ILibrarySource
     {
         T GetFunction<T>(string name);
     }
 
-    internal class LibraryLoaderSource : ILibraryLoaderSource
+    internal class LibrarySource : ILibrarySource
     {
         private readonly string _libraryName;
         private readonly Lazy<IPlatformLibraryLoader> _loader;
 
-        public LibraryLoaderSource(IDictionary<SupportedPlatforms, string> libraryRelativePaths, Func<bool, string> getLibraryNameFunc)
+        public LibrarySource(IDictionary<SupportedPlatforms, string> libraryRelativePaths, Func<bool, string> getLibraryNameFunc)
         {
             _libraryName = Ensure.IsNotNull(getLibraryNameFunc(Is64BitnessPlatform), nameof(getLibraryNameFunc));
             Ensure.IsNotNull(libraryRelativePaths, nameof(libraryRelativePaths));
@@ -58,7 +58,7 @@ namespace MongoDB.Driver.Core.NativeLibraryLoader
             }, isThreadSafe: true);
         }
 
-        public LibraryLoaderSource(IDictionary<SupportedPlatforms, string> libraryRelativePaths, string libraryName)
+        public LibrarySource(IDictionary<SupportedPlatforms, string> libraryRelativePaths, string libraryName)
             : this(libraryRelativePaths, b => libraryName)
         {
         }
@@ -122,8 +122,10 @@ namespace MongoDB.Driver.Core.NativeLibraryLoader
         {
             var candidatePaths = new List<string>();
 
-            var assembly = typeof(LibraryLoaderSource).GetTypeInfo().Assembly;
-            var location = assembly.Location;
+            var assembly = typeof(LibrarySource).GetTypeInfo().Assembly;
+            var codeBase = assembly.CodeBase;
+            var uri = new Uri(codeBase);
+            var location = uri.AbsolutePath;
             var basepath = Path.GetDirectoryName(location);
             candidatePaths.Add(basepath);
 

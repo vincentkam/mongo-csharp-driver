@@ -16,6 +16,7 @@
 using System;
 using System.Collections.Generic;
 using MongoDB.Driver.Core.Compression.Native;
+using MongoDB.Driver.Core.Misc;
 using MongoDB.Driver.Core.NativeLibraryLoader;
 
 namespace MongoDB.Driver.Core.Compression.Snappy.Native
@@ -40,7 +41,7 @@ namespace MongoDB.Driver.Core.Compression.Snappy.Native
         public static ISnappyNativeMethods Instance => __instance ?? (__instance = new SnappyNativeMethods());
         #endregion
 
-        private readonly IDictionary<SupportedPlatforms, string> __libraryPaths = new Dictionary<SupportedPlatforms, string>()
+        private readonly IDictionary<SupportedPlatforms, string> _libraryPaths = new Dictionary<SupportedPlatforms, string>
         {
             { SupportedPlatforms.Windows, string.Empty }, // bin folder
             // On Linux, the snappy library depends on the Snappy package.
@@ -51,16 +52,17 @@ namespace MongoDB.Driver.Core.Compression.Snappy.Native
 
         private readonly ISnappyNativeMethods _snappyNativeMethods;
 
+        // private constructor
         private SnappyNativeMethods()
         {
-            var libraryLoaderSource = new LibraryLoaderSource(__libraryPaths, is64Bit => is64Bit ? "snappy64.dll" : "snappy32.dll");
-            if (libraryLoaderSource.Is64BitnessPlatform)
+            var librarySource = new LibrarySource(_libraryPaths, is64Bit => is64Bit ? "snappy64.dll" : "snappy32.dll");
+            if (librarySource.Is64BitnessPlatform)
             {
-                _snappyNativeMethods = new SnappyNativeMethods64(libraryLoaderSource);
+                _snappyNativeMethods = new SnappyNativeMethods64(librarySource);
             }
             else
             {
-                _snappyNativeMethods = new SnappyNativeMethods32(libraryLoaderSource);
+                _snappyNativeMethods = new SnappyNativeMethods32(librarySource);
             }
         }
 
@@ -99,13 +101,15 @@ namespace MongoDB.Driver.Core.Compression.Snappy.Native
             private readonly Delegates32.snappy_uncompressed_length _snappy_uncompressed_length;
             private readonly Delegates32.snappy_validate_compressed_buffer _snappy_validate_compressed_buffer;
 
-            public SnappyNativeMethods32(ILibraryLoaderSource libraryLoaderSource)
+            public SnappyNativeMethods32(ILibrarySource librarySource)
             {
-                _snappy_compress = libraryLoaderSource.GetFunction<Delegates32.snappy_compress>(nameof(snappy_compress));
-                _snappy_max_compressed_length = libraryLoaderSource.GetFunction<Delegates32.snappy_max_compressed_length>(nameof(snappy_max_compressed_length));
-                _snappy_uncompress = libraryLoaderSource.GetFunction<Delegates32.snappy_uncompress>(nameof(snappy_uncompress));
-                _snappy_uncompressed_length = libraryLoaderSource.GetFunction<Delegates32.snappy_uncompressed_length>(nameof(snappy_uncompressed_length));
-                _snappy_validate_compressed_buffer = libraryLoaderSource.GetFunction<Delegates32.snappy_validate_compressed_buffer>(nameof(snappy_validate_compressed_buffer));
+                Ensure.IsNotNull(librarySource, nameof(librarySource));
+
+                _snappy_compress = librarySource.GetFunction<Delegates32.snappy_compress>(nameof(snappy_compress));
+                _snappy_max_compressed_length = librarySource.GetFunction<Delegates32.snappy_max_compressed_length>(nameof(snappy_max_compressed_length));
+                _snappy_uncompress = librarySource.GetFunction<Delegates32.snappy_uncompress>(nameof(snappy_uncompress));
+                _snappy_uncompressed_length = librarySource.GetFunction<Delegates32.snappy_uncompressed_length>(nameof(snappy_uncompressed_length));
+                _snappy_validate_compressed_buffer = librarySource.GetFunction<Delegates32.snappy_validate_compressed_buffer>(nameof(snappy_validate_compressed_buffer));
             }
 
             // public methods
@@ -153,13 +157,15 @@ namespace MongoDB.Driver.Core.Compression.Snappy.Native
             private readonly Delegates64.snappy_uncompressed_length _snappy_uncompressed_length;
             private readonly Delegates64.snappy_validate_compressed_buffer _snappy_validate_compressed_buffer;
 
-            public SnappyNativeMethods64(ILibraryLoaderSource libraryLoaderSource)
+            public SnappyNativeMethods64(ILibrarySource librarySource)
             {
-                _snappy_compress = libraryLoaderSource.GetFunction<Delegates64.snappy_compress>(nameof(snappy_compress));
-                _snappy_max_compressed_length = libraryLoaderSource.GetFunction<Delegates64.snappy_max_compressed_length>(nameof(snappy_max_compressed_length));
-                _snappy_uncompress = libraryLoaderSource.GetFunction<Delegates64.snappy_uncompress>(nameof(snappy_uncompress));
-                _snappy_uncompressed_length = libraryLoaderSource.GetFunction<Delegates64.snappy_uncompressed_length>(nameof(snappy_uncompressed_length));
-                _snappy_validate_compressed_buffer = libraryLoaderSource.GetFunction<Delegates64.snappy_validate_compressed_buffer>(nameof(snappy_validate_compressed_buffer));
+                Ensure.IsNotNull(librarySource, nameof(librarySource));
+
+                _snappy_compress = librarySource.GetFunction<Delegates64.snappy_compress>(nameof(snappy_compress));
+                _snappy_max_compressed_length = librarySource.GetFunction<Delegates64.snappy_max_compressed_length>(nameof(snappy_max_compressed_length));
+                _snappy_uncompress = librarySource.GetFunction<Delegates64.snappy_uncompress>(nameof(snappy_uncompress));
+                _snappy_uncompressed_length = librarySource.GetFunction<Delegates64.snappy_uncompressed_length>(nameof(snappy_uncompressed_length));
+                _snappy_validate_compressed_buffer = librarySource.GetFunction<Delegates64.snappy_validate_compressed_buffer>(nameof(snappy_validate_compressed_buffer));
             }
 
             // public methods
