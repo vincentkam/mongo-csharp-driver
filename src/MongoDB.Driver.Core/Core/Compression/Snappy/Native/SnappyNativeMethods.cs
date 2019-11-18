@@ -56,7 +56,7 @@ namespace MongoDB.Driver.Core.Compression.Snappy.Native
         // private constructor
         private SnappyNativeMethods()
         {
-            var librarySource = new LibrarySource(_libraryPaths, is64Bit => is64Bit ? "snappy64.dll" : "snappy32.dll");
+            var librarySource = new NativeLibrarySource(_libraryPaths, is64Bit => is64Bit ? "snappy64.dll" : "snappy32.dll");
             if (librarySource.Is64BitnessPlatform)
             {
                 _snappyNativeMethods = new SnappyNativeMethods64(librarySource);
@@ -102,7 +102,7 @@ namespace MongoDB.Driver.Core.Compression.Snappy.Native
             private readonly Delegates32.snappy_uncompressed_length _snappy_uncompressed_length;
             private readonly Delegates32.snappy_validate_compressed_buffer _snappy_validate_compressed_buffer;
 
-            public SnappyNativeMethods32(ILibrarySource librarySource)
+            public SnappyNativeMethods32(INativeLibrarySource librarySource)
             {
                 Ensure.IsNotNull(librarySource, nameof(librarySource));
 
@@ -116,9 +116,9 @@ namespace MongoDB.Driver.Core.Compression.Snappy.Native
             // public methods
             public SnappyStatus snappy_compress(IntPtr input, int input_length, IntPtr output, ref int output_length)
             {
-                var uintOutput_length = (uint) output_length;
+                var uintOutput_length = (uint)output_length;
                 var result = _snappy_compress(input, (uint)input_length, output, ref uintOutput_length);
-                output_length = (int) uintOutput_length;
+                output_length = (int)uintOutput_length;
                 return result;
             }
 
@@ -131,14 +131,14 @@ namespace MongoDB.Driver.Core.Compression.Snappy.Native
             {
                 var uintOutput_length = (uint)output_length;
                 var result = _snappy_uncompress(input, (uint)input_length, output, ref uintOutput_length);
-                output_length = (int) uintOutput_length;
+                output_length = (int)uintOutput_length;
                 return result;
             }
 
             public SnappyStatus snappy_uncompressed_length(IntPtr input, int input_length, out int output_length)
             {
                 var result = _snappy_uncompressed_length(input, (uint)input_length, out var uintOutput_length);
-                output_length = (int) uintOutput_length;
+                output_length = (int)uintOutput_length;
                 return result;
             }
 
@@ -171,7 +171,7 @@ namespace MongoDB.Driver.Core.Compression.Snappy.Native
             private readonly Delegates64.snappy_uncompressed_length _snappy_uncompressed_length;
             private readonly Delegates64.snappy_validate_compressed_buffer _snappy_validate_compressed_buffer;
 
-            public SnappyNativeMethods64(ILibrarySource librarySource)
+            public SnappyNativeMethods64(INativeLibrarySource librarySource)
             {
                 Ensure.IsNotNull(librarySource, nameof(librarySource));
 

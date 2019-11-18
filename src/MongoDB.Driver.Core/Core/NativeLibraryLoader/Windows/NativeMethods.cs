@@ -20,7 +20,7 @@ using MongoDB.Libmongocrypt;
 
 namespace MongoDB.Driver.Core.NativeLibraryLoader.Windows
 {
-    internal class NativeMethods : IPlatformLibraryLoader
+    internal class NativeMethods : INativeLibraryLoader
     {
         private readonly IntPtr _handle;
 
@@ -35,7 +35,7 @@ namespace MongoDB.Driver.Core.NativeLibraryLoader.Windows
 
                 // error code 193 indicates that a 64-bit OS has tried to load a 32-bit dll
                 // https://docs.microsoft.com/en-us/windows/win32/debug/system-error-codes--0-499-
-                throw new LibraryLoadingException(path + ", Windows Error: " + gle);
+                throw new LibraryLoadingException($"Path: {path}. Windows Error: {gle}.");
             }
         }
 
@@ -48,7 +48,7 @@ namespace MongoDB.Driver.Core.NativeLibraryLoader.Windows
             if (ptr == null)
             {
                 var gle = Marshal.GetLastWin32Error();
-                throw new TypeLoadException($"The function {name} has not been loaded, Windows Error: {gle}.");
+                throw new TypeLoadException($"The function {name} has not been loaded. Windows Error: {gle}.");
             }
 
             return ptr;

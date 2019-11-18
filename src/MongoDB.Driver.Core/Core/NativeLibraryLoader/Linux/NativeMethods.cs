@@ -20,7 +20,7 @@ using MongoDB.Driver.Core.Misc;
 
 namespace MongoDB.Driver.Core.NativeLibraryLoader.Linux
 {
-    internal class NativeMethods : IPlatformLibraryLoader
+    internal class NativeMethods : INativeLibraryLoader
     {
         // See dlfcn.h
         // #define RTLD_LAZY       0x1

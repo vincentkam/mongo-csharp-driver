@@ -29,36 +29,25 @@ namespace MongoDB.Driver.Core.NativeLibraryLoader
         MacOS
     }
 
-    internal interface ILibrarySource
+    internal interface INativeLibrarySource
     {
         T GetFunction<T>(string name);
     }
 
-    internal class LibrarySource : ILibrarySource
+    internal class NativeLibrarySource : INativeLibrarySource
     {
         private readonly string _libraryName;
-        private readonly Lazy<IPlatformLibraryLoader> _loader;
+        private readonly Lazy<INativeLibraryLoader> _loader;
 
-        public LibrarySource(IDictionary<SupportedPlatforms, string> libraryRelativePaths, Func<bool, string> getLibraryNameFunc)
+        public NativeLibrarySource(IDictionary<SupportedPlatforms, string> libraryRelativePaths, Func<bool, string> getLibraryNameFunc)
         {
             _libraryName = Ensure.IsNotNull(getLibraryNameFunc(Is64BitnessPlatform), nameof(getLibraryNameFunc));
             Ensure.IsNotNull(libraryRelativePaths, nameof(libraryRelativePaths));
 
-            _loader = new Lazy<IPlatformLibraryLoader>(() =>
-            {
-                var currentPlatform = GetCurrentPlatform();
-                if (currentPlatform.HasValue && libraryRelativePaths.TryGetValue(currentPlatform.Value, out var relativePath))
-                {
-                    return CreateLibraryLoader(currentPlatform.Value, relativePath);
-                }
-                else
-                {
-                    throw new PlatformNotSupportedException("The current platform is not supported or the library path has not been provided.");
-                }
-            }, isThreadSafe: true);
+            _loader = new Lazy<INativeLibraryLoader>(() => CreateLibraryLoader(libraryRelativePaths), isThreadSafe: true);
         }
 
-        public LibrarySource(IDictionary<SupportedPlatforms, string> libraryRelativePaths, string libraryName)
+        public NativeLibrarySource(IDictionary<SupportedPlatforms, string> libraryRelativePaths, string libraryName)
             : this(libraryRelativePaths, b => libraryName)
         {
         }
@@ -83,7 +72,20 @@ namespace MongoDB.Driver.Core.NativeLibraryLoader
         }
 
         // private methods
-        private IPlatformLibraryLoader CreateLibraryLoader(SupportedPlatforms supportedPlatform, string relativePath)
+        private INativeLibraryLoader CreateLibraryLoader(IDictionary<SupportedPlatforms, string> libraryRelativePaths)
+        {
+            var currentPlatform = GetCurrentPlatform();
+            if (currentPlatform.HasValue && libraryRelativePaths.TryGetValue(currentPlatform.Value, out var relativePath))
+            {
+                return CreateLibraryLoader(currentPlatform.Value, relativePath);
+            }
+            else
+            {
+                throw new PlatformNotSupportedException("The current platform is not supported or the library path has not been provided.");
+            }
+        }
+
+        private INativeLibraryLoader CreateLibraryLoader(SupportedPlatforms supportedPlatform, string relativePath)
         {
             var path = GetAbsolutePath(relativePath);
             switch (supportedPlatform)
@@ -122,7 +124,7 @@ namespace MongoDB.Driver.Core.NativeLibraryLoader
         {
             var candidatePaths = new List<string>();
 
-            var assembly = typeof(LibrarySource).GetTypeInfo().Assembly;
+            var assembly = typeof(NativeLibrarySource).GetTypeInfo().Assembly;
             var codeBase = assembly.CodeBase;
             var uri = new Uri(codeBase);
             var location = uri.AbsolutePath;
@@ -155,7 +157,7 @@ namespace MongoDB.Driver.Core.NativeLibraryLoader
             }
         }
 
-        private T GetFunction<T>(IPlatformLibraryLoader loader, string name)
+        private T GetFunction<T>(INativeLibraryLoader loader, string name)
         {
             IntPtr ptr = loader.GetFunction(name);
             if (ptr == IntPtr.Zero)

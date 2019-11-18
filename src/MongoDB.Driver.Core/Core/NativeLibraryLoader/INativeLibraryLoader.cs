@@ -17,7 +17,7 @@ using System;
 
 namespace MongoDB.Driver.Core.NativeLibraryLoader
 {
-    internal interface IPlatformLibraryLoader
+    internal interface INativeLibraryLoader
     {
         IntPtr GetFunction(string name);
     }
