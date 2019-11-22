@@ -57,24 +57,26 @@ namespace MongoDB.Driver.Core.Tests.Core.Compression
         [InlineData(100, 0, 3, 100, 100, typeof(ArgumentOutOfRangeException))]
         [InlineData(100, 0, 3, 100, 101, typeof(ArgumentOutOfRangeException))]
         [InlineData(100, 0, 100, 3, 0, typeof(ArgumentOutOfRangeException))]
-        public void Compress_with_advanced_options_should_throw_if_parameters_incorrect(int? inputCount, int offset, int length, int? outputCount, int outOffset, Type expectedException)
+        public void Compress_with_advanced_options_should_throw_if_parameters_incorrect(int? inputCount, int inputOffset, int inputLength, int? outputCount, int outputOffset, Type expectedException)
         {
             var input = inputCount.HasValue ? new byte[inputCount.Value] : null;
             var output = outputCount.HasValue ? new byte[outputCount.Value] : null;
-            var exception = Record.Exception(() => SnappyCodec.Compress(input, offset, length, output, outOffset));
+            var outputLength = (output?.Length ?? 0) - outputOffset;
+            var exception = Record.Exception(() => SnappyCodec.Compress(input, inputOffset, inputLength, output, outputOffset, outputLength));
             exception.Should().BeOfType(expectedException);
         }
 
         [Theory]
         [InlineData(3, 5, 10, "Hello")]
         [InlineData(0, 11, 0, "ByeHelloBye")]
-        public void Compress_with_advanced_options_should_work_as_expected(int inputOffset, int inputLength, int outOffset, string expectedResult)
+        public void Compress_with_advanced_options_should_work_as_expected(int inputOffset, int inputLength, int outputOffset, string expectedResult)
         {
             var input = Encoding.ASCII.GetBytes("ByeHelloBye");
             var output = new byte[100];
 
-            var compressedLength = SnappyCodec.Compress(input, inputOffset, inputLength, output, outOffset);
-            var compressedOutputWithoutOffset = output.Skip(outOffset).Take(compressedLength).ToArray();
+            var outputLength = output.Length - outputOffset;
+            var compressedLength = SnappyCodec.Compress(input, inputOffset, inputLength, output, outputOffset, outputLength);
+            var compressedOutputWithoutOffset = output.Skip(outputOffset).Take(compressedLength).ToArray();
 
             var uncompressed = SnappyCodec.Uncompress(compressedOutputWithoutOffset);
             var uncompressedString = Encoding.ASCII.GetString(uncompressed);
@@ -96,7 +98,7 @@ namespace MongoDB.Driver.Core.Tests.Core.Compression
         [InlineData(true, 0, 0, typeof(InvalidDataException))]
         [InlineData(true, 22, 0, typeof(InvalidDataException))]
         [InlineData(false, 0, 10, typeof(InvalidDataException))]
-        public void GetUncompressedLength_with_advanced_options_should_throw_if_parameters_incorrect(bool? provideCorrectCompressedBytes, int offset, int length, Type expectedExceptionType)
+        public void GetUncompressedLength_with_advanced_options_should_throw_if_parameters_incorrect(bool? provideCorrectCompressedBytes, int inputOffset, int inputLength, Type expectedExceptionType)
         {
             var uncompressedBytes = Encoding.ASCII.GetBytes("Hello, hello, howdy?"); // 20 bytes
             byte[] compressedBytes = null;
@@ -112,7 +114,7 @@ namespace MongoDB.Driver.Core.Tests.Core.Compression
                 }
             }
 
-            var exception = Record.Exception(() => SnappyCodec.GetUncompressedLength(compressedBytes, offset, length));
+            var exception = Record.Exception(() => SnappyCodec.GetUncompressedLength(compressedBytes, inputOffset, inputLength));
             exception.Should().BeOfType(expectedExceptionType);
         }
 
@@ -133,9 +135,10 @@ namespace MongoDB.Driver.Core.Tests.Core.Compression
         [InlineData(true, 22, 0, 100, 0, typeof(InvalidDataException))]
         [InlineData(true, 0, 22, 100, -1, typeof(ArgumentOutOfRangeException))]
         [InlineData(true, 0, 22, 100, 101, typeof(ArgumentOutOfRangeException))]
+        [InlineData(true, 0, 22, 100, 100, typeof(ArgumentOutOfRangeException))]
         [InlineData(true, 0, 22, 100, 97, typeof(ArgumentOutOfRangeException))]
         [InlineData(false, 0, 22, 100, 0, typeof(InvalidDataException))]
-        public void Uncompress_with_advanced_parameters_should_throw_if_parameters_incorrect(bool? provideCorrectCompressedBytes, int offset, int length, int? outputCount, int outOffset, Type expectedException)
+        public void Uncompress_with_advanced_parameters_should_throw_if_parameters_incorrect(bool? provideCorrectCompressedBytes, int inputOffset, int inputLength, int? outputCount, int outputOffset, Type expectedException)
         {
             var uncompressedBytes = Encoding.ASCII.GetBytes("Hello, hello, howdy?"); // 20 bytes
             byte[] compressedBytes = null;
@@ -147,14 +150,15 @@ namespace MongoDB.Driver.Core.Tests.Core.Compression
                 }
                 else
                 {
-                    compressedBytes = new byte[length];
+                    compressedBytes = new byte[inputLength];
                     new Random(0).NextBytes(compressedBytes);
                 }
             }
 
             var outputBytes = outputCount.HasValue ? new byte[outputCount.Value] : null;
 
-            var exception = Record.Exception(() => SnappyCodec.Uncompress(compressedBytes, offset, length, outputBytes, outOffset));
+            var outputLength = (outputBytes?.Length ?? 0) - outputOffset;
+            var exception = Record.Exception(() => SnappyCodec.Uncompress(compressedBytes, inputOffset, inputLength, outputBytes, outputOffset, outputLength));
             exception.Should().BeOfType(expectedException);
         }
 
@@ -169,7 +173,9 @@ namespace MongoDB.Driver.Core.Tests.Core.Compression
             var padded = uncompressedBytes1.Take(3).Concat(compressedBytes2).Concat(uncompressedBytes1.Skip(3)).ToArray();
 
             var output = new byte[100];
-            var uncompressedLength = SnappyCodec.Uncompress(padded, 3, padded.Length - 5, output, 10);
+
+            var outputLength = output.Length - 10;
+            var uncompressedLength = SnappyCodec.Uncompress(padded, 3, padded.Length - 5, output, 10, outputLength);
             uncompressedLength.Should().Be(5);
 
             var outputBytes2 = output.Skip(10).Take(5).ToArray();
@@ -211,12 +217,12 @@ namespace MongoDB.Driver.Core.Tests.Core.Compression
         [InlineData(true, -1, 20, typeof(ArgumentOutOfRangeException))]
         [InlineData(true, 0, -1, typeof(ArgumentOutOfRangeException))]
         [InlineData(true, 22, 4, typeof(ArgumentOutOfRangeException))]
-        public void Validate_with_advanced_options_should_throw_if_parameters_incorrect(bool provideCompressedBytes, int offset, int length, Type expectedExceptionType)
+        public void Validate_with_advanced_options_should_throw_if_parameters_incorrect(bool provideCompressedBytes, int inputOffset, int inputLength, Type expectedExceptionType)
         {
             var uncompressedBytes = Encoding.ASCII.GetBytes("Hello, hello, howdy?"); // 20 bytes
             var compressedBytes = provideCompressedBytes ? SnappyCodec.Compress(uncompressedBytes) : null; // 22 bytes
 
-            var exception = Record.Exception(() => SnappyCodec.Validate(compressedBytes, offset, length));
+            var exception = Record.Exception(() => SnappyCodec.Validate(compressedBytes, inputOffset, inputLength));
             exception.Should().BeOfType(expectedExceptionType);
         }
     }

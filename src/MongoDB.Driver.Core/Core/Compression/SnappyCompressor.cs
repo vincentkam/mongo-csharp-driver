@@ -37,7 +37,13 @@ namespace MongoDB.Driver.Core.Compression
             input.ReadBytes(uncompressedBytes, offset: 0, count: uncompressedSize, CancellationToken.None);
             var maxCompressedSize = SnappyCodec.GetMaxCompressedLength(uncompressedSize);
             var compressedBytes = new byte[maxCompressedSize];
-            var compressedSize = SnappyCodec.Compress(uncompressedBytes, 0, uncompressedSize, compressedBytes, 0);
+            var compressedSize = SnappyCodec.Compress(
+                input: uncompressedBytes, 
+                inputOffset: 0, 
+                inputLength: uncompressedSize, 
+                output: compressedBytes, 
+                outputOffset: 0, 
+                outputLength: compressedBytes.Length); // output.Length - outputOffset
             output.Write(compressedBytes, 0, (int)compressedSize);
         }
 
