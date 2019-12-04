@@ -79,7 +79,7 @@ namespace MongoDB.Driver.Core.NativeLibraryLoader
             {
                 return SupportedPlatform.MacOS;
             }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 return SupportedPlatform.Linux;
             }

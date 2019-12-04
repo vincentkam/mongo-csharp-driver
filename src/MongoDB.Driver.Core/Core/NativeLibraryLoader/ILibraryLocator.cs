@@ -13,49 +13,10 @@
 * limitations under the License.
 */
 
-using System;
-using System.IO;
-using System.Reflection;
-
 namespace MongoDB.Driver.Core.NativeLibraryLoader
 {
     internal interface ILibraryLocator
     {
         string GetLibraryAbsolutePath(SupportedPlatform currentPlatform);
-    }
-
-    internal abstract class LibraryRelativeLocatorBase : ILibraryLocator
-    {
-        public virtual Assembly Assembly => typeof(LibraryRelativeLocatorBase).GetTypeInfo().Assembly;
-
-        public abstract string GetLibraryRelativePath(SupportedPlatform currentPlatform);
-
-        public string GetLibraryAbsolutePath(SupportedPlatform currentPlatform)
-        {
-            var relativePath = GetLibraryRelativePath(currentPlatform);
-            return GetAbsolutePath(relativePath);
-        }
-
-        // private methods
-        private string FindLibraryOrThrow(string basePath, string relativePath)
-        {
-            var fullPath = Path.Combine(basePath, relativePath);
-            if (File.Exists(fullPath))
-            {
-                return fullPath;
-            }
-
-            throw new FileNotFoundException($"Could not find library {fullPath}.");
-        }
-
-        private string GetAbsolutePath(string relativePath)
-        {
-            var codeBase = Assembly.CodeBase;
-            var uri = new Uri(codeBase);
-            var location = uri.AbsolutePath;
-            var basepath = Path.GetDirectoryName(location);
-
-            return FindLibraryOrThrow(basepath, relativePath);
-        }
     }
 }

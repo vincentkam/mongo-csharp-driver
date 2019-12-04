@@ -20,7 +20,7 @@ namespace MongoDB.Driver.Core.Compression.Snappy
 {
     internal static class Snappy64NativeMethods
     {
-        // static fields
+        // private static fields
         private static readonly Lazy<LibraryLoader> __libraryLoader;
         private static readonly Lazy<Delegates64.snappy_compress> __snappy_compress;
         private static readonly Lazy<Delegates64.snappy_max_compressed_length> __snappy_max_compressed_length;
@@ -83,7 +83,7 @@ namespace MongoDB.Driver.Core.Compression.Snappy
             public delegate SnappyStatus snappy_validate_compressed_buffer(IntPtr input, ulong input_length);
         }
 
-        private class SnappyLocator : LibraryRelativeLocatorBase
+        private class SnappyLocator : RelativeLibraryLocatorBase
         {
             public override string GetLibraryRelativePath(SupportedPlatform currentPlatform)
             {
