@@ -15,8 +15,6 @@
 
 using MongoDB.Driver.Core.Misc;
 using System;
-using System.IO;
-using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace MongoDB.Driver.Core.NativeLibraryLoader
@@ -32,10 +30,10 @@ namespace MongoDB.Driver.Core.NativeLibraryLoader
     {
         private readonly INativeLibraryLoader _nativeLoader;
 
-        public LibraryLoader(Func<SupportedPlatform, string> libraryLocator)
+        public LibraryLoader(ILibraryLocator libraryLocator)
         {
             Ensure.IsNotNull(libraryLocator, nameof(libraryLocator));
-            ThrowIfNotSupportedPlatform();
+            ThrowIfNot64BitProcess();
             _nativeLoader = CreateNativeLoader(libraryLocator);
         }
 
@@ -52,11 +50,10 @@ namespace MongoDB.Driver.Core.NativeLibraryLoader
         }
 
         // private methods
-        private INativeLibraryLoader CreateNativeLoader(Func<SupportedPlatform, string> libraryLocator)
+        private INativeLibraryLoader CreateNativeLoader(ILibraryLocator libraryLocator)
         {
             var currentPlatform = GetCurrentPlatform();
-            var relativePath = libraryLocator(currentPlatform);
-            var absolutePath = GetAbsolutePath(relativePath);
+            var absolutePath = libraryLocator.GetLibraryAbsolutePath(currentPlatform);
             return CreateNativeLoader(currentPlatform, absolutePath);
         }
 
@@ -75,28 +72,6 @@ namespace MongoDB.Driver.Core.NativeLibraryLoader
             }
         }
 
-        private string FindLibraryOrThrow(string basePath, string relativePath)
-        {
-            var fullPath = Path.Combine(basePath, relativePath);
-            if (File.Exists(fullPath))
-            {
-                return fullPath;
-            }
-
-            throw new FileNotFoundException($"Could not find library {fullPath}.");
-        }
-
-        private string GetAbsolutePath(string relativePath)
-        {
-            var assembly = typeof(LibraryLoader).GetTypeInfo().Assembly;
-            var codeBase = assembly.CodeBase;
-            var uri = new Uri(codeBase);
-            var location = uri.AbsolutePath;
-            var basepath = Path.GetDirectoryName(location);
-
-            return FindLibraryOrThrow(basepath, relativePath);
-        }
-
         private SupportedPlatform GetCurrentPlatform()
         {
 #if NETSTANDARD1_5
@@ -108,7 +83,6 @@ namespace MongoDB.Driver.Core.NativeLibraryLoader
             {
                 return SupportedPlatform.Linux;
             }
-            else
 #endif
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -118,7 +92,7 @@ namespace MongoDB.Driver.Core.NativeLibraryLoader
             throw new InvalidOperationException("Current platform is not supported by LibraryLoader.");
         }
 
-        private void ThrowIfNotSupportedPlatform()
+        private void ThrowIfNot64BitProcess()
         {
 #if NET452 || NETSTANDARD2_0
             var is64Bit = Environment.Is64BitProcess;

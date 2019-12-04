@@ -44,7 +44,7 @@ namespace MongoDB.Driver.Core.Compression
                 output: compressedBytes, 
                 outputOffset: 0, 
                 outputLength: compressedBytes.Length); // output.Length - outputOffset
-            output.Write(compressedBytes, 0, (int)compressedSize);
+            output.Write(compressedBytes, 0, compressedSize);
         }
 
         /// <summary>

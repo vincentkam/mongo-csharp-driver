@@ -28,12 +28,6 @@ namespace MongoDB.Driver.Core.Compression.Snappy
             EnsureBufferRangeIsValid(inputOffset, inputLength, input.Length);
             EnsureBufferRangeIsValid(outputOffset, outputLength, output.Length);
 
-            if (inputOffset == input.Length)
-            {
-                input = new byte[1];
-                inputOffset = 0;
-            }
-
             var status = SnappyAdapter.snappy_compress(input, inputOffset, inputLength, output, outputOffset, ref outputLength);
             switch (status)
             {
@@ -102,12 +96,6 @@ namespace MongoDB.Driver.Core.Compression.Snappy
             if (inputLength == 0)
             {
                 throw new InvalidDataException("Compressed block cannot be empty.");
-            }
-
-            if (outputOffset == output.Length)
-            {
-                output = new byte[1];
-                outputOffset = 0;
             }
 
             var status = SnappyAdapter.snappy_uncompress(input, inputOffset, inputLength, output, outputOffset, ref outputLength);

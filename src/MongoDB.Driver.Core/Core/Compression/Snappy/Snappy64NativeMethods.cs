@@ -20,6 +20,7 @@ namespace MongoDB.Driver.Core.Compression.Snappy
 {
     internal static class Snappy64NativeMethods
     {
+        // static fields
         private static readonly Lazy<LibraryLoader> __libraryLoader;
         private static readonly Lazy<Delegates64.snappy_compress> __snappy_compress;
         private static readonly Lazy<Delegates64.snappy_max_compressed_length> __snappy_max_compressed_length;
@@ -27,9 +28,11 @@ namespace MongoDB.Driver.Core.Compression.Snappy
         private static readonly Lazy<Delegates64.snappy_uncompressed_length> __snappy_uncompressed_length;
         private static readonly Lazy<Delegates64.snappy_validate_compressed_buffer> __snappy_validate_compressed_buffer;
 
+        // static constructor
         static Snappy64NativeMethods()
         {
-            __libraryLoader = new Lazy<LibraryLoader>(() => new LibraryLoader(GetLibraryLocator), isThreadSafe: true);
+            var snappyLocator = new SnappyLocator();
+            __libraryLoader = new Lazy<LibraryLoader>(() => new LibraryLoader(snappyLocator), isThreadSafe: true);
 
             __snappy_compress = CreateLazyForDelegate<Delegates64.snappy_compress>(nameof(snappy_compress));
             __snappy_max_compressed_length = CreateLazyForDelegate<Delegates64.snappy_max_compressed_length>(nameof(snappy_max_compressed_length));
@@ -70,19 +73,6 @@ namespace MongoDB.Driver.Core.Compression.Snappy
             return new Lazy<TDelegate>(() => __libraryLoader.Value.GetDelegate<TDelegate>(name), isThreadSafe: true);
         }
 
-         private static string GetLibraryLocator(SupportedPlatform currentPlatform)
-         {
-             switch (currentPlatform)
-             {
-                 case SupportedPlatform.Windows:
-                     return "Core/Compression/Snappy/lib/win/snappy64.dll";
-                 case SupportedPlatform.Linux: // TODO: add support for Linux and MacOS later
-                 case SupportedPlatform.MacOS:
-                 default:
-                     throw new InvalidOperationException($"Snappy is not supported on the current platform: {currentPlatform}.");
-             }
-         }
-
         // nested types
         private class Delegates64
         {
@@ -91,6 +81,22 @@ namespace MongoDB.Driver.Core.Compression.Snappy
             public delegate SnappyStatus snappy_uncompress(IntPtr input, ulong input_length, IntPtr output, ref ulong output_length);
             public delegate SnappyStatus snappy_uncompressed_length(IntPtr input, ulong input_length, out ulong output_length);
             public delegate SnappyStatus snappy_validate_compressed_buffer(IntPtr input, ulong input_length);
+        }
+
+        private class SnappyLocator : LibraryRelativeLocatorBase
+        {
+            public override string GetLibraryRelativePath(SupportedPlatform currentPlatform)
+            {
+                switch (currentPlatform)
+                {
+                    case SupportedPlatform.Windows:
+                        return "Core/Compression/Snappy/lib/win/snappy64.dll";
+                    case SupportedPlatform.Linux: // TODO: add support for Linux and MacOS later
+                    case SupportedPlatform.MacOS:
+                    default:
+                        throw new InvalidOperationException($"Snappy is not supported on the current platform: {currentPlatform}.");
+                }
+            }
         }
     }
 }
