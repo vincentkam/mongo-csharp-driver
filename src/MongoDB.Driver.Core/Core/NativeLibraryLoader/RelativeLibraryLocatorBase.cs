@@ -14,6 +14,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
@@ -35,31 +36,39 @@ namespace MongoDB.Driver.Core.NativeLibraryLoader
 
         public virtual string GetLibraryBasePath()
         {
-            var assembly = GetLibraryBaseAssembly();
-            var codeBase = assembly.CodeBase;
-            var uri = new Uri(codeBase);
-            var absolutePath = uri.AbsolutePath;
-            return Path.GetDirectoryName(absolutePath);
+            // In the nuget package, get the shared library from a relative path of this assembly
+            // Also, when running locally, get the shared library from a relative path of this assembly
+            var assembly = typeof(LibraryLoader).GetTypeInfo().Assembly;
+            var location = assembly.Location;
+            string basePath = Path.GetDirectoryName(location);
+            return Path.GetDirectoryName(basePath);
         }
 
         public abstract string GetLibraryRelativePath(SupportedPlatform currentPlatform);
 
         // private methods
-        private string FindLibraryOrThrow(string basePath, string relativePath)
+        private string FindLibraryOrThrow(string[] basePaths, string[] suffixPaths, string library)
         {
-            var absolutePath = Path.Combine(basePath, relativePath);
-            if (!File.Exists(absolutePath))
+            var failedPaths = new List<string>();
+            foreach (var basePath in basePaths)
             {
-                throw new FileNotFoundException($"Could not find library {absolutePath}.");
+                foreach (var suffix in suffixPaths)
+                {
+                    string path = Path.Combine(basePath, suffix, library);
+                    if (File.Exists(path))
+                    {
+                       return path;
+                    }
+                    failedPaths.Add(path);
+                }
             }
-
-            return absolutePath;
-        }
+            throw new FileNotFoundException("Could not find: " + library + " --\n Tried: " + string.Join(",", failedPaths));
+       }
 
         private string GetAbsolutePath(string relativePath)
         {
             var basePath = GetLibraryBasePath();
-            return FindLibraryOrThrow(basePath, relativePath);
+            return FindLibraryOrThrow(new [] {basePath, ""}, new[] {relativePath, ""}, "snappy64.dll");
         }
     }
 }

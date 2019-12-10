@@ -77,11 +77,34 @@
     <Compile Include="..\MongoDB.Shared\MaxTimeHelper.cs" Link="Core\Operations\MaxTimeHelper.cs" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <SnappyBinaries>Core/Compression/Snappy/lib/win</SnappyBinaries>
+  </PropertyGroup>
+
   <ItemGroup>
-    <Content Include="Core\Compression\Snappy\lib\win\snappy64.dll">
+    <Content Include="$(SnappyBinaries)/snappy64.dll" Condition="Exists('$(SnappyBinaries)/snappy64.dll')">
+      <Link>snappy64.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+ </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="$(SnappyBinaries)/snappy64.dll">
+      <Pack>true</Pack>
+      <PackagePath>x64/native/windows</PackagePath>
+    </Content>
   </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="MongoDB.Driver.Core.targets">
+      <Pack>true</Pack>
+      <PackagePath>build</PackagePath>
+    </Content>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <NoWarn>NU5100</NoWarn>
+  </PropertyGroup>
 
   <ItemGroup>
     <None Include="..\..\License.txt" Pack="true" PackagePath="$(PackageLicenseFile)" />
