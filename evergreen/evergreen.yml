@@ -241,7 +241,6 @@ functions:
           ${PREPARE_SHELL}
           SSL=${SSL} evergreen/add-certs-if-needed.sh
           AUTH=${AUTH} SSL=${SSL} MONGODB_URI="${MONGODB_URI}" TOPOLOGY=${TOPOLOGY} OS=${OS} COMPRESSOR=${COMPRESSOR} evergreen/run-tests.sh
-          echo "Skipping certificate removal..."
 
   run-atlas-connectivity-tests:
     - command: shell.exec
@@ -426,7 +425,6 @@ functions:
             MONGODB_URI="${MONGODB_URI}" \
             OCSP_TLS_SHOULD_SUCCEED="${OCSP_TLS_SHOULD_SUCCEED}" \
               evergreen/run-tests.sh
-          echo "Skipping certificate removal..."
 
   run-valid-ocsp-server-ca-responder:
     - command: shell.exec
